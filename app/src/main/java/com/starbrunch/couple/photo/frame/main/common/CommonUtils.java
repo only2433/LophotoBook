@@ -64,11 +64,7 @@ import com.starbrunch.couple.photo.frame.main.R;
 import com.starbrunch.couple.photo.frame.main.base.MainApplication;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -1321,61 +1317,17 @@ public class CommonUtils
 	 */
 	public Uri createImageFileUri(String fileName)
 	{
-		Uri uri = null;
-		File folderPath = new File(Common.PATH_IMAGE_ROOT);
-		File imageFile = null;
-		if(folderPath.isDirectory() == false)
-		{
-			folderPath.mkdirs();
-		}
-
-		try {
-			imageFile = new File(Common.PATH_IMAGE_ROOT+fileName+".jpg");
-			imageFile.createNewFile();
-            Log.i("imageFile Path : "+  imageFile.getPath()+", isExist : "+ imageFile.exists());
-
-			//uri = FileProvider.getUriForFile(sContext, Common.PACKAGE_NAME+".provider", imageFile);
-            //Log.i("Uri Path : "+ uri.getPath());
-
-			uri = Uri.fromFile(imageFile);
-
-            Log.i("Uri Path : "+ uri.getPath());
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		return uri;
+        Log.f("fileName : "+fileName);
+        Uri requestUri = null;
+        requestUri = Uri.fromFile(new File(Environment.getExternalStorageDirectory(), fileName+".jpg"));
+		return requestUri;
 	}
 
-	public boolean copyFile(File srcFile , File destFile)
+
+
+    public boolean saveJpegFile(Uri uri, String fileName)
 	{
-		InputStream inputStream = null;
-		OutputStream outputStream = null;
-		try
-		{
-			inputStream = new FileInputStream(srcFile);
-			outputStream = new FileOutputStream(destFile);
-
-			byte[] buffer = new byte[4096];
-			int byteRead;
-			while((byteRead = inputStream.read(buffer)) > 0)
-			{
-				outputStream.write(buffer,0,byteRead);
-			}
-			outputStream.close();
-		}
-		catch(Exception e)
-		{
-			Log.f("Error Message : "+ e.getMessage());
-			return false;
-		}
-
-		return true;
-	}
-
-    public boolean saveUriToJpeg(Uri uri, String fileName)
-	{
+        Log.f("fileName : "+fileName);
 		File folderPath = null;
 		String fileFullName = fileName +".jpg";
 		boolean isSuccess = true;
@@ -1399,7 +1351,6 @@ public class CommonUtils
 		}
 
 		return isSuccess;
-
 	}
 
 }

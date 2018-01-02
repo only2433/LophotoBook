@@ -13,6 +13,7 @@ import android.provider.MediaStore;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 
+import com.littlefox.library.system.common.FileUtils;
 import com.littlefox.logmonitor.Log;
 import com.starbrunch.couple.photo.frame.main.MainContainerActivity;
 import com.starbrunch.couple.photo.frame.main.R;
@@ -51,15 +52,15 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
     private MainContainerContract.View mMainContainerContractView = null;
     private int mMonthPosition = 0;
     private int mSelectMonthColor = 0;
-    private Uri mImageCaptureUri;
-    private PhotoInformationDBHelper mPhotoInformationDBHelper;
-    private WeakReferenceHandler mWeakReferenceHandler;
+    private Uri mImageCaptureUri = null;
+    private PhotoInformationDBHelper mPhotoInformationDBHelper = null;
+    private WeakReferenceHandler mWeakReferenceHandler = null;
+    private PhotoInformationObject mCurrentPhotoInformationObject = null;
+    private File mCropImageFile = null;
 
     public MainContainerPresent(Context context)
     {
         mContext = context;
-
-
 
         Log.i("Common.PATH_APP_ROOT : "+ Common.PATH_APP_ROOT);
         Log.i("Common.PATH_IMAGE_ROOT : "+ Common.PATH_IMAGE_ROOT);
@@ -112,7 +113,7 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
 
     }
 
-    private void addPhotoInformationToDB()
+    private PhotoInformationObject getPhotoInformation(Uri uri)
     {
         final int INDEX_DATE_TIME   = 0;
         final int INDEX_LATITUDE    = 1;
@@ -120,7 +121,7 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
         PhotoInformationObject result = null;
 
         String[] projection = {MediaStore.Images.Media.DATE_TAKEN, MediaStore.Images.Media.LATITUDE, MediaStore.Images.Media.LONGITUDE};
-        Cursor cursor = ((AppCompatActivity)mContext).getContentResolver().query(mImageCaptureUri, projection, null, null, null);
+        Cursor cursor = ((AppCompatActivity)mContext).getContentResolver().query(uri, projection, null, null, null);
         cursor.moveToFirst();
 
         if(cursor != null && cursor.getCount() != 0)
@@ -147,23 +148,22 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
                     cursor.getString(INDEX_LONGITUDE) == null ? 0.0f :Float.valueOf(cursor.getString(INDEX_LONGITUDE)),
                     ""
             );
-            mPhotoInformationDBHelper.addPhotoInformationObject(result);
 
         }
-
+        return result;
     }
 
     private void copyChooseImageFile(Intent data)
     {
-
-        mImageCaptureUri = CommonUtils.getInstance(mContext).createImageFileUri(Common.MONTH_TEXT_LIST[mMonthPosition]+"_"+mMonthListViewFragment.getPhotoInformationSize());
-
         File originalImageFile = CommonUtils.getInstance(mContext).getImageFile(data.getData());
-        File cropImageFile = new File(mImageCaptureUri.getPath());
-        CommonUtils.getInstance(mContext).copyFile(originalImageFile, cropImageFile);
+        mImageCaptureUri = CommonUtils.getInstance(mContext).createImageFileUri(Common.MONTH_TEXT_LIST[mMonthPosition]+"_"+mMonthListViewFragment.getPhotoInformationSize());
+        mCropImageFile = new File(mImageCaptureUri.getPath());
+        Log.i("mImageCaptureUri.getPath() : "+mImageCaptureUri.getPath());
+        Log.i("originalImageFile path : "+originalImageFile.getPath());
+        Log.i("cropImageFile path : "+ mCropImageFile.getPath());
+        FileUtils.copyFile(originalImageFile, mCropImageFile);
 
-        Log.i("originalImageFile path : "+originalImageFile.getAbsolutePath());
-        Log.i("cropImageFile path : "+ cropImageFile.getPath());
+
     }
 
     @Override
@@ -209,6 +209,9 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
         switch(requestCode)
         {
             case PICK_FROM_ALBUM:
+
+
+                mCurrentPhotoInformationObject = getPhotoInformation(data.getData());
                 copyChooseImageFile(data);
 
                 Intent intent = new Intent("com.android.camera.action.CROP");
@@ -312,13 +315,15 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
                 break;
             case MESSAGE_IMAGE_INFORMATION_SAVE:
 
-                boolean isSuccess = CommonUtils.getInstance(mContext).saveUriToJpeg(mImageCaptureUri,Common.MONTH_TEXT_LIST[mMonthPosition]+"_"+mMonthListViewFragment.getPhotoInformationSize());
+                boolean isSuccess = CommonUtils.getInstance(mContext).saveJpegFile(mImageCaptureUri,Common.MONTH_TEXT_LIST[mMonthPosition]+"_"+mMonthListViewFragment.getPhotoInformationSize());
                 if(isSuccess)
                 {
-                    addPhotoInformationToDB();
+                    FileUtils.deleteFile(mCropImageFile.getPath());
+                    mPhotoInformationDBHelper.addPhotoInformationObject(mCurrentPhotoInformationObject);
                     //TODO: 리스트 프레그먼트 갱신
                     mMonthListViewFragment.updateView();
                 }
+
                 break;
 
 
