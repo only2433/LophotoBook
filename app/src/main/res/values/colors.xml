@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="color_white">#ffffffff</color>
+    <color name="color_black">#ff000000</color>
+    <color name="main_background_color">#f3f2ee</color>
+    <color name="main_statusbar_color">#4A4A4A</color>
+    <color name="main_divide_line_color">#838383</color>
+
+    <color name="main_list_item_select_color">#ce636d</color>
+    <color name="main_title_color">#373736</color>
+
+
+    <color name="color_month_1">#DA4453</color>
+    <color name="color_month_2">#E9573F</color>
+    <color name="color_month_3">#F6BB42</color>
+    <color name="color_month_4">#8CC152</color>
+    <color name="color_month_5">#37B09B</color>
+    <color name="color_month_6">#3BAFDA</color>
+    <color name="color_month_7">#4A89DC</color>
+    <color name="color_month_8">#967ADC</color>
+    <color name="color_month_9">#D770AD</color>
+    <color name="color_month_10">#37474f</color>
+    <color name="color_month_11">#D3C99B</color>
+    <color name="color_month_12">#A7765B</color>
+
+    <color name="color_999999">#999999</color>
+
+</resources>

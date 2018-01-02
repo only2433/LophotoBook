@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/main_background_color"
+    >
+
+    <FrameLayout
+        android:id="@+id/_mainBaseBackgroundLayout"
+        android:layout_width="match_parent"
+        android:layout_height="220dp"
+        ></FrameLayout>
+
+
+    <FrameLayout
+        android:id="@+id/_mainContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+
+    </FrameLayout>
+
+    <com.ssomai.android.scalablelayout.ScalableLayout
+        android:id="@+id/_mainBaseTitleLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:scale_base_width="1280"
+        app:scale_base_height="450">
+        <com.starbrunch.couple.photo.frame.main.hanks.htextview.HTextView
+            android:id="@+id/_mainBaseTitleText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            app:scale_width="800"
+            app:scale_height="450"
+            app:scale_left="240"
+            app:scale_top="0"
+            app:scale_textsize="100"
+            android:gravity="center"
+            android:textColor="@color/main_title_color"/>
+
+        <TextView
+            android:id="@+id/_titleMonthSubTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/color_white"
+            android:gravity="center_vertical|right"
+            android:visibility="gone"
+            app:scale_width="150"
+            app:scale_height="150"
+            app:scale_left="980"
+            app:scale_top="250"
+            app:scale_textsize="100"/>
+
+
+        <ImageView
+        android:id="@+id/_divideLine"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:scale_width="1000"
+        app:scale_height="2"
+        app:scale_left="140"
+        app:scale_top="400"
+
+        android:background="@color/main_title_color"/>
+    </com.ssomai.android.scalablelayout.ScalableLayout>
+
+</RelativeLayout>
