@@ -32,6 +32,7 @@ import com.starbrunch.couple.photo.frame.main.common.FontManager;
 import com.starbrunch.couple.photo.frame.main.database.PhotoInformationDBHelper;
 import com.starbrunch.couple.photo.frame.main.hanks.htextview.HTextView;
 import com.starbrunch.couple.photo.frame.main.hanks.htextview.HTextViewType;
+import com.starbrunch.couple.photo.frame.main.itemanimator.SlideInAnimator;
 import com.starbrunch.couple.photo.frame.main.object.PhotoInformationObject;
 
 import java.util.ArrayList;
@@ -166,15 +167,18 @@ public class MonthListViewFragment extends Fragment
     {
         if(mMonthPictureAdapter == null)
         {
+            _MonthPictureList.setItemAnimator(new SlideInAnimator(mContext));
             mMonthPictureAdapter = new MonthPictureAdapter();
             mLinearLayoutManager = new LinearLayoutManager(mContext);
             mLinearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
             _MonthPictureList.setLayoutManager(mLinearLayoutManager);
             _MonthPictureList.setAdapter(mMonthPictureAdapter);
+
+
         }
         else
         {
-            mMonthPictureAdapter.notifyDataSetChanged();
+            mMonthPictureAdapter.notifyItemRangeChanged(0,mPhotoInformationList.size());
         }
 
     }
@@ -255,6 +259,15 @@ public class MonthListViewFragment extends Fragment
 
             //int imageResource = mContext.getResources().getIdentifier("test_image_"+(position+1),"drawable", Common.PACKAGE_NAME);
             Glide.with(mContext).load(Common.PATH_IMAGE_ROOT+mPhotoInformationList.get(position).getFileName()).into(holder._PhotoImage);
+
+            holder._PhotoDeleteButton.setOnClickListener(new View.OnClickListener()
+            {
+                @Override
+                public void onClick(View view)
+                {
+
+                }
+            });
         }
 
         @Override
@@ -283,6 +296,9 @@ public class MonthListViewFragment extends Fragment
             @BindView(R.id._photoDayNameText)
             TextView _photoDayNameText;
 
+            @BindView(R.id._photoDeleteButton)
+            ImageView _PhotoDeleteButton;
+
 
             public ViewHolder(View view)
             {
@@ -295,7 +311,6 @@ public class MonthListViewFragment extends Fragment
             {
                 _photoMonthText.setTypeface(FontManager.getInstance(mContext).getMainMonthTextFont());
                 _photoDayNumberText.setTypeface(FontManager.getInstance(mContext).getDefaultBoldTextFont());
-
                 _photoDayNameText.setTypeface(FontManager.getInstance(mContext).getMainMonthTextFont());
             }
         }

@@ -41,18 +41,31 @@
             android:gravity="center"
             android:textColor="@color/main_title_color"/>
 
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/_titleMonthSubTitleBackground"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/image_count_background"
+            android:visibility="gone"
+            app:scale_top="275"
+            app:scale_left="1040"
+            app:scale_width="100"
+            app:scale_height="100"
+            app:civ_border_width="4dp"
+            app:civ_border_color="@color/color_white"/>
+
         <TextView
             android:id="@+id/_titleMonthSubTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/color_white"
-            android:gravity="center_vertical|right"
             android:visibility="gone"
-            app:scale_width="150"
-            app:scale_height="150"
-            app:scale_left="980"
-            app:scale_top="250"
-            app:scale_textsize="100"/>
+            android:gravity="center"
+            app:scale_width="100"
+            app:scale_height="100"
+            app:scale_left="1040"
+            app:scale_top="275"
+            app:scale_textsize="60"/>
 
 
         <ImageView

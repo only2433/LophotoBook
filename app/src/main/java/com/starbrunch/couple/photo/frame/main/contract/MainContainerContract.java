@@ -11,7 +11,7 @@ public class MainContainerContract
         void showTitleViewBackgroundAnimation(int color);
         void hideTitleViewBackgroundAnimation(int color);
 
-        void setMonthNumberText(String text);
+        void setMonthNumberText(int color, int imageCount);
 
         void showMonthNumberAnimation();
         void hideMonthNumberAnimation();

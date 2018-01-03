@@ -12,6 +12,7 @@ import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.View;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -30,6 +31,7 @@ import com.starbrunch.couple.photo.frame.main.hanks.htextview.HTextViewType;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Created by 정재현 on 2017-12-13.
@@ -51,6 +53,9 @@ public class MainContainerActivity extends BaseActivity implements MainContainer
 
     @BindView(R.id._titleMonthSubTitle)
     TextView _TitleMonthSubTitle;
+
+    @BindView(R.id._titleMonthSubTitleBackground)
+    CircleImageView _TitleMonthSubTitleBackground;
 
     @BindView(R.id._divideLine)
     ImageView _DivideLineImage;
@@ -90,7 +95,7 @@ public class MainContainerActivity extends BaseActivity implements MainContainer
     private void initFont()
     {
         _MainBaseTitleText.setTypeface(FontManager.getInstance(this).getMainTitleFont());
-        _TitleMonthSubTitle.setTypeface(FontManager.getInstance(this).getMainTitleFont());
+        _TitleMonthSubTitle.setTypeface(FontManager.getInstance(this).getDefaultLightTextFont());
     }
 
 
@@ -98,17 +103,22 @@ public class MainContainerActivity extends BaseActivity implements MainContainer
     {
         AnimatorSet animatorSet = new AnimatorSet();
 
-        ObjectAnimator transAnimator = ObjectAnimator.ofFloat(_TitleMonthSubTitle, "translationX", 100,0);
-        ObjectAnimator alphaAnimator = ObjectAnimator.ofFloat(_TitleMonthSubTitle, "alpha", 0 , 1);
-        animatorSet.playTogether(transAnimator,alphaAnimator);
+        ObjectAnimator transTextAnimator = ObjectAnimator.ofFloat(_TitleMonthSubTitle, "translationY", -300,0);
+        ObjectAnimator alphaTextAnimator = ObjectAnimator.ofFloat(_TitleMonthSubTitle, "alpha", 0 , 1);
+        ObjectAnimator transBackgroundAnimator = ObjectAnimator.ofFloat(_TitleMonthSubTitleBackground, "translationY", 100,0);
+        ObjectAnimator alphaBackgroundAnimator = ObjectAnimator.ofFloat(_TitleMonthSubTitleBackground, "alpha", 0 , 1);
+
+        animatorSet.setInterpolator(new AccelerateDecelerateInterpolator());
+        animatorSet.playTogether(transTextAnimator,alphaTextAnimator, transBackgroundAnimator, alphaBackgroundAnimator);
         animatorSet.setStartDelay(Common.DURATION_SHORT);
         animatorSet.setDuration(Common.DURATION_DEFAULT);
         animatorSet.start();
-        transAnimator.addListener(new Animator.AnimatorListener()
+        transTextAnimator.addListener(new Animator.AnimatorListener()
         {
             @Override
             public void onAnimationStart(Animator animator) {
                 _TitleMonthSubTitle.setVisibility(View.VISIBLE);
+                _TitleMonthSubTitleBackground.setVisibility(View.VISIBLE);
             }
             @Override
             public void onAnimationEnd(Animator animator) {}
@@ -124,13 +134,16 @@ public class MainContainerActivity extends BaseActivity implements MainContainer
     {
         AnimatorSet animatorSet = new AnimatorSet();
 
-        ObjectAnimator transAnimator = ObjectAnimator.ofFloat(_TitleMonthSubTitle, "translationX", 0,100);
-        ObjectAnimator alphaAnimator = ObjectAnimator.ofFloat(_TitleMonthSubTitle, "alpha", 1 , 0);
-        animatorSet.playTogether(transAnimator, alphaAnimator);
+        ObjectAnimator transTextAnimator = ObjectAnimator.ofFloat(_TitleMonthSubTitle, "translationY", 0,-300);
+        ObjectAnimator alphaTextAnimator = ObjectAnimator.ofFloat(_TitleMonthSubTitle, "alpha", 1 , 0);
+        ObjectAnimator transBackgroundAnimator = ObjectAnimator.ofFloat(_TitleMonthSubTitleBackground, "translationY", 0,100);
+        ObjectAnimator alphaBackgroundAnimator = ObjectAnimator.ofFloat(_TitleMonthSubTitleBackground, "alpha", 1 , 0);
 
+
+        animatorSet.playTogether(transTextAnimator, alphaTextAnimator, transBackgroundAnimator, alphaBackgroundAnimator);
         animatorSet.setDuration(Common.DURATION_DEFAULT);
         animatorSet.start();
-        transAnimator.addListener(new Animator.AnimatorListener()
+        transTextAnimator.addListener(new Animator.AnimatorListener()
         {
             @Override
             public void onAnimationStart(Animator animator) {}
@@ -138,6 +151,7 @@ public class MainContainerActivity extends BaseActivity implements MainContainer
             public void onAnimationEnd(Animator animator)
             {
                 _TitleMonthSubTitle.setVisibility(View.GONE);
+                _TitleMonthSubTitleBackground.setVisibility(View.GONE);
             }
             @Override
             public void onAnimationCancel(Animator animator) {}
@@ -173,9 +187,10 @@ public class MainContainerActivity extends BaseActivity implements MainContainer
     }
 
     @Override
-    public void setMonthNumberText(String text)
+    public void setMonthNumberText(int color, int imageCount)
     {
-        _TitleMonthSubTitle.setText(text);
+        _TitleMonthSubTitle.setText(String.valueOf(imageCount));
+        _TitleMonthSubTitleBackground.setBackgroundColor(getResources().getColor(color));
     }
 
     @Override
@@ -187,7 +202,6 @@ public class MainContainerActivity extends BaseActivity implements MainContainer
     @Override
     public void hideMonthNumberAnimation()
     {
-
         hideMonthNumberText();
     }
 

@@ -44,7 +44,6 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
     private static final int MESSAGE_TITLE_INIT_COLOR = 0;
     private static final int MESSAGE_IMAGE_INFORMATION_SAVE = 1;
 
-
     private Context mContext = null;
     private MainViewFragment mMainViewFragment = null;
     private MonthListViewFragment mMonthListViewFragment = null;
@@ -108,7 +107,8 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
         mFragmentManager.beginTransaction().replace(R.id._mainContainer, mMonthListViewFragment)
                 .addToBackStack(null)
                 .commit();
-        mMainContainerContractView.setMonthNumberText(String.valueOf(mMonthPosition+1));
+
+        mMainContainerContractView.setMonthNumberText(mSelectMonthColor, mPhotoInformationDBHelper.getPhotoInformationListByMonth(Common.MONTH_TEXT_LIST[mMonthPosition]).size());
         mMainContainerContractView.changeTitleAnimationText(Common.MONTH_TEXT_LIST[mMonthPosition]);
 
     }
@@ -291,7 +291,6 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
         Log.i("");
 
         Intent intent = new Intent(Intent.ACTION_PICK);
-
         intent.setType(android.provider.MediaStore.Images.Media.CONTENT_TYPE);
         ((AppCompatActivity)mContext).startActivityForResult(intent, PICK_FROM_ALBUM);
 
@@ -322,6 +321,8 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
                     mPhotoInformationDBHelper.addPhotoInformationObject(mCurrentPhotoInformationObject);
                     //TODO: 리스트 프레그먼트 갱신
                     mMonthListViewFragment.updateView();
+                    mMainContainerContractView.setMonthNumberText(mSelectMonthColor, mPhotoInformationDBHelper.getPhotoInformationListByMonth(Common.MONTH_TEXT_LIST[mMonthPosition]).size());
+
                 }
 
                 break;

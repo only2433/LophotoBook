@@ -49,6 +49,7 @@ dependencies {
     implementation 'com.github.only2433:LittlefoxLogMoniter:1.0.1'
     implementation 'com.github.only2433:LittlefoxSystemLibrary:1.0.2'
     implementation 'com.github.only2433:LittlefoxViewLibrary:1.0.4'
+    implementation 'de.hdodenhof:circleimageview:2.2.0'
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
