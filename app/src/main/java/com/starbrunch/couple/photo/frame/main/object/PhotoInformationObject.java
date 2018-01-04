@@ -1,11 +1,14 @@
 package com.starbrunch.couple.photo.frame.main.object;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * 포토 정보에 관련된 객체
  * Created by 정재현 on 2017-12-27.
  */
 
-public class PhotoInformationObject
+public class PhotoInformationObject implements Parcelable
 {
     private String  keyID       = "";
     private String  month       = "";
@@ -70,4 +73,48 @@ public class PhotoInformationObject
     {
         return month;
     }
+
+    @Override
+    public int describeContents()
+    {
+        return 0;
+    }
+
+
+    protected PhotoInformationObject(Parcel in)
+    {
+        keyID = in.readString();
+        month = in.readString();
+        fileName = in.readString();
+        dateTime = in.readLong();
+        latitude = in.readFloat();
+        longitude = in.readFloat();
+        commants = in.readString();
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i)
+    {
+        parcel.writeString(keyID);
+        parcel.writeString(month);
+        parcel.writeString(fileName);
+        parcel.writeLong(dateTime);
+        parcel.writeFloat(latitude);
+        parcel.writeFloat(longitude);
+        parcel.writeString(commants);
+    }
+
+    public static final Creator<PhotoInformationObject> CREATOR = new Creator<PhotoInformationObject>() {
+        @Override
+        public PhotoInformationObject createFromParcel(Parcel in) {
+            return new PhotoInformationObject(in);
+        }
+
+        @Override
+        public PhotoInformationObject[] newArray(int size) {
+            return new PhotoInformationObject[size];
+        }
+    };
+
+
 }

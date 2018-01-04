@@ -13,7 +13,7 @@ public interface MainContainerCallback
 
     public void onAddPicture();
 
-    public void onDeletePicture();
+    public void onDeletePicture(String keyID);
 
 
 }

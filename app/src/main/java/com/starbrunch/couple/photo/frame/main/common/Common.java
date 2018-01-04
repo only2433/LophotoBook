@@ -14,6 +14,7 @@ public class Common
     public static String SHARED_ELEMENT_MONTH_TITLE ="shared_element_month_title";
     public static String SHARED_ELEMENT_MONTH_IMAGE ="shared_element_month_image";
     public static String SHARED_ELEMENT_MONTH_POSITION = "shared_element_month_position";
+    public static String SHARED_ELEMENT_MONTH_PHOTO_LIST = "shared_element_month_photo_list";
 
     public static String[] MONTH_TEXT_LIST =  {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "November"};
 

@@ -1,6 +1,7 @@
 package com.starbrunch.couple.photo.frame.main.fragment;
 
 
+import android.animation.Animator;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
@@ -8,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPropertyAnimatorListener;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -32,13 +34,14 @@ import com.starbrunch.couple.photo.frame.main.common.FontManager;
 import com.starbrunch.couple.photo.frame.main.database.PhotoInformationDBHelper;
 import com.starbrunch.couple.photo.frame.main.hanks.htextview.HTextView;
 import com.starbrunch.couple.photo.frame.main.hanks.htextview.HTextViewType;
-import com.starbrunch.couple.photo.frame.main.itemanimator.SlideInAnimator;
 import com.starbrunch.couple.photo.frame.main.object.PhotoInformationObject;
 
 import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import jp.wasabeef.recyclerview.animators.SlideInRightAnimator;
+import jp.wasabeef.recyclerview.animators.holder.AnimateViewHolder;
 
 /**
  * Created by 정재현 on 2017-12-13.
@@ -70,6 +73,7 @@ public class MonthListViewFragment extends Fragment
     private int mMonthBackgroundColor = 0;
     private int mFlotingButtonHeight = 0;
     private int mCurrentMonthPosition = 0;
+    private int mDeleteIndex = 0;
 
     private CoordinatorLayout.LayoutParams mCoordinatorLayoutParams = null;
     private PhotoInformationDBHelper photoInformationDBHelper = null;
@@ -91,9 +95,19 @@ public class MonthListViewFragment extends Fragment
         ButterKnife.bind(this,view);
         init();
         initFont();
-        showEmptyDataAnimation();
 
-        updateView();
+
+        if(mPhotoInformationList.size() > 0)
+        {
+            showMonthPictureList();
+            initRecyclerView();
+        }
+        else
+        {
+            showEmptyData();
+            showEmptyDataAnimation(Common.DURATION_DEFAULT);
+        }
+
         showFloatingButton();
         return view;
     }
@@ -130,8 +144,8 @@ public class MonthListViewFragment extends Fragment
         if (mBundle != null)
         {
             mCurrentMonthPosition = mBundle.getInt(Common.SHARED_ELEMENT_MONTH_POSITION);
+            mPhotoInformationList = mBundle.getParcelableArrayList(Common.SHARED_ELEMENT_MONTH_PHOTO_LIST);
 
-            Log.f("mCurrentMonthPosition : "+mCurrentMonthPosition);
             mMonthBackgroundColor = mContext.getResources().getIdentifier("color_month_" + (mCurrentMonthPosition + 1), "color", Common.PACKAGE_NAME);
         }
         mCoordinatorLayoutParams = (CoordinatorLayout.LayoutParams) _PhotoFloatingButton.getLayoutParams();
@@ -145,43 +159,62 @@ public class MonthListViewFragment extends Fragment
         _EmptyDataMessageTextView.setTypeface(FontManager.getInstance(mContext).getDefaultLightTextFont());
     }
 
-    public void updateView()
+
+
+    private void addPhotoInformation(PhotoInformationObject object)
     {
-        mPhotoInformationList = new ArrayList<PhotoInformationObject>();
-        mPhotoInformationList = photoInformationDBHelper.getPhotoInformationListByMonth(Common.MONTH_TEXT_LIST[mCurrentMonthPosition]);
+
+        mPhotoInformationList.add(object);
         Log.f("PhotoInformationList size : "+ mPhotoInformationList.size());
-        if(mPhotoInformationList.size() > 0)
-        {
-            _EmptyDataLayout.setVisibility(View.GONE);
-            _MonthPictureList.setVisibility(View.VISIBLE);
-            initRecyclerView();
-        }
-        else
-        {
-            _EmptyDataLayout.setVisibility(View.VISIBLE);
-            _MonthPictureList.setVisibility(View.GONE);
-        }
     }
+
+    private void showMonthPictureList()
+    {
+        _EmptyDataMessageTextView.reset("");
+        _EmptyDataMessageTextView.animateText("");
+        _EmptyDataLayout.setVisibility(View.GONE);
+        _MonthPictureList.setVisibility(View.VISIBLE);
+
+    }
+
+    private void showEmptyData()
+    {
+        _EmptyDataLayout.setVisibility(View.VISIBLE);
+        _MonthPictureList.setVisibility(View.GONE);
+
+    }
+
 
     private void initRecyclerView()
     {
         if(mMonthPictureAdapter == null)
         {
-            _MonthPictureList.setItemAnimator(new SlideInAnimator(mContext));
+            _MonthPictureList.setItemAnimator(new SlideInRightAnimator());
             mMonthPictureAdapter = new MonthPictureAdapter();
             mLinearLayoutManager = new LinearLayoutManager(mContext);
             mLinearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
             _MonthPictureList.setLayoutManager(mLinearLayoutManager);
             _MonthPictureList.setAdapter(mMonthPictureAdapter);
-
-
         }
-        else
-        {
-            mMonthPictureAdapter.notifyItemRangeChanged(0,mPhotoInformationList.size());
-        }
-
     }
+
+    public void insertItem(PhotoInformationObject object)
+    {
+        addPhotoInformation(object);
+        showMonthPictureList();
+        initRecyclerView();
+        mMonthPictureAdapter.notifyItemRangeInserted(mPhotoInformationList.size() == 0 ? 0 : mPhotoInformationList.size(), 1);
+    }
+
+
+    public void deleteItem()
+    {
+        Log.i("index : "+ mDeleteIndex);
+
+        mPhotoInformationList.remove(mDeleteIndex);
+        mMonthPictureAdapter.notifyItemRemoved(mDeleteIndex);
+    }
+
 
     private void showFloatingButton()
     {
@@ -200,10 +233,14 @@ public class MonthListViewFragment extends Fragment
         });
     }
 
-    private void showEmptyDataAnimation()
+    /**
+     * 데이터가 없을때 에니메이션을 동작 시킨다.
+     * @param delay 지연 시키는 값.
+     */
+    private void showEmptyDataAnimation(int delay)
     {
         _EmptyDataLayout.setVisibility(View.VISIBLE);
-        Animation animation = CommonUtils.getInstance(mContext).getTranslateYAnimation(_EmptyDataLayout.getScaleHeight(), 0, Common.DURATION_SHORT, Common.DURATION_DEFAULT, new AnticipateOvershootInterpolator());
+        Animation animation = CommonUtils.getInstance(mContext).getTranslateYAnimation(_EmptyDataLayout.getScaleHeight(), 0, Common.DURATION_SHORT, delay, new AnticipateOvershootInterpolator());
 
         animation.setAnimationListener(new Animation.AnimationListener()
         {
@@ -217,7 +254,6 @@ public class MonthListViewFragment extends Fragment
             {
                 Log.i("");
                 _EmptyDataMessageTextView.setAnimateType(HTextViewType.TYPER);
-
                 _EmptyDataMessageTextView.animateText(mContext.getResources().getString(R.string.message_empty_picture_data));
             }
 
@@ -248,7 +284,7 @@ public class MonthListViewFragment extends Fragment
         }
 
         @Override
-        public void onBindViewHolder(ViewHolder holder, int position)
+        public void onBindViewHolder(ViewHolder holder, final int position)
         {
             if(position == 0)
             {
@@ -265,7 +301,8 @@ public class MonthListViewFragment extends Fragment
                 @Override
                 public void onClick(View view)
                 {
-
+                    mDeleteIndex = position;
+                    mMainContainerCallback.onDeletePicture(mPhotoInformationList.get(position).getKeyID());
                 }
             });
         }
@@ -276,7 +313,7 @@ public class MonthListViewFragment extends Fragment
             return mPhotoInformationList.size();
         }
 
-        public class ViewHolder extends RecyclerView.ViewHolder
+        public class ViewHolder extends RecyclerView.ViewHolder implements AnimateViewHolder
         {
             @BindView(R.id._photoBaseLayout)
             ScalableLayout _PhotoBaseLayout;
@@ -313,11 +350,93 @@ public class MonthListViewFragment extends Fragment
                 _photoDayNumberText.setTypeface(FontManager.getInstance(mContext).getDefaultBoldTextFont());
                 _photoDayNameText.setTypeface(FontManager.getInstance(mContext).getMainMonthTextFont());
             }
+
+            @Override
+            public void preAnimateAddImpl(RecyclerView.ViewHolder holder)
+            {
+                holder.itemView.setTranslationX(holder.itemView.getWidth());
+                holder.itemView.setAlpha(0.0f);
+            }
+
+            @Override
+            public void preAnimateRemoveImpl(RecyclerView.ViewHolder holder)
+            {
+                holder.itemView.setTranslationX(0);
+                holder.itemView.setAlpha(1.0f);
+            }
+
+            @Override
+            public void animateAddImpl(RecyclerView.ViewHolder holder, ViewPropertyAnimatorListener listener)
+            {
+                holder.itemView.animate()
+                        .translationX(0)
+                        .alpha(1.0f)
+                        .setDuration(Common.DURATION_DEFAULT)
+                        .setStartDelay(Common.DURATION_SHORT)
+                        .setListener(new Animator.AnimatorListener() {
+                            @Override
+                            public void onAnimationStart(Animator animator) {
+
+                            }
+
+                            @Override
+                            public void onAnimationEnd(Animator animator) {
+                                mMonthPictureAdapter.notifyDataSetChanged();
+                            }
+
+                            @Override
+                            public void onAnimationCancel(Animator animator) {
+
+                            }
+
+                            @Override
+                            public void onAnimationRepeat(Animator animator) {
+
+                            }
+                        })
+                        .start();
+            }
+
+            @Override
+            public void animateRemoveImpl(RecyclerView.ViewHolder holder, ViewPropertyAnimatorListener listener)
+            {
+                holder.itemView.animate()
+                        .translationX(holder.itemView.getWidth())
+                        .alpha(0.0f)
+                        .setDuration(Common.DURATION_DEFAULT)
+                        .setListener(new Animator.AnimatorListener() {
+                            @Override
+                            public void onAnimationStart(Animator animator) {
+
+                            }
+
+                            @Override
+                            public void onAnimationEnd(Animator animator) {
+                                mMonthPictureAdapter.notifyDataSetChanged();
+                                if(mPhotoInformationList.size() <= 0)
+                                {
+                                    showEmptyData();
+                                    showEmptyDataAnimation(0);
+                                }
+                            }
+
+                            @Override
+                            public void onAnimationCancel(Animator animator) {
+
+                            }
+
+                            @Override
+                            public void onAnimationRepeat(Animator animator) {
+
+                            }
+                        })
+                        .start();
+            }
         }
     }
+
     public void setMainContainerCallback(MainContainerCallback baseContainerCallback)
     {
         mMainContainerCallback = baseContainerCallback;
     }
-
 }

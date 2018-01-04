@@ -28,6 +28,7 @@ import com.starbrunch.couple.photo.frame.main.handler.WeakReferenceHandler;
 import com.starbrunch.couple.photo.frame.main.object.PhotoInformationObject;
 
 import java.io.File;
+import java.util.ArrayList;
 
 /**
  * Created by 정재현 on 2017-12-21.
@@ -91,7 +92,10 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
 
     private void startMonthListViewFragment(int position)
     {
+        Log.i("position");
         mMonthPosition = position;
+        ArrayList<PhotoInformationObject> list = mPhotoInformationDBHelper.getPhotoInformationListByMonth(Common.MONTH_TEXT_LIST[mMonthPosition]);
+
         mMonthListViewFragment = new MonthListViewFragment();
         mMonthListViewFragment.setMainContainerCallback(this);
 
@@ -99,8 +103,8 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
 
         mMainViewFragment.setExitTransition(CommonUtils.getInstance(mContext).getSlideTransition(Common.DURATION_DEFAULT));
         mMainViewFragment.setReenterTransition(CommonUtils.getInstance(mContext).getSlideTransition(Common.DURATION_DEFAULT));
-
         bundle.putInt(Common.SHARED_ELEMENT_MONTH_POSITION, position);
+        bundle.putParcelableArrayList(Common.SHARED_ELEMENT_MONTH_PHOTO_LIST, list);
 
         mMonthListViewFragment.setArguments(bundle);
 
@@ -108,7 +112,7 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
                 .addToBackStack(null)
                 .commit();
 
-        mMainContainerContractView.setMonthNumberText(mSelectMonthColor, mPhotoInformationDBHelper.getPhotoInformationListByMonth(Common.MONTH_TEXT_LIST[mMonthPosition]).size());
+        mMainContainerContractView.setMonthNumberText(mSelectMonthColor, list.size());
         mMainContainerContractView.changeTitleAnimationText(Common.MONTH_TEXT_LIST[mMonthPosition]);
 
     }
@@ -298,9 +302,12 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
 
 
     @Override
-    public void onDeletePicture()
+    public void onDeletePicture(String keyID)
     {
-
+        Log.i("keyID : "+keyID);
+        mPhotoInformationDBHelper.deletePhotoInformationObject(keyID);
+        mMainContainerContractView.setMonthNumberText(mSelectMonthColor, mPhotoInformationDBHelper.getPhotoInformationListByMonth(Common.MONTH_TEXT_LIST[mMonthPosition]).size());
+        mMonthListViewFragment.deleteItem();
     }
 
     @Override
@@ -320,7 +327,7 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
                     FileUtils.deleteFile(mCropImageFile.getPath());
                     mPhotoInformationDBHelper.addPhotoInformationObject(mCurrentPhotoInformationObject);
                     //TODO: 리스트 프레그먼트 갱신
-                    mMonthListViewFragment.updateView();
+                    mMonthListViewFragment.insertItem(mCurrentPhotoInformationObject);
                     mMainContainerContractView.setMonthNumberText(mSelectMonthColor, mPhotoInformationDBHelper.getPhotoInformationListByMonth(Common.MONTH_TEXT_LIST[mMonthPosition]).size());
 
                 }
