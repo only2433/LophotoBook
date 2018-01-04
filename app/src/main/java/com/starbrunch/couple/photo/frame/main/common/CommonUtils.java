@@ -91,23 +91,29 @@ public class CommonUtils
 		
 		return sCommonUtils;
 	}
-	
-	
 
-	
-    public String getDateTime(long timeMs) {
-
+    public String getDateFullText(long timeMs)
+	{
     	Date date = new Date(timeMs);
-    	String todayString  = new SimpleDateFormat("MM/dd/yyyy").format(date);
+    	String todayString  = new SimpleDateFormat("EEEE, MMMM dd, yyyy", Locale.ENGLISH).format(date);
     	return todayString;
     }
-    
-    public String getTodayDate(long timeMs) {
 
-    	Date date = new Date(timeMs);
-    	String todayString  = new SimpleDateFormat("yyyy.MM.dd").format(date);
-    	return todayString;
-    }
+    public String getDateDay(long timeMs)
+	{
+		Date date = new Date(timeMs);
+		String todayString  = new SimpleDateFormat("dd", Locale.ENGLISH).format(date);
+		return todayString;
+	}
+
+	public String getDateTime(long timeMs)
+	{
+		Date date = new Date(timeMs);
+		String todayString  = new SimpleDateFormat("hh:mm a", Locale.ENGLISH).format(date);
+		return todayString;
+	}
+
+
     
     /**
      * 결제 관련 되서 화면에 표현해주는 형식으로 전달해준다.
@@ -1329,7 +1335,7 @@ public class CommonUtils
 	{
         Log.f("fileName : "+fileName);
 		File folderPath = null;
-		String fileFullName = fileName +".jpg";
+
 		boolean isSuccess = true;
 
 		Bitmap bitmap = null;
@@ -1341,7 +1347,7 @@ public class CommonUtils
 				folderPath.mkdirs();
 			}
 
-			FileOutputStream out = new FileOutputStream(Common.PATH_IMAGE_ROOT+fileFullName);
+			FileOutputStream out = new FileOutputStream(Common.PATH_IMAGE_ROOT+fileName);
 			bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
 			out.close();
 		}catch (Exception e)

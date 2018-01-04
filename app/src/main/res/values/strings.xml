@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">Lophoto Book</string>
     <string name="message_empty_picture_data">Post pictures of Your happy moments</string>
+    <string name="message_question_delete_data">Do You want to delete this?</string>
+    <string name="button_ok">OK</string>
+    <string name="button_cancel">Cancel</string>
 
 </resources>

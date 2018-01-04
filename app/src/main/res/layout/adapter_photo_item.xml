@@ -33,47 +33,54 @@
                 app:scale_left="0"
                 app:scale_width="1280"
                 app:scale_height="800"/>
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/color_alpha"
+                android:scaleType="centerCrop"
+                app:scale_top="0"
+                app:scale_left="0"
+                app:scale_width="1280"
+                app:scale_height="800"/>
 
             <TextView
-                android:id="@+id/_photoDayNameText"
+                android:id="@+id/_photoDayTimeText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Thursday"
-                android:gravity="center_vertical|right"
+                android:gravity="center_vertical|left"
                 android:paddingRight="5dp"
                 android:textColor="@color/color_white"
-                app:scale_top="350"
-                app:scale_left="980"
-                app:scale_width="280"
+                app:scale_top="500"
+                app:scale_left="30"
+                app:scale_width="300"
                 app:scale_height="120"
-                app:scale_textsize="80"/>
+                app:scale_textsize="40"/>
             <TextView
                 android:id="@+id/_photoDayNumberText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical|right"
+                android:gravity="center_vertical|left"
                 android:text="15"
-
                 android:textColor="@color/color_white"
-
-                app:scale_top="400"
-                app:scale_left="1000"
-                app:scale_width="250"
+                app:scale_top="530"
+                app:scale_left="30"
+                app:scale_width="270"
                 app:scale_height="240"
-                app:scale_textsize="170"/>
+                app:scale_textsize="150"/>
             <TextView
-                android:id="@+id/_photoMonthText"
+                android:id="@+id/_photoFullDateText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/color_white"
-                android:gravity="center_vertical|right"
+                android:gravity="center_vertical|left"
                 android:text="Sep"
                 android:paddingRight="5dp"
-                app:scale_top="580"
-                app:scale_left="980"
-                app:scale_width="280"
+                app:scale_top="690"
+                app:scale_left="30"
+                app:scale_width="900"
                 app:scale_height="120"
-                app:scale_textsize="90"/>
+                app:scale_textsize="40"/>
 
             <ImageView
                 android:id="@+id/_photoDeleteButton"
@@ -82,7 +89,7 @@
                 android:src="@drawable/btn_close"
                 android:scaleType="fitXY"
                 app:scale_top="30"
-                app:scale_left="30"
+                app:scale_left="1193"
                 app:scale_width="57"
                 app:scale_height="57"/>
 

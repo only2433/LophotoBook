@@ -12,7 +12,7 @@
     <color name="main_list_item_select_color">#ce636d</color>
     <color name="main_title_color">#373736</color>
 
-
+    <color name="color_alpha">#33000000</color>
     <color name="color_month_1">#DA4453</color>
     <color name="color_month_2">#E9573F</color>
     <color name="color_month_3">#F6BB42</color>

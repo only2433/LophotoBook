@@ -2,7 +2,9 @@ package com.starbrunch.couple.photo.frame.main.fragment;
 
 
 import android.animation.Animator;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -13,6 +15,7 @@ import android.support.v4.view.ViewPropertyAnimatorListener;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -96,7 +99,6 @@ public class MonthListViewFragment extends Fragment
         init();
         initFont();
 
-
         if(mPhotoInformationList.size() > 0)
         {
             showMonthPictureList();
@@ -145,13 +147,10 @@ public class MonthListViewFragment extends Fragment
         {
             mCurrentMonthPosition = mBundle.getInt(Common.SHARED_ELEMENT_MONTH_POSITION);
             mPhotoInformationList = mBundle.getParcelableArrayList(Common.SHARED_ELEMENT_MONTH_PHOTO_LIST);
-
             mMonthBackgroundColor = mContext.getResources().getIdentifier("color_month_" + (mCurrentMonthPosition + 1), "color", Common.PACKAGE_NAME);
         }
         mCoordinatorLayoutParams = (CoordinatorLayout.LayoutParams) _PhotoFloatingButton.getLayoutParams();
-
         mFlotingButtonHeight = (int) CommonUtils.getInstance(mContext).convertDpToPixel(HEIGHT_FLOTING_BUTTON_DP);
-
     }
 
     private void initFont()
@@ -233,6 +232,36 @@ public class MonthListViewFragment extends Fragment
         });
     }
 
+    private void showDeletePhotoConfirmDialog(final int position)
+    {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+        builder.setMessage(getResources().getString(R.string.message_question_delete_data));
+        builder.setNegativeButton(R.string.button_cancel, new DialogInterface.OnClickListener()
+        {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i)
+            {
+
+            }
+        });
+        builder.setPositiveButton(R.string.button_ok, new DialogInterface.OnClickListener()
+        {
+
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i)
+            {
+                mDeleteIndex = position;
+                mMainContainerCallback.onDeletePicture(mPhotoInformationList.get(position).getKeyID());
+            }
+        });
+
+        AlertDialog dialog = builder.show();
+        TextView messageText = (TextView)dialog.findViewById(android.R.id.message);
+        messageText.setGravity(Gravity.CENTER);
+
+        dialog.show();
+    }
+
     /**
      * 데이터가 없을때 에니메이션을 동작 시킨다.
      * @param delay 지연 시키는 값.
@@ -296,15 +325,20 @@ public class MonthListViewFragment extends Fragment
             //int imageResource = mContext.getResources().getIdentifier("test_image_"+(position+1),"drawable", Common.PACKAGE_NAME);
             Glide.with(mContext).load(Common.PATH_IMAGE_ROOT+mPhotoInformationList.get(position).getFileName()).into(holder._PhotoImage);
 
+            holder._PhotoDayTimeText.setText(CommonUtils.getInstance(mContext).getDateTime(mPhotoInformationList.get(position).getDateTime()));
+            holder._photoDayNumberText.setText(CommonUtils.getInstance(mContext).getDateDay(mPhotoInformationList.get(position).getDateTime()));
+            holder._PhotoFullDateText.setText(CommonUtils.getInstance(mContext).getDateFullText(mPhotoInformationList.get(position).getDateTime()));
+
+
             holder._PhotoDeleteButton.setOnClickListener(new View.OnClickListener()
             {
                 @Override
                 public void onClick(View view)
                 {
-                    mDeleteIndex = position;
-                    mMainContainerCallback.onDeletePicture(mPhotoInformationList.get(position).getKeyID());
+                    showDeletePhotoConfirmDialog(position);
                 }
             });
+
         }
 
         @Override
@@ -324,14 +358,14 @@ public class MonthListViewFragment extends Fragment
             @BindView(R.id._photoImage)
             ImageView _PhotoImage;
 
-            @BindView(R.id._photoMonthText)
-            TextView _photoMonthText;
+            @BindView(R.id._photoDayTimeText)
+            TextView _PhotoDayTimeText;
 
             @BindView(R.id._photoDayNumberText)
             TextView _photoDayNumberText;
 
-            @BindView(R.id._photoDayNameText)
-            TextView _photoDayNameText;
+            @BindView(R.id._photoFullDateText)
+            TextView _PhotoFullDateText;
 
             @BindView(R.id._photoDeleteButton)
             ImageView _PhotoDeleteButton;
@@ -346,9 +380,9 @@ public class MonthListViewFragment extends Fragment
 
             private void initFont()
             {
-                _photoMonthText.setTypeface(FontManager.getInstance(mContext).getMainMonthTextFont());
+                _PhotoDayTimeText.setTypeface(FontManager.getInstance(mContext).getmDefaultRegularTextFont());
                 _photoDayNumberText.setTypeface(FontManager.getInstance(mContext).getDefaultBoldTextFont());
-                _photoDayNameText.setTypeface(FontManager.getInstance(mContext).getMainMonthTextFont());
+                _PhotoFullDateText.setTypeface(FontManager.getInstance(mContext).getmDefaultRegularTextFont());
             }
 
             @Override
@@ -373,26 +407,22 @@ public class MonthListViewFragment extends Fragment
                         .alpha(1.0f)
                         .setDuration(Common.DURATION_DEFAULT)
                         .setStartDelay(Common.DURATION_SHORT)
-                        .setListener(new Animator.AnimatorListener() {
+                        .setListener(new Animator.AnimatorListener()
+                        {
                             @Override
-                            public void onAnimationStart(Animator animator) {
-
-                            }
+                            public void onAnimationStart(Animator animator) {}
 
                             @Override
-                            public void onAnimationEnd(Animator animator) {
+                            public void onAnimationEnd(Animator animator)
+                            {
                                 mMonthPictureAdapter.notifyDataSetChanged();
                             }
 
                             @Override
-                            public void onAnimationCancel(Animator animator) {
-
-                            }
+                            public void onAnimationCancel(Animator animator) {}
 
                             @Override
-                            public void onAnimationRepeat(Animator animator) {
-
-                            }
+                            public void onAnimationRepeat(Animator animator) {}
                         })
                         .start();
             }
@@ -406,12 +436,11 @@ public class MonthListViewFragment extends Fragment
                         .setDuration(Common.DURATION_DEFAULT)
                         .setListener(new Animator.AnimatorListener() {
                             @Override
-                            public void onAnimationStart(Animator animator) {
-
-                            }
+                            public void onAnimationStart(Animator animator) {}
 
                             @Override
-                            public void onAnimationEnd(Animator animator) {
+                            public void onAnimationEnd(Animator animator)
+                            {
                                 mMonthPictureAdapter.notifyDataSetChanged();
                                 if(mPhotoInformationList.size() <= 0)
                                 {
@@ -421,14 +450,10 @@ public class MonthListViewFragment extends Fragment
                             }
 
                             @Override
-                            public void onAnimationCancel(Animator animator) {
-
-                            }
+                            public void onAnimationCancel(Animator animator) {}
 
                             @Override
-                            public void onAnimationRepeat(Animator animator) {
-
-                            }
+                            public void onAnimationRepeat(Animator animator) {}
                         })
                         .start();
             }
