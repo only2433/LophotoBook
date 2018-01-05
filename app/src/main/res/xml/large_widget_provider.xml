@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:initialKeyguardLayout="@layout/widget_4x4_photo_framelayout"
+    android:initialLayout="@layout/widget_4x4_photo_framelayout"
+    android:minHeight="240dp"
+    android:minWidth="360dp"
+    android:previewImage="@drawable/preview_image"
+    android:resizeMode="horizontal"
+    android:updatePeriodMillis="1800000"
+    >
+
+</appwidget-provider>
