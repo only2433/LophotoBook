@@ -380,9 +380,9 @@ public class MonthListViewFragment extends Fragment
 
             private void initFont()
             {
-                _PhotoDayTimeText.setTypeface(FontManager.getInstance(mContext).getmDefaultRegularTextFont());
+                _PhotoDayTimeText.setTypeface(FontManager.getInstance(mContext).getDefaultLightTextFont());
                 _photoDayNumberText.setTypeface(FontManager.getInstance(mContext).getDefaultBoldTextFont());
-                _PhotoFullDateText.setTypeface(FontManager.getInstance(mContext).getmDefaultRegularTextFont());
+                _PhotoFullDateText.setTypeface(FontManager.getInstance(mContext).getDefaultLightTextFont());
             }
 
             @Override

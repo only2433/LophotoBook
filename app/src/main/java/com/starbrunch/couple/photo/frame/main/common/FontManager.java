@@ -79,7 +79,7 @@ public class FontManager
         return  mMainMonthTextFont;
     }
 
-    public Typeface getmMainImageCountFont()
+    public Typeface getMainImageCountFont()
     {
         return mMainImageCountFont;
     }
@@ -93,7 +93,7 @@ public class FontManager
         return mDefaultLightTextFont;
     }
 
-    public Typeface getmDefaultRegularTextFont()
+    public Typeface getDefaultRegularTextFont()
     {
         return mDefaultRegularTextFont;
     }

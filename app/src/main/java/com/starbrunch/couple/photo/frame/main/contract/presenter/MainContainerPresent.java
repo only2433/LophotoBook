@@ -26,6 +26,7 @@ import com.starbrunch.couple.photo.frame.main.fragment.MainViewFragment;
 import com.starbrunch.couple.photo.frame.main.fragment.MonthListViewFragment;
 import com.starbrunch.couple.photo.frame.main.handler.WeakReferenceHandler;
 import com.starbrunch.couple.photo.frame.main.object.PhotoInformationObject;
+import com.starbrunch.couple.photo.frame.main.widget.PhotoFrameWidgetProvider;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -180,6 +181,14 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
         FileUtils.copyFile(originalImageFile, mCropImageFile);
     }
 
+    private void updateWidget()
+    {
+        Log.i("");
+        Intent intent = new Intent(mContext, PhotoFrameWidgetProvider.class);
+        intent.setAction(Common.INTENT_WIDGET_UPDATE);
+        mContext.sendBroadcast(intent);
+    }
+
     @Override
     public void onAcvitityResult(int requestCode, int resultCode, Intent data)
     {
@@ -282,6 +291,7 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
         mPhotoInformationDBHelper.deletePhotoInformationObject(keyID);
         mMainContainerContractView.setMonthNumberText(mSelectMonthColor, mPhotoInformationDBHelper.getPhotoInformationListByMonth(Common.MONTH_TEXT_LIST[mMonthPosition]).size());
         mMonthListViewFragment.deleteItem();
+        updateWidget();
     }
 
     @Override
@@ -301,10 +311,10 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
                     FileUtils.deleteFile(mCropImageFile.getPath());
                     Log.i("add KeyID : "+ mCurrentPhotoInformationObject.getKeyID());
                     mPhotoInformationDBHelper.addPhotoInformationObject(mCurrentPhotoInformationObject);
-                    //TODO: 리스트 프레그먼트 갱신
+
                     mMonthListViewFragment.insertItem(mCurrentPhotoInformationObject);
                     mMainContainerContractView.setMonthNumberText(mSelectMonthColor, mPhotoInformationDBHelper.getPhotoInformationListByMonth(Common.MONTH_TEXT_LIST[mMonthPosition]).size());
-
+                    updateWidget();
                 }
 
                 break;

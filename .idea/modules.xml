@@ -2,8 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/CouplePhotoFrame.iml" filepath="$PROJECT_DIR$/CouplePhotoFrame.iml" />
       <module fileurl="file://C:\AndroidProject\LophotoBook\CouplePhotoFrame.iml" filepath="C:\AndroidProject\LophotoBook\CouplePhotoFrame.iml" />
-      <module fileurl="file://$PROJECT_DIR$/LophotoBook.iml" filepath="$PROJECT_DIR$/LophotoBook.iml" />
+      <module fileurl="file://D:\moveProject\SharedElementTest\CouplePhotoFrame\LophotoBook.iml" filepath="D:\moveProject\SharedElementTest\CouplePhotoFrame\LophotoBook.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://C:\AndroidProject\LophotoBook\app\app.iml" filepath="C:\AndroidProject\LophotoBook\app\app.iml" />
     </modules>

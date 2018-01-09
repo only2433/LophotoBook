@@ -23,6 +23,7 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -42,6 +43,7 @@ import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
 import android.transition.Slide;
 import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.View;
@@ -676,10 +678,6 @@ public class CommonUtils
 		return dirSize;
 	}
 
-	public int getDrawableResourceFromString(Context context, String name)
-    {
-        return context.getResources().getIdentifier(name, "drawable", context.getApplicationContext().getPackageName());
-    }
     
     public Bitmap getBitmapFromDrawable(Drawable mDrawable, int width, int height)
 	{
@@ -695,32 +693,39 @@ public class CommonUtils
 
 	}
 
+	public Bitmap getBitmapFromFile(String filePath)
+	{
+		Bitmap bitmap = BitmapFactory.decodeFile(filePath);
+		return bitmap;
+	}
 
-    public Bitmap getRoundedCornerBitmap(Bitmap bitmap)
-    {
-        Bitmap output = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
 
-        Canvas canvas = new Canvas(output);
+	public Bitmap getRoundedCornerBitmap(Bitmap bitmap, int roundPixel)
+	{
+		Bitmap output = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
 
-        final int color = 0xff424242;
-        final Paint paint = new Paint();
-        final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
-        final RectF rectF = new RectF(rect);
-        final float roundPx = 12;
+		Canvas canvas = new Canvas(output);
 
-        paint.setAntiAlias(true);
-        canvas.drawARGB(0, 0, 0, 0);
-        paint.setColor(color);
-        canvas.drawRoundRect(rectF, roundPx, roundPx, paint);
+		final int color = 0xff424242;
+		final Paint paint = new Paint();
+		final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
+		final RectF rectF = new RectF(rect);
+		final float roundPx = roundPixel;
 
-        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+		paint.setAntiAlias(true);
+		canvas.drawARGB(0, 0, 0, 0);
+		paint.setColor(color);
 
-        canvas.drawBitmap(bitmap, rect, rect, paint);
+		canvas.drawRoundRect(rectF, roundPx, roundPx, paint);
 
-        return output;
-    }
+		paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
 
-    public Drawable getRoundedCornerRect(int width, int height, int color)
+		canvas.drawBitmap(bitmap, rect, rect, paint);
+
+		return output;
+	}
+
+    public Bitmap getRoundedCornerRect(int width, int height, int color)
     {
         Bitmap output = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(output);
@@ -736,7 +741,7 @@ public class CommonUtils
         paint.setColor(color);
         canvas.drawRoundRect(rectF, getPixel(20), getPixel(20), paint);
 
-        return getDrawableFromBitmap(output);
+        return output;
     }
 
     public Drawable getDrawableFromBitmap(Bitmap mBitmap)
@@ -914,22 +919,13 @@ public class CommonUtils
 	
 
 	
-	public long getAdded1Month(long currentPaidMilliseconds)
+	public int getCurrentMonth(long currentPaidMilliseconds)
 	{
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTimeInMillis(currentPaidMilliseconds);
-		calendar.add(Calendar.MONTH, 1);
-		return calendar.getTimeInMillis();
+		return calendar.get(Calendar.MONTH);
 	}
-	
-	public long getAdded1year(long currentPaidMilliseconds)
-	{
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTimeInMillis(currentPaidMilliseconds);
-		calendar.add(Calendar.YEAR, 1);
-		return calendar.getTimeInMillis();
-	}
-	
+
 	
 	public void startLinkMove(String link)
 	{
@@ -1357,6 +1353,42 @@ public class CommonUtils
 		}
 
 		return isSuccess;
+	}
+
+	public  Bitmap getFontBitmap(String text, int color, float fontSizeSP, int viewWidth, int padding, String fontName, boolean isCenter) {
+		float xOriginal = 0.0f;
+		int fontSizePX = convertDiptoPix(fontSizeSP);
+		int pad = convertDiptoPix(padding);
+		Paint paint = new Paint();
+		Typeface typeface = Typeface.createFromAsset(sContext.getAssets(), fontName);
+		paint.setAntiAlias(true);
+		paint.setTypeface(typeface);
+		paint.setColor(color);
+		paint.setTextSize(fontSizePX);
+
+
+		int textWidth = (int) (convertDiptoPix(viewWidth));
+		if(isCenter)
+		{
+			xOriginal = (int) ((textWidth - paint.measureText(text))/2);
+		}
+		else
+		{
+			xOriginal = pad/2;
+		}
+
+		int height = (int) (fontSizePX / 0.75);
+		Bitmap bitmap = Bitmap.createBitmap(textWidth, height, Bitmap.Config.ARGB_4444);
+		Canvas canvas = new Canvas(bitmap);
+
+
+		canvas.drawText(text, xOriginal, fontSizePX, paint);
+		return bitmap;
+	}
+
+	public int convertDiptoPix(float dip) {
+		int value = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dip, sContext.getResources().getDisplayMetrics());
+		return value;
 	}
 
 }
