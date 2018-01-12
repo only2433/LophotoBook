@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/_ModifiedBaseLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/color_black"
+    android:orientation="vertical">
+
+    <com.ssomai.android.scalablelayout.ScalableLayout
+        android:id="@+id/_ModifiedButtonLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/size_icon_toolbar"
+        app:scale_base_height="120"
+        app:scale_base_width="1920">
+
+        <ImageView
+            android:id="@+id/_ModifiedCancelIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scaleType="fitXY"
+            android:src="@drawable/ic_clear_white_24dp"
+            app:scale_height="120"
+            app:scale_left="70"
+            app:scale_top="0"
+            app:scale_width="120" />
+
+        <TextView
+            android:id="@+id/_ModifiedCancelText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:text="@string/button_cancel"
+            android:textColor="@color/color_white"
+            app:scale_height="120"
+            app:scale_left="260"
+            app:scale_textsize="80"
+            app:scale_top="0"
+            app:scale_width="300" />
+
+        <ImageView
+            android:id="@+id/_ModifiedSaveIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scaleType="fitXY"
+            android:src="@drawable/ic_done_white_24dp"
+            app:scale_height="120"
+            app:scale_left="1410"
+            app:scale_top="0"
+            app:scale_width="120" />
+
+        <TextView
+            android:id="@+id/_ModifiedSaveText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:text="@string/button_save"
+            android:textColor="@color/color_white"
+            app:scale_height="120"
+            app:scale_left="1600"
+            app:scale_textsize="80"
+            app:scale_top="0"
+            app:scale_width="300" />
+
+
+    </com.ssomai.android.scalablelayout.ScalableLayout>
+
+    <com.ssomai.android.scalablelayout.ScalableLayout
+        android:id="@+id/_ModifiedImageLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/_ModifiedButtonLayout"
+        android:layout_marginTop="@dimen/spacing_normal"
+        app:scale_base_height="1200"
+        app:scale_base_width="1920">
+
+        <ImageView
+            android:id="@+id/_ModifiedImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scaleType="fitXY"
+            android:src="@drawable/test_image_9"
+            app:scale_height="1180"
+            app:scale_left="10"
+            app:scale_top="10"
+            app:scale_width="1900" />
+
+    </com.ssomai.android.scalablelayout.ScalableLayout>
+
+
+    <com.ssomai.android.scalablelayout.ScalableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="20dp"
+        app:scale_base_height="1200"
+        app:scale_base_width="1920">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/color_222222"
+            app:scale_height="4"
+            app:scale_left="310"
+            app:scale_top="0"
+            app:scale_width="1300" />
+
+        <com.starbrunch.couple.photo.frame.main.hanks.htextview.HTextView
+            android:id="@+id/_ModifiedDateInformationText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/color_white"
+            android:gravity="center"
+            app:scale_height="496"
+            app:scale_left="0"
+            app:scale_textsize="80"
+            app:scale_top="2"
+            app:scale_width="1920" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/color_222222"
+            app:scale_height="4"
+            app:scale_left="310"
+            app:scale_top="496"
+            app:scale_width="1300" />
+
+        <ImageView
+            android:id="@+id/_ModifiedPhotoIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scaleType="fitXY"
+            android:src="@drawable/ic_wallpaper_white"
+            app:scale_height="120"
+            app:scale_left="127"
+            app:scale_top="980"
+            app:scale_width="120" />
+
+        <TextView
+            android:id="@+id/_ModifiedPhotoText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/text_photo"
+            android:textColor="@color/color_white"
+            app:scale_height="200"
+            app:scale_left="247"
+            app:scale_textsize="80"
+            app:scale_top="940"
+            app:scale_width="400" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/color_222222"
+            app:scale_height="200"
+            app:scale_left="647"
+            app:scale_top="940"
+            app:scale_width="4" />
+
+        <ImageView
+            android:id="@+id/_ModifiedDateIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scaleType="fitXY"
+            android:src="@drawable/ic_today_white_24dp"
+            app:scale_height="120"
+            app:scale_left="731"
+            app:scale_top="980"
+            app:scale_width="120" />
+
+        <TextView
+            android:id="@+id/_ModifiedDateText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/text_date"
+            android:textColor="@color/color_white"
+            app:scale_height="200"
+            app:scale_left="851"
+            app:scale_textsize="80"
+            app:scale_top="940"
+            app:scale_width="400" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/color_222222"
+            app:scale_height="200"
+            app:scale_left="1251"
+            app:scale_top="940"
+            app:scale_width="4" />
+
+        <ImageView
+            android:id="@+id/_ModifiedCommentIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scaleType="fitXY"
+            android:src="@drawable/ic_chat_white_24dp"
+            app:scale_height="120"
+            app:scale_left="1331"
+            app:scale_top="980"
+            app:scale_width="120" />
+
+        <TextView
+            android:id="@+id/_ModifiedCommentText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/text_comment"
+            android:textColor="@color/color_white"
+            app:scale_height="200"
+            app:scale_left="1451"
+            app:scale_textsize="80"
+            app:scale_top="940"
+            app:scale_width="400" />
+
+    </com.ssomai.android.scalablelayout.ScalableLayout>
+
+
+</RelativeLayout>

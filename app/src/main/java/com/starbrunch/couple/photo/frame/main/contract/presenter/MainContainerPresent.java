@@ -10,12 +10,17 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Message;
 import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 
 import com.littlefox.library.system.common.FileUtils;
 import com.littlefox.logmonitor.Log;
 import com.starbrunch.couple.photo.frame.main.MainContainerActivity;
+import com.starbrunch.couple.photo.frame.main.ModifiedInformationActivity;
 import com.starbrunch.couple.photo.frame.main.R;
 import com.starbrunch.couple.photo.frame.main.callback.MainContainerCallback;
 import com.starbrunch.couple.photo.frame.main.common.Common;
@@ -40,8 +45,9 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
 
     private static final int PERMISSION_REQUEST = 100;
 
-    private static final int PICK_FROM_ALBUM    = 0;
-    private static final int CROP_FROM_ALBUM    = 1;
+    private static final int REQUEST_PICK_FROM_ALBUM    = 0;
+    private static final int REQUEST_CROP_FROM_ALBUM    = 1;
+    private static final int REQUEST_PHOTO_MODIFIED     = 2;
 
     private static final int MESSAGE_TITLE_INIT_COLOR = 0;
     private static final int MESSAGE_IMAGE_INFORMATION_SAVE = 1;
@@ -49,6 +55,7 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
     private Context mContext = null;
     private MainViewFragment mMainViewFragment = null;
     private MonthListViewFragment mMonthListViewFragment = null;
+
     private FragmentManager mFragmentManager = null;
     private MainContainerContract.View mMainContainerContractView = null;
     private int mMonthPosition = 0;
@@ -90,8 +97,6 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
     @Override
     public void onDestroy(){}
 
-    @Override
-    public void init(Object object){}
 
     private void settingInformation()
     {
@@ -120,8 +125,8 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
 
         mMainViewFragment.setExitTransition(CommonUtils.getInstance(mContext).getSlideTransition(Common.DURATION_DEFAULT));
         mMainViewFragment.setReenterTransition(CommonUtils.getInstance(mContext).getSlideTransition(Common.DURATION_DEFAULT));
-        bundle.putInt(Common.SHARED_ELEMENT_MONTH_POSITION, position);
-        bundle.putParcelableArrayList(Common.SHARED_ELEMENT_MONTH_PHOTO_LIST, list);
+        bundle.putInt(Common.INTENT_MONTH_POSITION, position);
+        bundle.putParcelableArrayList(Common.INTENT_MONTH_PHOTO_LIST, list);
 
         mMonthListViewFragment.setArguments(bundle);
 
@@ -170,10 +175,11 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
             );
 
         }
+        cursor.close();
         return result;
     }
 
-    private void copyChooseImageFile(Intent data)
+    private void  copyChooseImageFile(Intent data)
     {
         File originalImageFile = CommonUtils.getInstance(mContext).getImageFile(data.getData());
         mImageCaptureUri = CommonUtils.getInstance(mContext).createImageFileUri(mCurrentPhotoInformationObject.getKeyID());
@@ -189,6 +195,17 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
         mContext.sendBroadcast(intent);
     }
 
+    private void startModifiedInformationActivity(String keyID, Pair<View, String> item)
+    {
+        Intent intent = new Intent(mContext, ModifiedInformationActivity.class);
+        String transitionName = item.second;
+        intent.putExtra(Common.INTENT_PHOTO_KEY_ID, keyID);
+        intent.putExtra(Common.INTENT_PHOTO_TRANSITION_NAME, transitionName);
+
+        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation((MainContainerActivity)mContext, item);
+        ActivityCompat.startActivityForResult((MainContainerActivity)mContext, intent, REQUEST_PHOTO_MODIFIED, options.toBundle());
+    }
+
     @Override
     public void onAcvitityResult(int requestCode, int resultCode, Intent data)
     {
@@ -199,7 +216,7 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
 
         switch(requestCode)
         {
-            case PICK_FROM_ALBUM:
+            case REQUEST_PICK_FROM_ALBUM:
 
                 mCurrentPhotoInformationObject = getPhotoInformation(data.getData());
                 copyChooseImageFile(data);
@@ -213,11 +230,14 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
                 intent.putExtra("aspectY", 10);
                 intent.putExtra("scale", true);
                 intent.putExtra("output", mImageCaptureUri);
-                ((AppCompatActivity)mContext).startActivityForResult(intent, CROP_FROM_ALBUM);
+                ((AppCompatActivity)mContext).startActivityForResult(intent, REQUEST_CROP_FROM_ALBUM);
 
                 break;
-            case CROP_FROM_ALBUM:
+            case REQUEST_CROP_FROM_ALBUM:
                 mWeakReferenceHandler.sendEmptyMessage(MESSAGE_IMAGE_INFORMATION_SAVE);
+
+                break;
+            case REQUEST_PHOTO_MODIFIED:
 
                 break;
 
@@ -247,6 +267,7 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
         }
     }
 
+
     @Override
     public void onSelectMonth(int position)
     {
@@ -273,25 +294,37 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
 
 
     @Override
-    public void onAddPicture()
+    public void onAddPhoto()
     {
-        Log.i("");
+        Log.f("");
 
         Intent intent = new Intent(Intent.ACTION_PICK);
         intent.setType(android.provider.MediaStore.Images.Media.CONTENT_TYPE);
-        ((AppCompatActivity)mContext).startActivityForResult(intent, PICK_FROM_ALBUM);
+        ((AppCompatActivity)mContext).startActivityForResult(intent, REQUEST_PICK_FROM_ALBUM);
 
     }
 
 
     @Override
-    public void onDeletePicture(String keyID)
+    public void onDeletePhoto(String keyID)
     {
-        Log.i("Delete keyID : "+keyID);
+        Log.f("Delete keyID : "+keyID);
+        PhotoInformationObject object = mPhotoInformationDBHelper.getPhotoInformationObject(keyID);
+        Log.f("Delete FileName : "+Common.PATH_IMAGE_ROOT+object.getFileName());
+
+        FileUtils.deleteFile(Common.PATH_IMAGE_ROOT+object.getFileName());
+        Log.f("Delete CheckFile : "+FileUtils.checkFile(Common.PATH_IMAGE_ROOT+object.getFileName()));
         mPhotoInformationDBHelper.deletePhotoInformationObject(keyID);
         mMainContainerContractView.setMonthNumberText(mSelectMonthColor, mPhotoInformationDBHelper.getPhotoInformationListByMonth(Common.MONTH_TEXT_LIST[mMonthPosition]).size());
         mMonthListViewFragment.deleteItem();
         updateWidget();
+    }
+
+    @Override
+    public void onModifiedPhoto(String keyID, Pair<View, String> item)
+    {
+        Log.f("");
+        startModifiedInformationActivity(keyID, item);
     }
 
     @Override

@@ -10,11 +10,6 @@ import android.os.Message;
 
 public class BaseContract
 {
-    public interface View
-    {
-        void initView();
-    }
-
     public interface Presenter
     {
         void onResume();
@@ -22,7 +17,6 @@ public class BaseContract
         void onStop();
         void onDestroy();
 
-        void init(Object object);
         void onAcvitityResult(int requestCode, int resultCode, Intent data);
         void onRequestPermissionResult(int requestCode, String[] permissions, int[] grantResults);
         void sendMessageEvent(Message msg);

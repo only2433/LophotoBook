@@ -108,7 +108,7 @@ public class CommonUtils
 		return todayString;
 	}
 
-	public String getDateTime(long timeMs)
+	public String getDateClock(long timeMs)
 	{
 		Date date = new Date(timeMs);
 		String todayString  = new SimpleDateFormat("hh:mm a", Locale.ENGLISH).format(date);
@@ -904,8 +904,8 @@ public class CommonUtils
 	 */
 	public boolean isOverPayDay(long payEndMiliseconds)
 	{
-		Log.f("Today : " + getDateTime(System.currentTimeMillis()));
-		Log.f("Pay End Day : " + getDateTime(payEndMiliseconds));
+		Log.f("Today : " + getDateClock(System.currentTimeMillis()));
+		Log.f("Pay End Day : " + getDateClock(payEndMiliseconds));
 		
 		if(System.currentTimeMillis() >=  payEndMiliseconds)
 		{

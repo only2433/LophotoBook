@@ -83,7 +83,7 @@
                 app:scale_textsize="40"/>
 
             <ImageView
-                android:id="@+id/_photoDeleteButton"
+
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/btn_close"
@@ -92,6 +92,15 @@
                 app:scale_left="1193"
                 app:scale_width="57"
                 app:scale_height="57"/>
+
+            <ImageView
+                android:id="@+id/_photoDeleteButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:scale_top="9"
+                app:scale_left="1170"
+                app:scale_width="100"
+                app:scale_height="100"/>
 
         </com.ssomai.android.scalablelayout.ScalableLayout>
     </android.support.v7.widget.CardView>

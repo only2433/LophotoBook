@@ -11,6 +11,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.util.Pair;
 import android.support.v4.view.ViewPropertyAnimatorListener;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
@@ -145,8 +146,8 @@ public class MonthListViewFragment extends Fragment
 
         if (mBundle != null)
         {
-            mCurrentMonthPosition = mBundle.getInt(Common.SHARED_ELEMENT_MONTH_POSITION);
-            mPhotoInformationList = mBundle.getParcelableArrayList(Common.SHARED_ELEMENT_MONTH_PHOTO_LIST);
+            mCurrentMonthPosition = mBundle.getInt(Common.INTENT_MONTH_POSITION);
+            mPhotoInformationList = mBundle.getParcelableArrayList(Common.INTENT_MONTH_PHOTO_LIST);
             mMonthBackgroundColor = mContext.getResources().getIdentifier("color_month_" + (mCurrentMonthPosition + 1), "color", Common.PACKAGE_NAME);
         }
         mCoordinatorLayoutParams = (CoordinatorLayout.LayoutParams) _PhotoFloatingButton.getLayoutParams();
@@ -227,7 +228,7 @@ public class MonthListViewFragment extends Fragment
             @Override
             public void onClick(View view)
             {
-                mMainContainerCallback.onAddPicture();
+                mMainContainerCallback.onAddPhoto();
             }
         });
     }
@@ -251,7 +252,7 @@ public class MonthListViewFragment extends Fragment
             public void onClick(DialogInterface dialogInterface, int i)
             {
                 mDeleteIndex = position;
-                mMainContainerCallback.onDeletePicture(mPhotoInformationList.get(position).getKeyID());
+                mMainContainerCallback.onDeletePhoto(mPhotoInformationList.get(position).getKeyID());
             }
         });
 
@@ -313,7 +314,7 @@ public class MonthListViewFragment extends Fragment
         }
 
         @Override
-        public void onBindViewHolder(ViewHolder holder, final int position)
+        public void onBindViewHolder(final ViewHolder holder, final int position)
         {
             if(position == 0)
             {
@@ -325,10 +326,11 @@ public class MonthListViewFragment extends Fragment
             //int imageResource = mContext.getResources().getIdentifier("test_image_"+(position+1),"drawable", Common.PACKAGE_NAME);
             Glide.with(mContext).load(Common.PATH_IMAGE_ROOT+mPhotoInformationList.get(position).getFileName()).into(holder._PhotoImage);
 
-            holder._PhotoDayTimeText.setText(CommonUtils.getInstance(mContext).getDateTime(mPhotoInformationList.get(position).getDateTime()));
+            holder._PhotoDayTimeText.setText(CommonUtils.getInstance(mContext).getDateClock(mPhotoInformationList.get(position).getDateTime()));
             holder._photoDayNumberText.setText(CommonUtils.getInstance(mContext).getDateDay(mPhotoInformationList.get(position).getDateTime()));
             holder._PhotoFullDateText.setText(CommonUtils.getInstance(mContext).getDateFullText(mPhotoInformationList.get(position).getDateTime()));
 
+            holder._PhotoImage.setTransitionName(Common.SHARED_PHOTO_IMAGE +"_"+ mPhotoInformationList.get(position).getKeyID());
 
             holder._PhotoDeleteButton.setOnClickListener(new View.OnClickListener()
             {
@@ -336,6 +338,17 @@ public class MonthListViewFragment extends Fragment
                 public void onClick(View view)
                 {
                     showDeletePhotoConfirmDialog(position);
+                }
+            });
+
+            holder._PhotoImage.setOnClickListener(new View.OnClickListener()
+            {
+
+                @Override
+                public void onClick(View view)
+                {
+                    Pair requestPair = new Pair(holder._PhotoImage, holder._PhotoImage.getTransitionName());
+                    mMainContainerCallback.onModifiedPhoto(mPhotoInformationList.get(position).getKeyID(), requestPair);
                 }
             });
 

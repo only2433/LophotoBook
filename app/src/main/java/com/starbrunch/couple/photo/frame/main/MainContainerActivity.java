@@ -84,6 +84,8 @@ public class MainContainerActivity extends BaseActivity implements MainContainer
         mMainContainerPresent = new MainContainerPresent(this);
     }
 
+
+
     @Override
     public void initView()
     {
@@ -101,9 +103,10 @@ public class MainContainerActivity extends BaseActivity implements MainContainer
 
     private void showMonthNumberText()
     {
-        AnimatorSet animatorSet = new AnimatorSet();
+        final AnimatorSet animatorSet = new AnimatorSet();
 
-        ObjectAnimator transTextAnimator = ObjectAnimator.ofFloat(_TitleMonthSubTitle, "translationY", -300,0);
+
+        ObjectAnimator transTextAnimator = ObjectAnimator.ofFloat(_TitleMonthSubTitle, "translationY", -100,0);
         ObjectAnimator alphaTextAnimator = ObjectAnimator.ofFloat(_TitleMonthSubTitle, "alpha", 0 , 1);
         ObjectAnimator transBackgroundAnimator = ObjectAnimator.ofFloat(_TitleMonthSubTitleBackground, "translationY", 100,0);
         ObjectAnimator alphaBackgroundAnimator = ObjectAnimator.ofFloat(_TitleMonthSubTitleBackground, "alpha", 0 , 1);
@@ -111,7 +114,8 @@ public class MainContainerActivity extends BaseActivity implements MainContainer
         animatorSet.setInterpolator(new AccelerateDecelerateInterpolator());
         animatorSet.playTogether(transTextAnimator,alphaTextAnimator, transBackgroundAnimator, alphaBackgroundAnimator);
         animatorSet.setStartDelay(Common.DURATION_SHORT);
-        animatorSet.setDuration(Common.DURATION_DEFAULT);
+        animatorSet.setDuration(Common.DURATION_SHORT);
+
         animatorSet.start();
         transTextAnimator.addListener(new Animator.AnimatorListener()
         {
@@ -121,9 +125,16 @@ public class MainContainerActivity extends BaseActivity implements MainContainer
                 _TitleMonthSubTitleBackground.setVisibility(View.VISIBLE);
             }
             @Override
-            public void onAnimationEnd(Animator animator) {}
+            public void onAnimationEnd(Animator animator)
+            {
+                Log.i("");
+
+            }
             @Override
-            public void onAnimationCancel(Animator animator) {}
+            public void onAnimationCancel(Animator animator)
+            {
+                Log.i("");
+            }
             @Override
             public void onAnimationRepeat(Animator animator) {}
         });
@@ -134,7 +145,7 @@ public class MainContainerActivity extends BaseActivity implements MainContainer
     {
         AnimatorSet animatorSet = new AnimatorSet();
 
-        ObjectAnimator transTextAnimator = ObjectAnimator.ofFloat(_TitleMonthSubTitle, "translationY", 0,-300);
+        ObjectAnimator transTextAnimator = ObjectAnimator.ofFloat(_TitleMonthSubTitle, "translationY", 0,-100);
         ObjectAnimator alphaTextAnimator = ObjectAnimator.ofFloat(_TitleMonthSubTitle, "alpha", 1 , 0);
         ObjectAnimator transBackgroundAnimator = ObjectAnimator.ofFloat(_TitleMonthSubTitleBackground, "translationY", 0,100);
         ObjectAnimator alphaBackgroundAnimator = ObjectAnimator.ofFloat(_TitleMonthSubTitleBackground, "alpha", 1 , 0);
@@ -176,6 +187,7 @@ public class MainContainerActivity extends BaseActivity implements MainContainer
     @Override
     public void hideTitleViewBackgroundAnimation(int color)
     {
+
         Rect rect = CommonUtils.getInstance(this).getGlobalVisibleRect(_MainBaseTitleText);
 
         CommonUtils.getInstance(MainContainerActivity.this).hideAnimateReveal(
@@ -236,4 +248,6 @@ public class MainContainerActivity extends BaseActivity implements MainContainer
     {
         mMainContainerPresent.sendMessageEvent(message);
     }
+
+
 }

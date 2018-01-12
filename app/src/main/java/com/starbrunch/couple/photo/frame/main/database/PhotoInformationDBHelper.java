@@ -119,15 +119,20 @@ public class PhotoInformationDBHelper extends SQLiteOpenHelper
         if(cursor == null || cursor.getCount() == 0)
         {
             Log.i("Value Not Have");
+            return object;
         }
 
-        object = new PhotoInformationObject(
-                cursor.getString(INDEX_KEY_ID),
-                cursor.getString(INDEX_MONTH),
-                Long.valueOf(cursor.getString(INDEX_DATE_MILLISECOND)),
-                Float.valueOf(cursor.getString(INDEX_LATITUDE)),
-                Float.valueOf(cursor.getString(INDEX_LONGITUDE)),
-                cursor.getString(INDEX_COMMENTS));
+        if(cursor.moveToFirst())
+        {
+            object = new PhotoInformationObject(
+                    cursor.getString(INDEX_KEY_ID),
+                    cursor.getString(INDEX_MONTH),
+                    Long.valueOf(cursor.getString(INDEX_DATE_MILLISECOND)),
+                    Float.valueOf(cursor.getString(INDEX_LATITUDE)),
+                    Float.valueOf(cursor.getString(INDEX_LONGITUDE)),
+                    cursor.getString(INDEX_COMMENTS));
+        }
+
 
         cursor.close();
 
@@ -192,7 +197,7 @@ public class PhotoInformationDBHelper extends SQLiteOpenHelper
 
             }while (cursor.moveToNext());
         }
-
+        cursor.close();
         return result;
     }
 }

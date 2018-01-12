@@ -1,5 +1,6 @@
 package com.starbrunch.couple.photo.frame.main.widget;
 
+import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
@@ -24,6 +25,11 @@ import java.util.ArrayList;
 
 public class PhotoFrameWidgetProvider extends AppWidgetProvider
 {
+
+    private static final int VIEW_EMPTY_DATA = 0;
+    private static final int VIEW_PHOTO_DATA = 1;
+
+    private RemoteViews updateViews = null;
     /**
      * 브로드캐스트를 수신할때, Override된 콜백 메소드가 호출되기 직전에 호출됨
      */
@@ -42,25 +48,21 @@ public class PhotoFrameWidgetProvider extends AppWidgetProvider
         }
     }
 
-    public static void updateAppWidget(Context context, AppWidgetManager appWidgetManager, int appWidgetId)
+    public  void updateAppWidget(Context context, AppWidgetManager appWidgetManager, int appWidgetId)
     {
 
-        RemoteViews updateViews = new RemoteViews(context.getPackageName(), R.layout.widget_4x4_photo_framelayout);
-
-
+        updateViews = new RemoteViews(context.getPackageName(), R.layout.widget_4x4_photo_framelayout);
         int currentMonth = CommonUtils.getInstance(context).getCurrentMonth(System.currentTimeMillis());
-
-        Log.i("currentMonth : "+ currentMonth);
+        Log.f("currentMonth : "+ currentMonth);
 
         ArrayList<PhotoInformationObject> resultList = PhotoInformationDBHelper.getInstance(context).getPhotoInformationListByMonth(Common.MONTH_TEXT_LIST[currentMonth]);
-        Log.i("resultList size : "+ resultList.size());
+        Log.f("resultList size : "+ resultList.size());
 
         int roundPixel = CommonUtils.getInstance(context).convertDiptoPix(5);
 
-
         if(resultList.size() > 0)
         {
-            updateViews.setViewVisibility(R.id._emptyLayout, View.GONE);
+            settingWidgetView(VIEW_PHOTO_DATA);
             int randomIndex = (int)(Math.random() * resultList.size());
             Log.i("randomIndex : "+ randomIndex);
             Log.i("fileName : "+ resultList.get(randomIndex).getFileName());
@@ -69,7 +71,7 @@ public class PhotoFrameWidgetProvider extends AppWidgetProvider
 
 
             Bitmap dayTimeBitmap = CommonUtils.getInstance(context).getFontBitmap(
-                    CommonUtils.getInstance(context).getDateTime(resultList.get(randomIndex).getDateTime()),
+                    CommonUtils.getInstance(context).getDateClock(resultList.get(randomIndex).getDateTime()),
                     context.getResources().getColor(R.color.color_white),
                     10,
                     360,
@@ -96,12 +98,16 @@ public class PhotoFrameWidgetProvider extends AppWidgetProvider
                     false
                     );
 
+
+
             updateViews.setImageViewBitmap(R.id._widgetImage, CommonUtils.getInstance(context).getRoundedCornerBitmap(imageBitmap,roundPixel));
             updateViews.setImageViewBitmap(R.id._widgetAlphaImage, CommonUtils.getInstance(context).getRoundedCornerBitmap(alphaBitmap,roundPixel));
 
             updateViews.setImageViewBitmap(R.id._widgetDayTimeText, dayTimeBitmap);
             updateViews.setImageViewBitmap(R.id._widgetDayNumberText, dayNumberBitmap);
             updateViews.setImageViewBitmap(R.id._widgetFullDateText, dayFullTextBitmap);
+
+            updateViews.setOnClickPendingIntent(R.id._widgetImage, updateSelfData(context));
 
             imageBitmap = null;
             dayTimeBitmap = null;
@@ -112,10 +118,7 @@ public class PhotoFrameWidgetProvider extends AppWidgetProvider
         }
         else
         {
-            updateViews.setViewVisibility(R.id._widgetDayTimeText, View.GONE);
-            updateViews.setViewVisibility(R.id._widgetDayNumberText, View.GONE);
-            updateViews.setViewVisibility(R.id._widgetFullDateText, View.GONE);
-
+            settingWidgetView(VIEW_EMPTY_DATA);
 
             Bitmap emptyIconBitmap = CommonUtils.getInstance(context).getBitmapFromDrawable(context.getResources().getDrawable(R.drawable.empty_image),
                     480, 367);
@@ -138,6 +141,39 @@ public class PhotoFrameWidgetProvider extends AppWidgetProvider
         appWidgetManager.updateAppWidget(appWidgetId, updateViews);
     }
 
+    private PendingIntent updateSelfData(Context context)
+    {
+        Log.i("");
+        Intent intent = new Intent(context, getClass());
+        intent.setAction(Common.INTENT_WIDGET_UPDATE);
+        return PendingIntent.getBroadcast(context, 0, intent, 0);
+    }
+
+    private void settingWidgetView(int type)
+    {
+        if(updateViews == null)
+        {
+            return;
+        }
+
+        if(type == VIEW_EMPTY_DATA)
+        {
+            updateViews.setViewVisibility(R.id._emptyLayout, View.VISIBLE);
+            updateViews.setViewVisibility(R.id._widgetAlphaImage, View.GONE);
+            updateViews.setViewVisibility(R.id._widgetDayTimeText, View.GONE);
+            updateViews.setViewVisibility(R.id._widgetDayNumberText, View.GONE);
+            updateViews.setViewVisibility(R.id._widgetFullDateText, View.GONE);
+        }
+        else if(type == VIEW_PHOTO_DATA)
+        {
+            updateViews.setViewVisibility(R.id._widgetAlphaImage, View.VISIBLE);
+            updateViews.setViewVisibility(R.id._widgetDayTimeText, View.VISIBLE);
+            updateViews.setViewVisibility(R.id._widgetDayNumberText, View.VISIBLE);
+            updateViews.setViewVisibility(R.id._widgetFullDateText, View.VISIBLE);
+            updateViews.setViewVisibility(R.id._emptyLayout, View.GONE);
+        }
+    }
+
     /**
      * 위젯을 갱신할때 호출됨
      *
@@ -147,7 +183,8 @@ public class PhotoFrameWidgetProvider extends AppWidgetProvider
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds)
     {
         // There may be multiple widgets active, so update all of them
-        for (int appWidgetId : appWidgetIds) {
+        for (int appWidgetId : appWidgetIds)
+        {
             updateAppWidget(context, appWidgetManager, appWidgetId);
         }
         super.onUpdate(context, appWidgetManager, appWidgetIds);
