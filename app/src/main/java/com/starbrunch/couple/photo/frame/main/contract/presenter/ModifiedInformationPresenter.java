@@ -39,6 +39,8 @@ public class ModifiedInformationPresenter implements ModifiedInformationContract
     private ModifiedInformationContract.View mModifiedInformationContractView = null;
     private PhotoInformationDBHelper mPhotoInformationDBHelper = null;
     private WeakReferenceHandler mWeakReferenceHandler = null;
+
+    private PhotoInformationObject mCurrentModifiedObject = null;
     private String mConvertItemKeyID = "";
     private long mModifiedDateTime = 0L;
     private Uri mImageCaptureUri = null;
@@ -61,8 +63,8 @@ public class ModifiedInformationPresenter implements ModifiedInformationContract
     {
         Intent intent = ((AppCompatActivity)mContext).getIntent();
         mConvertItemKeyID = intent.getStringExtra(Common.INTENT_PHOTO_KEY_ID);
-        PhotoInformationObject object = mPhotoInformationDBHelper.getPhotoInformationObject(mConvertItemKeyID);
-        mModifiedInformationContractView.initView(object);
+        mCurrentModifiedObject = mPhotoInformationDBHelper.getPhotoInformationObject(mConvertItemKeyID);
+        mModifiedInformationContractView.initView(mCurrentModifiedObject);
     }
 
     private void  copyChooseImageFile(Intent data)
@@ -84,6 +86,32 @@ public class ModifiedInformationPresenter implements ModifiedInformationContract
             return Long.valueOf(cursor.getString(INDEX_DATE_TIME));
         }
         return System.currentTimeMillis();
+    }
+
+    private void saveModifiedInformation()
+    {
+        if(mModifiedCheckList.get(Check.PHOTO) == true)
+        {
+            Log.f("PHOTO CHANGE");
+            boolean isSuccess = CommonUtils.getInstance(mContext).saveJpegFile(mImageCaptureUri, mCurrentModifiedObject.getFileName());
+
+            if(isSuccess)
+            {
+                mModifiedInformationContractView.changePhoto(Common.PATH_IMAGE_ROOT + mCurrentModifiedObject.getFileName());
+                FileUtils.deleteFile(mCropImageFile.getPath());
+            }
+        }
+
+        if(mModifiedCheckList.get(Check.DATE) == true)
+        {
+            Log.f("DATE CHANGE");
+            mPhotoInformationDBHelper.updatePhotoInformationObject(mConvertItemKeyID, PhotoInformationDBHelper.KEY_DATE_MILLISECOND, String.valueOf(mModifiedDateTime));
+        }
+
+        CommonUtils.getInstance(mContext).updateWidget();
+        mModifiedInformationContractView.hideLoading();
+        ((AppCompatActivity)mContext).setResult(((AppCompatActivity) mContext).RESULT_OK);
+        ((AppCompatActivity)mContext).onBackPressed();
     }
 
 
@@ -162,6 +190,8 @@ public class ModifiedInformationPresenter implements ModifiedInformationContract
     public void onClickSaveButton()
     {
         Log.f("");
+        mModifiedInformationContractView.showLoading();
+        saveModifiedInformation();
     }
 
     @Override
@@ -196,7 +226,7 @@ public class ModifiedInformationPresenter implements ModifiedInformationContract
     @Override
     public void onDateSetChanged(long dateTime)
     {
-        Log.i("Full Time : "+ CommonUtils.getInstance(mContext).getDateFullText(dateTime));
+        Log.f("Full Time : "+ CommonUtils.getInstance(mContext).getDateFullText(dateTime));
         mModifiedCheckList.put(Check.DATE, true);
         mModifiedDateTime = dateTime;
         mModifiedInformationContractView.changeDateInformation(CommonUtils.getInstance(mContext).getDateFullText(mModifiedDateTime)+" "+ CommonUtils.getInstance(mContext).getDateClock(mModifiedDateTime));

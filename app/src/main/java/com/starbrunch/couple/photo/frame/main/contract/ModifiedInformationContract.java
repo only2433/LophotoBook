@@ -15,6 +15,9 @@ public class ModifiedInformationContract
         void changeDateInformation(String date);
         void changeComment(String comment);
         void showDatePickerDialog();
+
+        void showLoading();
+        void hideLoading();
     }
 
     public interface Presenter extends BaseContract.Presenter

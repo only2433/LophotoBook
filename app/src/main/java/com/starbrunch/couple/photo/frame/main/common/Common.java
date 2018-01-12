@@ -31,6 +31,7 @@ public class Common
     public static final int TYPE_PARAMS_STRING		= 2;
 
 
+    public static final int LOADING_DIALOG_SIZE = 100;
 
     public static final int DURATION_SHORT = 300;
     public static final int DURATION_DEFAULT = 500;

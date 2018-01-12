@@ -60,10 +60,12 @@ import android.widget.TextView;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.gson.Gson;
+import com.littlefox.library.system.common.FileUtils;
 import com.littlefox.library.view.object.DisPlayMetricsObject;
 import com.littlefox.logmonitor.Log;
 import com.starbrunch.couple.photo.frame.main.R;
 import com.starbrunch.couple.photo.frame.main.base.MainApplication;
+import com.starbrunch.couple.photo.frame.main.widget.PhotoFrameWidgetProvider;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -1331,6 +1333,7 @@ public class CommonUtils
 	{
         Log.f("fileName : "+fileName);
 		File folderPath = null;
+		File filePath = null;
 
 		boolean isSuccess = true;
 
@@ -1341,6 +1344,12 @@ public class CommonUtils
 			if(folderPath.isDirectory() == false)
 			{
 				folderPath.mkdirs();
+			}
+			filePath = new File(Common.PATH_IMAGE_ROOT+fileName);
+			if(filePath.exists())
+			{
+				Log.f("exist file");
+				FileUtils.deleteFile(filePath.getPath());
 			}
 
 			FileOutputStream out = new FileOutputStream(Common.PATH_IMAGE_ROOT+fileName);
@@ -1389,6 +1398,14 @@ public class CommonUtils
 	public int convertDiptoPix(float dip) {
 		int value = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dip, sContext.getResources().getDisplayMetrics());
 		return value;
+	}
+
+	public void updateWidget()
+	{
+		Log.i("");
+		Intent intent = new Intent(sContext, PhotoFrameWidgetProvider.class);
+		intent.setAction(Common.INTENT_WIDGET_UPDATE);
+		sContext.sendBroadcast(intent);
 	}
 
 }

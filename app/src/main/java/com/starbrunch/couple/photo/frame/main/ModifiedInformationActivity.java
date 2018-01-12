@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 
 import com.bumptech.glide.Glide;
+import com.littlefox.library.view.dialog.MaterialLoadingDialog;
 import com.littlefox.logmonitor.Log;
 import com.starbrunch.couple.photo.frame.main.base.BaseActivity;
 import com.starbrunch.couple.photo.frame.main.common.Common;
@@ -62,6 +63,7 @@ public class ModifiedInformationActivity extends BaseActivity implements Modifie
     private ModifiedInformationPresenter mModifiedInformationPresenter = null;
 
     private Calendar mRequestCalendar = null;
+    private MaterialLoadingDialog mMaterialLoadingDialog = null;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState)
     {
@@ -133,6 +135,26 @@ public class ModifiedInformationActivity extends BaseActivity implements Modifie
                 calendar.get(Calendar.MONTH),
                 calendar.get(Calendar.DAY_OF_MONTH));
         datePickerDialog.show();
+    }
+
+    @Override
+    public void showLoading()
+    {
+        if(mMaterialLoadingDialog == null)
+        {
+            mMaterialLoadingDialog = new MaterialLoadingDialog(this, CommonUtils.getInstance(this).getPixel(Common.LOADING_DIALOG_SIZE),
+                    getResources().getColor(R.color.colorAccent));
+        }
+        mMaterialLoadingDialog.show();
+    }
+
+    @Override
+    public void hideLoading()
+    {
+        if(mMaterialLoadingDialog != null)
+        {
+            mMaterialLoadingDialog.hide();
+        }
     }
 
     private void showTimePickerDialog()
