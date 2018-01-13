@@ -4,6 +4,8 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Message;
 import android.support.annotation.Nullable;
@@ -98,17 +100,42 @@ public class ModifiedInformationActivity extends BaseActivity implements Modifie
         initFont();
         String transitionName = getIntent().getStringExtra(Common.INTENT_PHOTO_TRANSITION_NAME);
         _ModifiedImage.setTransitionName(transitionName);
-        Glide.with(this).load(Common.PATH_IMAGE_ROOT+object.getFileName()).into(_ModifiedImage);
+
+        _ModifiedImage.setImageBitmap(BitmapFactory.decodeFile(Common.PATH_IMAGE_ROOT+object.getFileName()));
         _ModifiedDateInformationText.setAnimateType(HTextViewType.TYPER);
         _ModifiedDateInformationText.animateText(CommonUtils.getInstance(this).getDateFullText(object.getDateTime())+" "+CommonUtils.getInstance(this).getDateClock(object.getDateTime()));
     }
 
     @Override
-    public void changePhoto(String filePath)
-    {
-        Log.f("filePath : "+ filePath);
-        Glide.with(this).load(filePath).into(_ModifiedImage);
+    protected void onResume() {
+        super.onResume();
+        mModifiedInformationPresenter.onResume();
     }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mModifiedInformationPresenter.onPause();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mModifiedInformationPresenter.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mModifiedInformationPresenter.onDestroy();
+    }
+
+    @Override
+    public void changePhoto(Bitmap bitmap)
+    {
+        _ModifiedImage.setImageBitmap(bitmap);
+    }
+
 
     @Override
     public void changeDateInformation(String date)

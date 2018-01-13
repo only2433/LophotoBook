@@ -3,6 +3,8 @@ package com.starbrunch.couple.photo.frame.main.contract.presenter;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Message;
 import android.provider.MediaStore;
@@ -31,6 +33,8 @@ public class ModifiedInformationPresenter implements ModifiedInformationContract
     {
         PHOTO, DATE, COMMENT
     }
+
+    private static final int MESSAGE_SAVE_COMPLETE = 100;
 
     private static final int REQUEST_PICK_FROM_ALBUM    = 0;
     private static final int REQUEST_CROP_FROM_ALBUM    = 1;
@@ -90,28 +94,28 @@ public class ModifiedInformationPresenter implements ModifiedInformationContract
 
     private void saveModifiedInformation()
     {
-        if(mModifiedCheckList.get(Check.PHOTO) == true)
+        if(mModifiedCheckList.containsKey(Check.PHOTO) && mModifiedCheckList.get(Check.PHOTO) == true)
         {
             Log.f("PHOTO CHANGE");
             boolean isSuccess = CommonUtils.getInstance(mContext).saveJpegFile(mImageCaptureUri, mCurrentModifiedObject.getFileName());
 
             if(isSuccess)
             {
-                mModifiedInformationContractView.changePhoto(Common.PATH_IMAGE_ROOT + mCurrentModifiedObject.getFileName());
+                Log.f("DB 갱신 성공");
                 FileUtils.deleteFile(mCropImageFile.getPath());
+                //DB에 옮긴다.
             }
         }
 
-        if(mModifiedCheckList.get(Check.DATE) == true)
+        if(mModifiedCheckList.containsKey(Check.DATE) && mModifiedCheckList.get(Check.DATE) == true)
         {
             Log.f("DATE CHANGE");
             mPhotoInformationDBHelper.updatePhotoInformationObject(mConvertItemKeyID, PhotoInformationDBHelper.KEY_DATE_MILLISECOND, String.valueOf(mModifiedDateTime));
         }
 
-        CommonUtils.getInstance(mContext).updateWidget();
-        mModifiedInformationContractView.hideLoading();
         ((AppCompatActivity)mContext).setResult(((AppCompatActivity) mContext).RESULT_OK);
-        ((AppCompatActivity)mContext).onBackPressed();
+        mWeakReferenceHandler.sendEmptyMessageDelayed(MESSAGE_SAVE_COMPLETE, 2000);
+
     }
 
 
@@ -136,6 +140,14 @@ public class ModifiedInformationPresenter implements ModifiedInformationContract
     @Override
     public void onDestroy()
     {
+        Log.i("");
+        try
+        {
+            FileUtils.deleteFile(mCropImageFile.getPath());
+        }catch(Exception e)
+        {
+            Log.f("message : "+ e.getMessage());
+        }
 
     }
 
@@ -167,8 +179,9 @@ public class ModifiedInformationPresenter implements ModifiedInformationContract
                 mModifiedCheckList.put(Check.PHOTO, true);
                 mModifiedCheckList.put(Check.DATE, true);
 
-                mModifiedInformationContractView.changePhoto(mCropImageFile.getPath());
+                mModifiedInformationContractView.changePhoto(BitmapFactory.decodeFile(mCropImageFile.getPath()));
                 mModifiedInformationContractView.changeDateInformation(CommonUtils.getInstance(mContext).getDateFullText(mModifiedDateTime)+" "+ CommonUtils.getInstance(mContext).getDateClock(mModifiedDateTime));
+
                 break;
         }
 
@@ -183,7 +196,14 @@ public class ModifiedInformationPresenter implements ModifiedInformationContract
     @Override
     public void sendMessageEvent(Message msg)
     {
+        if(msg.what == MESSAGE_SAVE_COMPLETE)
+        {
+            Log.i("");
 
+            CommonUtils.getInstance(mContext).updateWidget();
+            mModifiedInformationContractView.hideLoading();
+            ((AppCompatActivity)mContext).onBackPressed();
+        }
     }
 
     @Override

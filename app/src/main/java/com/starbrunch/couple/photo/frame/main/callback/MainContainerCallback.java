@@ -16,6 +16,6 @@ public interface MainContainerCallback
 
     public void onAddPhoto();
     public void onDeletePhoto(String keyID);
-    public void onModifiedPhoto(String keyID, Pair<View, String> item);
+    public void onModifiedPhoto(int position, Pair<View, String> item);
 
 }

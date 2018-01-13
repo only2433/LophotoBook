@@ -1347,10 +1347,16 @@ public class CommonUtils
 			}
 			filePath = new File(Common.PATH_IMAGE_ROOT+fileName);
 			if(filePath.exists())
-			{
-				Log.f("exist file");
-				FileUtils.deleteFile(filePath.getPath());
-			}
+            {
+                Log.f("exist file");
+                FileUtils.deleteFile(filePath.getPath());
+            }
+
+            if(filePath.exists() == false)
+            {
+                Log.f("not exist file");
+
+            }
 
 			FileOutputStream out = new FileOutputStream(Common.PATH_IMAGE_ROOT+fileName);
 			bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);

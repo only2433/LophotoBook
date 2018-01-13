@@ -1,5 +1,7 @@
 package com.starbrunch.couple.photo.frame.main.contract;
 
+import android.graphics.Bitmap;
+
 import com.starbrunch.couple.photo.frame.main.object.PhotoInformationObject;
 
 /**
@@ -11,7 +13,7 @@ public class ModifiedInformationContract
     public interface View
     {
         void initView(PhotoInformationObject object);
-        void changePhoto(String filePath);
+        void changePhoto(Bitmap bitmap);
         void changeDateInformation(String date);
         void changeComment(String comment);
         void showDatePickerDialog();

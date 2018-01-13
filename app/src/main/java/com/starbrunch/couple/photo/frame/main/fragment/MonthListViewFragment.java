@@ -6,6 +6,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.ColorStateList;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
@@ -215,6 +216,13 @@ public class MonthListViewFragment extends Fragment
         mMonthPictureAdapter.notifyItemRemoved(mDeleteIndex);
     }
 
+    public void notifyChanged(int position, PhotoInformationObject object)
+    {
+        Log.i("position : "+position);
+        mPhotoInformationList.set(position, object);
+        mMonthPictureAdapter.notifyItemRangeChanged(0,1);
+    }
+
 
     private void showFloatingButton()
     {
@@ -324,7 +332,7 @@ public class MonthListViewFragment extends Fragment
             }
 
             //int imageResource = mContext.getResources().getIdentifier("test_image_"+(position+1),"drawable", Common.PACKAGE_NAME);
-            Glide.with(mContext).load(Common.PATH_IMAGE_ROOT+mPhotoInformationList.get(position).getFileName()).into(holder._PhotoImage);
+            holder._PhotoImage.setImageBitmap(BitmapFactory.decodeFile(Common.PATH_IMAGE_ROOT+mPhotoInformationList.get(position).getFileName()));
 
             holder._PhotoDayTimeText.setText(CommonUtils.getInstance(mContext).getDateClock(mPhotoInformationList.get(position).getDateTime()));
             holder._photoDayNumberText.setText(CommonUtils.getInstance(mContext).getDateDay(mPhotoInformationList.get(position).getDateTime()));
@@ -347,8 +355,9 @@ public class MonthListViewFragment extends Fragment
                 @Override
                 public void onClick(View view)
                 {
+                    view.setVisibility(View.INVISIBLE);
                     Pair requestPair = new Pair(holder._PhotoImage, holder._PhotoImage.getTransitionName());
-                    mMainContainerCallback.onModifiedPhoto(mPhotoInformationList.get(position).getKeyID(), requestPair);
+                    mMainContainerCallback.onModifiedPhoto(position, requestPair);
                 }
             });
 
