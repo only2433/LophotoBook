@@ -65,6 +65,7 @@ import com.littlefox.library.view.object.DisPlayMetricsObject;
 import com.littlefox.logmonitor.Log;
 import com.starbrunch.couple.photo.frame.main.R;
 import com.starbrunch.couple.photo.frame.main.base.MainApplication;
+import com.starbrunch.couple.photo.frame.main.object.PhotoInformationObject;
 import com.starbrunch.couple.photo.frame.main.widget.PhotoFrameWidgetProvider;
 
 import java.io.File;
@@ -831,6 +832,25 @@ public class CommonUtils
         }
         return anim;
     }
+
+	public Animation getTranslateXAnimation(float fromXValue, float toXValue, int duration, int delay, Interpolator interpolator)
+	{
+		Animation anim = null;
+		anim = new TranslateAnimation(Animation.ABSOLUTE, fromXValue, Animation.ABSOLUTE, toXValue, Animation.RELATIVE_TO_PARENT,0, Animation.RELATIVE_TO_PARENT, 0);
+		anim.setDuration(duration);
+		anim.setFillAfter(true);
+
+		if(delay != 0 )
+		{
+			anim.setStartOffset(delay);
+		}
+		if(interpolator != null)
+		{
+			anim.setInterpolator(interpolator);
+		}
+		return anim;
+	}
+
 	
 	public Animation getAlphaAnimation(int duration, float fromValue, float toValue)
 	{
@@ -1405,6 +1425,59 @@ public class CommonUtils
 		int value = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dip, sContext.getResources().getDisplayMetrics());
 		return value;
 	}
+
+    public long getPhotoDateTime(Uri uri)
+    {
+        final int INDEX_DATE_TIME   = 0;
+        String[] projection = {MediaStore.Images.Media.DATE_TAKEN};
+        Cursor cursor = ((AppCompatActivity)sContext).getContentResolver().query(uri, projection, null, null, null);
+        cursor.moveToFirst();
+        if(cursor != null && cursor.getCount() != 0)
+        {
+            return Long.valueOf(cursor.getString(INDEX_DATE_TIME));
+        }
+        return System.currentTimeMillis();
+    }
+
+    public PhotoInformationObject getPhotoInformation(Uri uri, String keyID, String month, String comment)
+    {
+        final int INDEX_DATE_TIME   = 0;
+        final int INDEX_LATITUDE    = 1;
+        final int INDEX_LONGITUDE   = 2;
+        PhotoInformationObject result = null;
+
+        String[] projection = {MediaStore.Images.Media.DATE_TAKEN, MediaStore.Images.Media.LATITUDE, MediaStore.Images.Media.LONGITUDE};
+        Cursor cursor = ((AppCompatActivity)sContext).getContentResolver().query(uri, projection, null, null, null);
+        cursor.moveToFirst();
+
+        if(cursor != null && cursor.getCount() != 0)
+        {
+            Log.f("cursor size : "+ cursor.getCount());
+
+            long millisecond = Long.valueOf(cursor.getString(INDEX_DATE_TIME));
+            Log.i("cursor DATE_TAKEN  : "+CommonUtils.getInstance(sContext).getPayInformationDate(false, millisecond));
+            try
+            {
+                Log.i("cursor LATITUDE : "+cursor.getString(INDEX_LATITUDE));
+                Log.i("cursor LONGITUDE : "+cursor.getString(INDEX_LONGITUDE));
+            }catch(Exception e)
+            {
+                Log.i("Error Message : "+ e.getMessage());
+            }
+
+            result = new PhotoInformationObject(
+                    keyID,
+                    month,
+                    Long.valueOf(cursor.getString(INDEX_DATE_TIME)),
+                    cursor.getString(INDEX_LATITUDE) == null ? 0.0f : Float.valueOf(cursor.getString(INDEX_LATITUDE)),
+                    cursor.getString(INDEX_LONGITUDE) == null ? 0.0f :Float.valueOf(cursor.getString(INDEX_LONGITUDE)),
+                    comment
+            );
+
+        }
+        cursor.close();
+        return result;
+    }
 
 	public void updateWidget()
 	{

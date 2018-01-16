@@ -12,13 +12,13 @@ public class BaseContract
 {
     public interface Presenter
     {
-        void onResume();
-        void onPause();
-        void onStop();
-        void onDestroy();
+        void resume();
+        void pause();
+        void stop();
+        void destroy();
 
-        void onAcvitityResult(int requestCode, int resultCode, Intent data);
-        void onRequestPermissionResult(int requestCode, String[] permissions, int[] grantResults);
+        void acvitityResult(int requestCode, int resultCode, Intent data);
+        void requestPermissionResult(int requestCode, String[] permissions, int[] grantResults);
         void sendMessageEvent(Message msg);
     }
 }

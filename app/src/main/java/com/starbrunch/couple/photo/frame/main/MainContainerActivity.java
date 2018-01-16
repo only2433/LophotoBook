@@ -3,6 +3,8 @@ package com.starbrunch.couple.photo.frame.main;
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Rect;
@@ -13,10 +15,13 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.widget.DatePicker;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.TimePicker;
 
+import com.littlefox.library.view.dialog.MaterialLoadingDialog;
 import com.littlefox.logmonitor.Log;
 import com.ssomai.android.scalablelayout.ScalableLayout;
 import com.starbrunch.couple.photo.frame.main.base.BaseActivity;
@@ -28,6 +33,8 @@ import com.starbrunch.couple.photo.frame.main.contract.presenter.MainContainerPr
 import com.starbrunch.couple.photo.frame.main.handler.callback.MessageHandlerCallback;
 import com.starbrunch.couple.photo.frame.main.hanks.htextview.HTextView;
 import com.starbrunch.couple.photo.frame.main.hanks.htextview.HTextViewType;
+
+import java.util.Calendar;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -61,6 +68,7 @@ public class MainContainerActivity extends BaseActivity implements MainContainer
     ImageView _DivideLineImage;
 
     private MainContainerPresent mMainContainerPresent = null;
+    private MaterialLoadingDialog mMaterialLoadingDialog = null;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState)
@@ -99,6 +107,35 @@ public class MainContainerActivity extends BaseActivity implements MainContainer
         _MainBaseTitleText.setTypeface(FontManager.getInstance(this).getMainTitleFont());
         _TitleMonthSubTitle.setTypeface(FontManager.getInstance(this).getDefaultLightTextFont());
     }
+
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+        Log.i("");
+    }
+
+    @Override
+    protected void onPause()
+    {
+        super.onPause();
+        Log.i("");
+    }
+
+    @Override
+    protected void onStop()
+    {
+        super.onStop();
+        Log.i("");
+    }
+
+    @Override
+    protected void onDestroy()
+    {
+        super.onDestroy();
+        Log.i("");
+    }
+
 
 
     private void showMonthNumberText()
@@ -232,15 +269,89 @@ public class MainContainerActivity extends BaseActivity implements MainContainer
     }
 
     @Override
+    public void showLoading()
+    {
+        if( mMaterialLoadingDialog == null)
+        {
+            mMaterialLoadingDialog = new MaterialLoadingDialog(this, CommonUtils.getInstance(this).getPixel(Common.LOADING_DIALOG_SIZE),
+                    getResources().getColor(R.color.colorAccent));
+        }
+        mMaterialLoadingDialog.show();
+    }
+
+    @Override
+    public void hideLoading()
+    {
+        if(mMaterialLoadingDialog != null)
+        {
+            mMaterialLoadingDialog.hide();
+            mMaterialLoadingDialog = null;
+        }
+    }
+
+    @Override
+    public void showDatePickerDialog()
+    {
+        Calendar calendar = Calendar.getInstance();
+        DatePickerDialog datePickerDialog = new DatePickerDialog(this, mDateSetListener,
+                calendar.get(Calendar.YEAR),
+                calendar.get(Calendar.MONTH),
+                calendar.get(Calendar.DAY_OF_MONTH));
+        datePickerDialog.show();
+    }
+
+    @Override
+    public void showTimePickerDialog()
+    {
+        Calendar calendar = Calendar.getInstance();
+        TimePickerDialog timePickerDialog = new TimePickerDialog(this, mTimeSetListener,
+                calendar.get(Calendar.HOUR_OF_DAY),
+                calendar.get(Calendar.MINUTE), false);
+        timePickerDialog.show();
+    }
+
+    @Override
+    public void showMainTitleLayout()
+    {
+        _MainBaseTitleLayout.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void hideMainTitleLayout()
+    {
+        _MainBaseTitleLayout.setVisibility(View.INVISIBLE);
+    }
+
+    private DatePickerDialog.OnDateSetListener mDateSetListener = new DatePickerDialog.OnDateSetListener()
+    {
+        @Override
+        public void onDateSet(DatePicker datePicker, int year, int monthOfYear, int dayOfMonth)
+        {
+            Log.f("year : "+year+", monthOfYear: "+monthOfYear+", dayOfMonth : "+dayOfMonth);
+            mMainContainerPresent.changeDateSetComplete(year, monthOfYear, dayOfMonth);
+        }
+    };
+
+    private TimePickerDialog.OnTimeSetListener mTimeSetListener = new TimePickerDialog.OnTimeSetListener()
+    {
+        @Override
+        public void onTimeSet(TimePicker timePicker, int hourOfDay, int minute)
+        {
+            Log.f("hourOfDay : "+hourOfDay+", minute: "+minute);
+            mMainContainerPresent.changeTimeSetComplete(hourOfDay, minute);
+        }
+    };
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data)
     {
-        mMainContainerPresent.onAcvitityResult(requestCode,resultCode,data);
+        mMainContainerPresent.acvitityResult(requestCode,resultCode,data);
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults)
     {
-        mMainContainerPresent.onRequestPermissionResult(requestCode, permissions, grantResults);
+        mMainContainerPresent.requestPermissionResult(requestCode, permissions, grantResults);
     }
 
     @Override

@@ -15,6 +15,8 @@ public class Common
     public static final String INTENT_PHOTO_KEY_ID = "intent_photo_key_id";
     public static final String INTENT_PHOTO_TRANSITION_NAME = "intent_photo_transition_name";
 
+    public static final String INTENT_MODIFIED_ITEM_OBJECT = "intent_modified_item_object";
+
     public static final String INTENT_MONTH_POSITION = "intent_month_position";
     public static final String INTENT_MONTH_PHOTO_LIST = "intent_month_photo_list";
 

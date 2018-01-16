@@ -20,10 +20,19 @@ public class MainContainerContract
         void changeTitleAnimationText(String string);
         void changeTitleViewColor(int color);
 
+        void showLoading();
+        void hideLoading();
+        void showDatePickerDialog();
+        void showTimePickerDialog();
+
+        void showMainTitleLayout();
+        void hideMainTitleLayout();
+
     }
 
     public interface Presenter extends BaseContract.Presenter
     {
-        //TODO : 추가 적으로 구현 해야할 것
+        void changeDateSetComplete(int year, int monthOfYear, int dayOfMonth);
+        void changeTimeSetComplete(int hourOfDay, int minute);
     }
 }

@@ -21,14 +21,18 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AccelerateInterpolator;
+import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
 import android.view.animation.AnticipateOvershootInterpolator;
+import android.view.animation.LayoutAnimationController;
+import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.littlefox.logmonitor.Log;
 import com.ssomai.android.scalablelayout.ScalableLayout;
 import com.starbrunch.couple.photo.frame.main.R;
@@ -36,7 +40,6 @@ import com.starbrunch.couple.photo.frame.main.callback.MainContainerCallback;
 import com.starbrunch.couple.photo.frame.main.common.Common;
 import com.starbrunch.couple.photo.frame.main.common.CommonUtils;
 import com.starbrunch.couple.photo.frame.main.common.FontManager;
-import com.starbrunch.couple.photo.frame.main.database.PhotoInformationDBHelper;
 import com.starbrunch.couple.photo.frame.main.hanks.htextview.HTextView;
 import com.starbrunch.couple.photo.frame.main.hanks.htextview.HTextViewType;
 import com.starbrunch.couple.photo.frame.main.object.PhotoInformationObject;
@@ -69,8 +72,9 @@ public class MonthListViewFragment extends Fragment
     @BindView(R.id._photoFloatingButton)
     FloatingActionButton _PhotoFloatingButton;
 
+    private static final int HEIGHT_FLOTING_BUTTON_DP = 56;
+
     private Context mContext = null;
-    private Bundle mBundle = null;
     private MainContainerCallback mMainContainerCallback = null;
     private MonthPictureAdapter mMonthPictureAdapter = null;
     private LinearLayoutManager mLinearLayoutManager = null;
@@ -79,11 +83,9 @@ public class MonthListViewFragment extends Fragment
     private int mFlotingButtonHeight = 0;
     private int mCurrentMonthPosition = 0;
     private int mDeleteIndex = 0;
+    private boolean isCreate = false;
 
     private CoordinatorLayout.LayoutParams mCoordinatorLayoutParams = null;
-    private PhotoInformationDBHelper photoInformationDBHelper = null;
-
-    private static final int HEIGHT_FLOTING_BUTTON_DP = 56;
     private ArrayList<PhotoInformationObject> mPhotoInformationList = null;
 
     @Override
@@ -92,15 +94,22 @@ public class MonthListViewFragment extends Fragment
         mContext = context;
     }
 
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState)
     {
         View view = inflater.inflate(R.layout.fragment_month, container, false);
         ButterKnife.bind(this,view);
+        isCreate = true;
         init();
         initFont();
 
+        Log.i("mPhotoInformationList size : "+mPhotoInformationList.size());
         if(mPhotoInformationList.size() > 0)
         {
             showMonthPictureList();
@@ -120,6 +129,7 @@ public class MonthListViewFragment extends Fragment
     public void onResume()
     {
         super.onResume();
+        Log.i("");
     }
 
     @Override
@@ -141,16 +151,19 @@ public class MonthListViewFragment extends Fragment
     }
 
 
-    private void init() {
-        photoInformationDBHelper = PhotoInformationDBHelper.getInstance(mContext);
-        mBundle = getArguments();
+    private void init()
+    {
+        Log.i("");
+        Bundle bundle = getArguments();
 
-        if (mBundle != null)
+        if (bundle != null)
         {
-            mCurrentMonthPosition = mBundle.getInt(Common.INTENT_MONTH_POSITION);
-            mPhotoInformationList = mBundle.getParcelableArrayList(Common.INTENT_MONTH_PHOTO_LIST);
+            mCurrentMonthPosition = bundle.getInt(Common.INTENT_MONTH_POSITION);
+            mPhotoInformationList = bundle.getParcelableArrayList(Common.INTENT_MONTH_PHOTO_LIST);
             mMonthBackgroundColor = mContext.getResources().getIdentifier("color_month_" + (mCurrentMonthPosition + 1), "color", Common.PACKAGE_NAME);
         }
+
+
         mCoordinatorLayoutParams = (CoordinatorLayout.LayoutParams) _PhotoFloatingButton.getLayoutParams();
         mFlotingButtonHeight = (int) CommonUtils.getInstance(mContext).convertDpToPixel(HEIGHT_FLOTING_BUTTON_DP);
     }
@@ -182,7 +195,6 @@ public class MonthListViewFragment extends Fragment
     {
         _EmptyDataLayout.setVisibility(View.VISIBLE);
         _MonthPictureList.setVisibility(View.GONE);
-
     }
 
 
@@ -191,12 +203,44 @@ public class MonthListViewFragment extends Fragment
         if(mMonthPictureAdapter == null)
         {
             _MonthPictureList.setItemAnimator(new SlideInRightAnimator());
+
+            mMonthPictureAdapter = new MonthPictureAdapter();
+            mLinearLayoutManager = new LinearLayoutManager(mContext);
+            mLinearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+            _MonthPictureList.setLayoutAnimation(getMonthPictureAnimationController());
+            _MonthPictureList.setLayoutManager(mLinearLayoutManager);
+            _MonthPictureList.setAdapter(mMonthPictureAdapter);
+        }
+        else if(mMonthPictureAdapter  != null && isCreate == true)
+        {
             mMonthPictureAdapter = new MonthPictureAdapter();
             mLinearLayoutManager = new LinearLayoutManager(mContext);
             mLinearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
             _MonthPictureList.setLayoutManager(mLinearLayoutManager);
             _MonthPictureList.setAdapter(mMonthPictureAdapter);
         }
+
+        isCreate = false;
+
+    }
+
+    private LayoutAnimationController getMonthPictureAnimationController()
+    {
+        AnimationSet animationSet = new AnimationSet(true);
+
+        TranslateAnimation translateAnimation = (TranslateAnimation) CommonUtils.getInstance(mContext).getTranslateXAnimation(
+                CommonUtils.getInstance(mContext).getDisplayWidth()/2, 0, 0, 0,
+                new AccelerateDecelerateInterpolator());
+        AlphaAnimation alphaAnimation = (AlphaAnimation) CommonUtils.getInstance(mContext).getAlphaAnimation(0, 0.0f, 1.0f);
+
+        animationSet.addAnimation(translateAnimation);
+        animationSet.addAnimation(alphaAnimation);
+        animationSet.setStartOffset(Common.DURATION_SHORT);
+        animationSet.setDuration(Common.DURATION_DEFAULT);
+        LayoutAnimationController controller = new LayoutAnimationController(animationSet, 0.25f);
+        controller.setOrder(LayoutAnimationController.ORDER_NORMAL);
+
+        return controller;
     }
 
     public void insertItem(PhotoInformationObject object)
@@ -220,7 +264,7 @@ public class MonthListViewFragment extends Fragment
     {
         Log.i("position : "+position);
         mPhotoInformationList.set(position, object);
-        mMonthPictureAdapter.notifyItemRangeChanged(0,1);
+        mMonthPictureAdapter.notifyItemRangeChanged(position,1);
     }
 
 
@@ -324,6 +368,7 @@ public class MonthListViewFragment extends Fragment
         @Override
         public void onBindViewHolder(final ViewHolder holder, final int position)
         {
+            Log.i("position : "+position);
             if(position == 0)
             {
                 RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) holder._ItemCardView.getLayoutParams();
@@ -355,7 +400,6 @@ public class MonthListViewFragment extends Fragment
                 @Override
                 public void onClick(View view)
                 {
-                    view.setVisibility(View.INVISIBLE);
                     Pair requestPair = new Pair(holder._PhotoImage, holder._PhotoImage.getTransitionName());
                     mMainContainerCallback.onModifiedPhoto(position, requestPair);
                 }
