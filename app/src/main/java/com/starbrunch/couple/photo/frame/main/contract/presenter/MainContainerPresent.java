@@ -98,6 +98,7 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
             CommonUtils.getInstance(mContext).requestPermission(new String[] { Manifest.permission.WRITE_EXTERNAL_STORAGE,
                     Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSION_REQUEST);
         }
+
     }
 
     @Override
@@ -190,8 +191,8 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
         Intent intent = new Intent("com.android.camera.action.CROP");
         intent.setDataAndType(mImageCaptureUri, "image/*");
 
-        intent.putExtra("outputX", 1280);
-        intent.putExtra("outputY", 800);
+        intent.putExtra("outputX", 640);
+        intent.putExtra("outputY", 400);
         intent.putExtra("aspectX", 16);
         intent.putExtra("aspectY", 10);
         intent.putExtra("scale", true);
@@ -297,6 +298,7 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
                 PhotoInformationObject updatePhotoInformationObject = mPhotoInformationDBHelper.getPhotoInformationObject(mModifiedInformationObject.getKeyID());
                 mMonthListViewFragment.notifyChanged(mModifiedItemPosition,updatePhotoInformationObject);
                 break;
+
 
         }
     }
@@ -435,7 +437,6 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
             {
                 Log.f("DB 갱신 성공");
                 FileUtils.deleteFile(mCropImageFile.getPath());
-                //DB에 옮긴다.
             }
         }
 

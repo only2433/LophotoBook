@@ -1273,7 +1273,7 @@ public class CommonUtils
 
         for(int i = 0 ; i < permissionList.length ; i++)
         {
-            if(sContext.checkSelfPermission(permissionList[i]) != PackageManager.PERMISSION_GRANTED)
+            if(ContextCompat.checkSelfPermission(sContext,permissionList[i]) != PackageManager.PERMISSION_GRANTED)
             {
                 unAuthorizeList.add(permissionList[i]);
             }

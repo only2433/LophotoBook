@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Rect;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -78,11 +77,6 @@ public class MainContainerActivity extends BaseActivity implements MainContainer
         setContentView(R.layout.activity_main_base);
         ButterKnife.bind(this);
         CommonUtils.getInstance(this).getWindowInfo();
-
-        Log.i("Environment.getExternalStorageDirectory() : "+ Environment.getExternalStorageDirectory());
-        Log.i("getFilesDir() : "+ getFilesDir());
-        Log.i("getCacheDir() : "+ getCacheDir());
-        Log.i("getExternalFilesDir() : "+ getExternalFilesDir(null));
 
         init();
     }

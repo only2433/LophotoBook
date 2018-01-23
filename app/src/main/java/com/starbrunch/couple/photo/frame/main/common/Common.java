@@ -1,11 +1,15 @@
 package com.starbrunch.couple.photo.frame.main.common;
 
+import java.util.UUID;
+
 /**
  * Created by 정재현 on 2017-12-13.
  */
 
 public class Common
 {
+
+
     public static final String PACKAGE_NAME ="com.starbrunch.couple.photo.frame.main";
     public static final String PATH_APP_ROOT	 = "/data/data/" + PACKAGE_NAME + "/files/";
     public static final String PATH_IMAGE_ROOT = PATH_APP_ROOT+"images/";
