@@ -1,6 +1,175 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/color_e6ebeb">
+
+    <com.ssomai.android.scalablelayout.ScalableLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:scale_base_width="1280"
+        app:scale_base_height="200"
+        android:background="@color/color_f9f9f9">
+
+        <ImageView
+            android:id="@+id/_settingBackButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:src="@drawable/ic_keyboard_backspace_black_24dp_gray"
+            app:scale_height="90"
+            app:scale_left="40"
+            app:scale_top="60"
+            app:scale_width="90" />
+
+        <TextView
+            android:id="@+id/_settingTitleText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/title_setting"
+            android:textColor="@color/color_606565"
+            app:scale_height="200"
+            app:scale_left="390"
+            app:scale_textsize="80"
+            app:scale_width="500" />
+
+    </com.ssomai.android.scalablelayout.ScalableLayout>
+    <com.ssomai.android.scalablelayout.ScalableLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:scale_base_width="1280"
+        app:scale_base_height="4"
+        android:background="@color/color_d9dede">
+    </com.ssomai.android.scalablelayout.ScalableLayout>
+
+    <com.ssomai.android.scalablelayout.ScalableLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:scale_base_width="1280"
+        app:scale_base_height="100">
+    </com.ssomai.android.scalablelayout.ScalableLayout>
+
+    <com.ssomai.android.scalablelayout.ScalableLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:scale_base_width="1280"
+        app:scale_base_height="150"
+        >
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/color_f2f2f2"
+            app:scale_left ="20"
+            app:scale_top="0"
+            app:scale_width="1240"
+            app:scale_height="150"/>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_speaker_phone_black_24dp_gray"
+            app:scale_left ="40"
+            app:scale_top="25"
+            app:scale_width="100"
+            app:scale_height="100"/>
+
+        <TextView
+            android:id="@+id/_settingBluetoothSubTitleText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:text="@string/title_bluetooth"
+            android:textColor="@color/color_606565"
+            app:scale_height="150"
+            app:scale_left="160"
+            app:scale_textsize="55"
+            app:scale_top="0"
+            app:scale_width="400" />
+
+    </com.ssomai.android.scalablelayout.ScalableLayout>
+    <com.ssomai.android.scalablelayout.ScalableLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:scale_base_width="1280"
+        app:scale_base_height="4"
+        >
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/color_d9dede"
+            app:scale_left="20"
+            app:scale_top="0"
+            app:scale_width="1240"
+            app:scale_height="4"
+            />
+    </com.ssomai.android.scalablelayout.ScalableLayout>
+    <com.ssomai.android.scalablelayout.ScalableLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:scale_base_width="1280"
+        app:scale_base_height="404"
+        >
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/color_white"
+            app:scale_left="20"
+            app:scale_top="0"
+            app:scale_width="1240"
+            app:scale_height="200"
+            />
+
+        <TextView
+            android:id="@+id/_settingSendBookText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:text="@string/button_send_book"
+
+            android:textColor="@color/color_606565"
+            app:scale_height="200"
+            app:scale_left="60"
+            app:scale_textsize="55"
+            app:scale_top="0"
+            app:scale_width="600" />
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/color_d9dede"
+            app:scale_left="20"
+            app:scale_top="200"
+            app:scale_width="1240"
+            app:scale_height="4"
+            />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/color_white"
+            app:scale_left="20"
+            app:scale_top="204"
+            app:scale_width="1240"
+            app:scale_height="200"
+            />
+
+        <TextView
+            android:id="@+id/_settingReceiveBookText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:text="@string/button_receive_book"
+
+            android:textColor="@color/color_606565"
+            app:scale_height="200"
+            app:scale_left="60"
+            app:scale_textsize="55"
+            app:scale_top="204"
+            app:scale_width="600" />
+
+    </com.ssomai.android.scalablelayout.ScalableLayout>
+
+
 
 </LinearLayout>

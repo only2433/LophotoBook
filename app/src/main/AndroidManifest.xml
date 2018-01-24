@@ -35,9 +35,9 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".ModifiedInformationActivity"
+        <activity android:name=".SettingContainerActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme_NoActionBar"
+            android:theme="@style/AppTheme"
             android:configChanges="orientation|screenSize">
         </activity>
         <!-- 1. The broadcast receiver that refers to our widget. This needs the

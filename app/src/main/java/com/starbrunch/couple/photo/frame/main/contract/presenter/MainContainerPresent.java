@@ -20,6 +20,7 @@ import com.littlefox.library.system.common.FileUtils;
 import com.littlefox.logmonitor.Log;
 import com.starbrunch.couple.photo.frame.main.MainContainerActivity;
 import com.starbrunch.couple.photo.frame.main.R;
+import com.starbrunch.couple.photo.frame.main.SettingContainerActivity;
 import com.starbrunch.couple.photo.frame.main.callback.MainContainerCallback;
 import com.starbrunch.couple.photo.frame.main.common.Common;
 import com.starbrunch.couple.photo.frame.main.common.CommonUtils;
@@ -54,6 +55,10 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
 
     private static final int REQUEST_PICK_FROM_MODIFY = 2;
     private static final int REQUEST_CROP_FROM_MODIFY = 3;
+
+    private static final int REQUEST_SETTING            = 101;
+    private static final int RESULT_SETTING_BLUETOOTH_SEND = 1001;
+    private static final int RESULT_SETTING_BLUETOOTH_RECEIVE = 1002;
 
     private static final int MESSAGE_TITLE_INIT_COLOR = 0;
     private static final int MESSAGE_IMAGE_INFORMATION_SAVE = 1;
@@ -115,6 +120,7 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
 
     private void settingInformation()
     {
+        mMainContainerContractView.ininFont();
         mMainContainerContractView.initView();
 
         mFragmentManager = ((AppCompatActivity)mContext).getSupportFragmentManager();
@@ -207,6 +213,13 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
         ((AppCompatActivity)mContext).startActivityForResult(intent, requestCode);
     }
 
+    private void startSettingActivity()
+    {
+        Intent intent = new Intent(mContext, SettingContainerActivity.class);
+        ((AppCompatActivity)mContext).startActivityForResult(intent, REQUEST_SETTING);
+        ((AppCompatActivity) mContext).overridePendingTransition(R.anim.slide_left_in, R.anim.slide_left_out);
+    }
+
     @Override
     public void acvitityResult(int requestCode, int resultCode, Intent data)
     {
@@ -240,6 +253,9 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
                 mModifiedCheckList.put(Check.DATE, true);
                 mModifiedInformationFragment.changePhoto(BitmapFactory.decodeFile(mCropImageFile.getPath()));
                 mModifiedInformationFragment.changeDateInformation(CommonUtils.getInstance(mContext).getDateFullText(mModifiedDateTime)+" "+ CommonUtils.getInstance(mContext).getDateClock(mModifiedDateTime));
+                break;
+            case REQUEST_SETTING:
+                //TODO : BLUETOOTH 선택에 따른 행동
                 break;
 
         }
@@ -335,6 +351,8 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
         else
         {
             //SETTING 화면으로
+            Log.f("");
+            startSettingActivity();
         }
     }
 

@@ -232,7 +232,7 @@ public class MainViewFragment extends Fragment
             private void initFont()
             {
                 _ItemMonthNumberText.setTypeface(FontManager.getInstance(mContext).getMainTitleFont());
-                _ItemMonthTitleText.setTypeface(FontManager.getInstance(mContext).getMainMonthTextFont());
+                _ItemMonthTitleText.setTypeface(FontManager.getInstance(mContext).getMainTitleFont());
             }
 
         }

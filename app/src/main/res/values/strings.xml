@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">Lophoto Book</string>
+    <string name="title_setting">SETTING</string>
+    <string name="title_bluetooth">BLUETOOTH</string>
     <string name="message_empty_picture_data">Post pictures of Your happy moments</string>
     <string name="message_question_delete_data">Do You want to delete this?</string>
     <string name="message_connection_failed">Unable to connect device</string>
@@ -7,7 +9,8 @@
     <string name="button_ok">OK</string>
     <string name="button_cancel">Cancel</string>
     <string name="button_save">Save</string>
-
+    <string name="button_send_book">Send Book</string>
+    <string name="button_receive_book">Receive Book</string>
     <string name="text_photo">Photo</string>
     <string name="text_date">Date</string>
     <string name="text_comment">Comment</string>

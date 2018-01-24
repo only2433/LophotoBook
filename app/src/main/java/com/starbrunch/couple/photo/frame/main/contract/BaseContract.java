@@ -10,6 +10,11 @@ import android.os.Message;
 
 public class BaseContract
 {
+    public interface View
+    {
+        void initView();
+        void ininFont();
+    }
     public interface Presenter
     {
         void resume();

@@ -6,9 +6,8 @@ package com.starbrunch.couple.photo.frame.main.contract;
 
 public class MainContainerContract
 {
-    public interface View
+    public interface View extends BaseContract.View
     {
-        void initView();
         void showTitleViewBackgroundAnimation(int color);
         void hideTitleViewBackgroundAnimation(int color);
 

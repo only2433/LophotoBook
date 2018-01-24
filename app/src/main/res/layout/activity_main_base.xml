@@ -36,7 +36,7 @@
                 android:layout_height="wrap_content"
 
                 android:gravity="center"
-                android:textColor="@color/main_title_color"
+                android:textColor="@color/color_606565"
                 app:scale_height="450"
                 app:scale_left="240"
                 app:scale_textsize="100"
@@ -74,7 +74,7 @@
                 android:id="@+id/_divideLine"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@color/main_title_color"
+                android:background="@color/color_606565"
                 app:scale_height="2"
                 app:scale_left="140"
                 app:scale_top="400"

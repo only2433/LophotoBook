@@ -12,7 +12,7 @@ public class FontManager
 {
     private static FontManager self;
     private Typeface mMainTitleFont = null;
-    private Typeface mMainMonthTextFont = null;
+
     private Typeface mMainImageCountFont = null;
     private Typeface mDefaultBoldTextFont = null;
     private Typeface mDefaultRegularTextFont = null;
@@ -32,8 +32,7 @@ public class FontManager
     private FontManager(Context context)
     {
         AssetManager assetManager = context.getAssets();
-        mMainTitleFont = Typeface.createFromAsset(assetManager, "fonts/mexcellentrg.ttf");
-        mMainMonthTextFont = Typeface.createFromAsset(assetManager, "fonts/quigleywiggly.ttf");
+        mMainTitleFont = Typeface.createFromAsset(assetManager, "fonts/rampung.regular.ttf");
         mMainImageCountFont = Typeface.createFromAsset(assetManager, "fonts/johnny_fever.ttf");
         mDefaultBoldTextFont = Typeface.createFromAsset(assetManager, "fonts/Roboto-Bold.ttf");
         mDefaultRegularTextFont = Typeface.createFromAsset(assetManager, "fonts/Roboto-Medium.ttf");
@@ -44,10 +43,6 @@ public class FontManager
             mMainTitleFont = Typeface.DEFAULT;
         }
 
-        if(mMainMonthTextFont == null)
-        {
-            mMainMonthTextFont = Typeface.DEFAULT;
-        }
 
         if(mMainImageCountFont == null)
         {
@@ -73,10 +68,6 @@ public class FontManager
     public Typeface getMainTitleFont()
     {
         return mMainTitleFont;
-    }
-    public Typeface getMainMonthTextFont()
-    {
-        return  mMainMonthTextFont;
     }
 
     public Typeface getMainImageCountFont()

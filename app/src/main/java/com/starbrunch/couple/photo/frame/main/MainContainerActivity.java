@@ -104,23 +104,25 @@ public class MainContainerActivity extends BaseActivity implements MainContainer
     @Override
     public void initView()
     {
-        initFont();
+
         mCoordinatorLayoutParams = (CoordinatorLayout.LayoutParams) _PhotoFloatingButton.getLayoutParams();
         mFlotingButtonHeight = (int) CommonUtils.getInstance(this).convertDpToPixel(HEIGHT_FLOTING_BUTTON_DP);
         changeTitleAnimationText(getResources().getString(R.string.app_name));
     }
 
-
-    private void initFont()
+    @Override
+    public void ininFont()
     {
         _MainBaseTitleText.setTypeface(FontManager.getInstance(this).getMainTitleFont());
         _TitleMonthSubTitle.setTypeface(FontManager.getInstance(this).getDefaultLightTextFont());
     }
 
+
     @Override
     protected void onResume()
     {
         super.onResume();
+        mMainContainerPresent.resume();
         Log.i("");
     }
 
@@ -128,6 +130,7 @@ public class MainContainerActivity extends BaseActivity implements MainContainer
     protected void onPause()
     {
         super.onPause();
+        mMainContainerPresent.pause();
         Log.i("");
     }
 
@@ -135,6 +138,7 @@ public class MainContainerActivity extends BaseActivity implements MainContainer
     protected void onStop()
     {
         super.onStop();
+        mMainContainerPresent.stop();
         Log.i("");
     }
 
@@ -142,6 +146,7 @@ public class MainContainerActivity extends BaseActivity implements MainContainer
     protected void onDestroy()
     {
         super.onDestroy();
+        mMainContainerPresent.destroy();
         Log.i("");
     }
 
@@ -263,22 +268,6 @@ public class MainContainerActivity extends BaseActivity implements MainContainer
         hideMonthNumberText();
     }
 
-    /*private void showFloatingButton()
-    {
-        _PhotoFloatingButton.setVisibility(View.VISIBLE);
-        _PhotoFloatingButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(mMonthBackgroundColor)));
-
-        Animation animation = CommonUtils.getInstance(mContext).getTranslateYAnimation(CommonUtils.getInstance(mContext).getPixel(mFlotingButtonHeight) + mCoordinatorLayoutParams.bottomMargin, 0, Common.DURATION_SHORT, Common.DURATION_DEFAULT, new AccelerateInterpolator());
-        _PhotoFloatingButton.startAnimation(animation);
-        _PhotoFloatingButton.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View view)
-            {
-                mMainContainerCallback.onAddPhoto();
-            }
-        });
-    }*/
 
     @Override
     public void changeTitleAnimationText(String string)
