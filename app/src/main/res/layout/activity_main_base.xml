@@ -1,83 +1,96 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@color/main_background_color"
-    >
+    android:layout_height="match_parent">
 
-    <FrameLayout
-        android:id="@+id/_mainBaseBackgroundLayout"
-        android:layout_width="match_parent"
-        android:layout_height="220dp"
-        ></FrameLayout>
-
-
-    <FrameLayout
-        android:id="@+id/_mainContainer"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        >
+        android:background="@color/main_background_color"
+        android:orientation="vertical">
 
-    </FrameLayout>
+        <FrameLayout
+            android:id="@+id/_mainBaseBackgroundLayout"
+            android:layout_width="match_parent"
+            android:layout_height="220dp"></FrameLayout>
 
-    <com.ssomai.android.scalablelayout.ScalableLayout
-        android:id="@+id/_mainBaseTitleLayout"
+
+        <FrameLayout
+            android:id="@+id/_mainContainer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        </FrameLayout>
+
+        <com.ssomai.android.scalablelayout.ScalableLayout
+            android:id="@+id/_mainBaseTitleLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:scale_base_height="450"
+            app:scale_base_width="1280">
+
+            <com.starbrunch.couple.photo.frame.main.hanks.htextview.HTextView
+                android:id="@+id/_mainBaseTitleText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:gravity="center"
+                android:textColor="@color/main_title_color"
+                app:scale_height="450"
+                app:scale_left="240"
+                app:scale_textsize="100"
+                app:scale_top="0"
+                app:scale_width="800" />
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/_titleMonthSubTitleBackground"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/image_count_background"
+                android:visibility="gone"
+                app:civ_border_color="@color/color_white"
+                app:civ_border_width="4dp"
+                app:scale_height="100"
+                app:scale_left="1040"
+                app:scale_top="275"
+                app:scale_width="100" />
+
+            <TextView
+                android:id="@+id/_titleMonthSubTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textColor="@color/color_white"
+                android:visibility="gone"
+                app:scale_height="100"
+                app:scale_left="1040"
+                app:scale_textsize="60"
+                app:scale_top="275"
+                app:scale_width="100" />
+
+
+            <ImageView
+                android:id="@+id/_divideLine"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/main_title_color"
+                app:scale_height="2"
+                app:scale_left="140"
+                app:scale_top="400"
+
+                app:scale_width="1000" />
+        </com.ssomai.android.scalablelayout.ScalableLayout>
+
+    </RelativeLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/_photoFloatingButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:scale_base_width="1280"
-        app:scale_base_height="450">
-        <com.starbrunch.couple.photo.frame.main.hanks.htextview.HTextView
-            android:id="@+id/_mainBaseTitleText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="10dp"
+        android:src="@drawable/ic_wallpaper_white"
 
-            app:scale_width="800"
-            app:scale_height="450"
-            app:scale_left="240"
-            app:scale_top="0"
-            app:scale_textsize="100"
-            android:gravity="center"
-            android:textColor="@color/main_title_color"/>
-
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/_titleMonthSubTitleBackground"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/image_count_background"
-            android:visibility="gone"
-            app:scale_top="275"
-            app:scale_left="1040"
-            app:scale_width="100"
-            app:scale_height="100"
-            app:civ_border_width="4dp"
-            app:civ_border_color="@color/color_white"/>
-
-        <TextView
-            android:id="@+id/_titleMonthSubTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/color_white"
-            android:visibility="gone"
-            android:gravity="center"
-            app:scale_width="100"
-            app:scale_height="100"
-            app:scale_left="1040"
-            app:scale_top="275"
-            app:scale_textsize="60"/>
-
-
-        <ImageView
-        android:id="@+id/_divideLine"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:scale_width="1000"
-        app:scale_height="2"
-        app:scale_left="140"
-        app:scale_top="400"
-
-        android:background="@color/main_title_color"/>
-    </com.ssomai.android.scalablelayout.ScalableLayout>
-
-</RelativeLayout>
+        android:visibility="invisible" />
+</android.support.design.widget.CoordinatorLayout>

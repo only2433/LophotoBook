@@ -1,7 +1,5 @@
 package com.starbrunch.couple.photo.frame.main.common;
 
-import java.util.UUID;
-
 /**
  * Created by 정재현 on 2017-12-13.
  */
@@ -42,4 +40,7 @@ public class Common
     public static final int DURATION_SHORT = 300;
     public static final int DURATION_DEFAULT = 500;
     public static final int DURATION_TITLE_BACKGROUND_ANIMATION = 700;
+
+    public static final int SCREEN_MAIN         = 0;
+    public static final int SCREEN_MONTH_LIST   = 1;
 }

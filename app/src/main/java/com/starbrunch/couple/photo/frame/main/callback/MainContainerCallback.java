@@ -12,10 +12,10 @@ public interface MainContainerCallback
 {
     public void onSelectMonth(int position);
 
-    public void onGotoMainView();
-    public void onGotoMonthListView();
 
-    public void onAddPhoto();
+    public void onChangeMainViewSetting();
+    public void onChangeMonthListViewSetting();
+
     public void onDeletePhoto(String keyID);
     public void onModifiedPhoto(int position, Pair<View, String> item);
     public void onModifiedEnd();

@@ -59,7 +59,6 @@ public class MainViewFragment extends Fragment
     {
         View view = inflater.inflate(R.layout.fragment_main, container, false);
         ButterKnife.bind(this, view);
-
         initRecyclerView();
         return view;
     }
@@ -103,7 +102,7 @@ public class MainViewFragment extends Fragment
             public void onTransitionEnd(@NonNull Transition transition)
             {
                 Log.i("");
-                mMainContainerCallback.onGotoMonthListView();
+                mMainContainerCallback.onChangeMonthListViewSetting();
             }
 
             @Override
@@ -129,7 +128,7 @@ public class MainViewFragment extends Fragment
 
                 Log.i("");
 
-                mMainContainerCallback.onGotoMainView();
+                mMainContainerCallback.onChangeMainViewSetting();
             }
 
             @Override

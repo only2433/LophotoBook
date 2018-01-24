@@ -28,11 +28,19 @@ public class MainContainerContract
         void showMainTitleLayout();
         void hideMainTitleLayout();
 
+        void showSettingButton();
+        void showPhotoButton(int color);
+        void changeSettingButton();
+        void changePhotoButton(int color);
+
+        void hideFloatButton();
+
     }
 
     public interface Presenter extends BaseContract.Presenter
     {
         void changeDateSetComplete(int year, int monthOfYear, int dayOfMonth);
         void changeTimeSetComplete(int hourOfDay, int minute);
+        void selectFloatButton();
     }
 }

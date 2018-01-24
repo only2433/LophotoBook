@@ -79,18 +79,17 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
     private HashMap<Enum, Boolean> mModifiedCheckList = null;
     private Calendar mRequestCalendar = null;
     private long mModifiedDateTime = 0L;
+    private int mCurrentViewState = Common.SCREEN_MAIN;
 
     public MainContainerPresent(Context context)
     {
         mContext = context;
 
-        Log.i("Common.PATH_APP_ROOT : "+ Common.PATH_APP_ROOT);
-        Log.i("Common.PATH_IMAGE_ROOT : "+ Common.PATH_IMAGE_ROOT);
         mMainContainerContractView = (MainContainerContract.View)mContext;
-
         mPhotoInformationDBHelper = PhotoInformationDBHelper.getInstance(mContext);
         mWeakReferenceHandler = new WeakReferenceHandler((MainContainerActivity)mContext);
         mModifiedCheckList = new HashMap<>();
+        mCurrentViewState = Common.SCREEN_MAIN;
         settingInformation();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
@@ -125,6 +124,7 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
         mFragmentManager.beginTransaction()
                 .replace(R.id._mainContainer, mMainViewFragment)
                 .commit();
+        mMainContainerContractView.showSettingButton();
     }
 
     private void startMonthListViewFragment(int position)
@@ -140,7 +140,7 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
 
         mMainViewFragment.setExitTransition(CommonUtils.getInstance(mContext).getSlideTransition(Common.DURATION_DEFAULT));
         mMainViewFragment.setReenterTransition(CommonUtils.getInstance(mContext).getSlideTransition(Common.DURATION_DEFAULT));
-        bundle.putInt(Common.INTENT_MONTH_POSITION, position);
+
         bundle.putParcelableArrayList(Common.INTENT_MONTH_PHOTO_LIST, mCurrentPhotoInformationObjectList);
 
         mMonthListViewFragment.setArguments(bundle);
@@ -324,39 +324,49 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
         mModifiedInformationFragment.changeDateInformation(CommonUtils.getInstance(mContext).getDateFullText(mModifiedDateTime)+" "+ CommonUtils.getInstance(mContext).getDateClock(mModifiedDateTime));
     }
 
+    @Override
+    public void selectFloatButton()
+    {
+        if(mCurrentViewState == Common.SCREEN_MONTH_LIST)
+        {
+            Log.f("");
+            startPickActivity(REQUEST_PICK_FROM_ADD);
+        }
+        else
+        {
+            //SETTING 화면으로
+        }
+    }
+
 
     @Override
     public void onSelectMonth(int position)
     {
+        mCurrentViewState = Common.SCREEN_MONTH_LIST;
         mSelectMonthColor = mContext.getResources().getIdentifier("color_month_"+(position+1), "color", Common.PACKAGE_NAME);
+        mMainContainerContractView.changePhotoButton(mSelectMonthColor);
         startMonthListViewFragment(position);
     }
 
+
     @Override
-    public void onGotoMainView()
+    public void onChangeMainViewSetting()
     {
+        mCurrentViewState = Common.SCREEN_MAIN;
         mWeakReferenceHandler.sendEmptyMessageDelayed(MESSAGE_TITLE_INIT_COLOR, Common.DURATION_DEFAULT);
         mMainContainerContractView.hideMonthNumberAnimation();
         mMainContainerContractView.changeTitleAnimationText(mContext.getResources().getString(R.string.app_name));
         mMainContainerContractView.hideTitleViewBackgroundAnimation(mSelectMonthColor);
+        mMainContainerContractView.changeSettingButton();
     }
 
     @Override
-    public void onGotoMonthListView()
+    public void onChangeMonthListViewSetting()
     {
         mMainContainerContractView.changeTitleViewColor(R.color.color_white);
         mMainContainerContractView.showMonthNumberAnimation();
         mMainContainerContractView.showTitleViewBackgroundAnimation(mSelectMonthColor);
     }
-
-
-    @Override
-    public void onAddPhoto()
-    {
-        Log.f("");
-        startPickActivity(REQUEST_PICK_FROM_ADD);
-    }
-
 
     @Override
     public void onDeletePhoto(String keyID)
@@ -381,12 +391,14 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
         mModifiedInformationObject = mCurrentPhotoInformationObjectList.get(mModifiedItemPosition);
         startModifiedInformationFragment(item);
         mMainContainerContractView.hideMainTitleLayout();
+        mMainContainerContractView.hideFloatButton();
     }
 
     @Override
     public void onModifiedEnd()
     {
         mMainContainerContractView.showMainTitleLayout();
+        mMainContainerContractView.showPhotoButton(mSelectMonthColor);
     }
 
     @Override

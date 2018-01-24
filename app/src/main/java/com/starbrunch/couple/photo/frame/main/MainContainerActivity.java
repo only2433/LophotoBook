@@ -7,13 +7,18 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.content.res.ColorStateList;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.Animation;
 import android.widget.DatePicker;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -37,6 +42,7 @@ import java.util.Calendar;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
@@ -45,6 +51,8 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainContainerActivity extends BaseActivity implements MainContainerContract.View, MessageHandlerCallback
 {
+    private static final int HEIGHT_FLOTING_BUTTON_DP = 56;
+
     @BindView(R.id._mainBaseBackgroundLayout)
     FrameLayout _MainBaseBackgroundLayout;
 
@@ -66,8 +74,13 @@ public class MainContainerActivity extends BaseActivity implements MainContainer
     @BindView(R.id._divideLine)
     ImageView _DivideLineImage;
 
+    @BindView(R.id._photoFloatingButton)
+    FloatingActionButton _PhotoFloatingButton;
+
     private MainContainerPresent mMainContainerPresent = null;
     private MaterialLoadingDialog mMaterialLoadingDialog = null;
+    private CoordinatorLayout.LayoutParams mCoordinatorLayoutParams = null;
+    private int mFlotingButtonHeight = 0;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState)
@@ -92,6 +105,8 @@ public class MainContainerActivity extends BaseActivity implements MainContainer
     public void initView()
     {
         initFont();
+        mCoordinatorLayoutParams = (CoordinatorLayout.LayoutParams) _PhotoFloatingButton.getLayoutParams();
+        mFlotingButtonHeight = (int) CommonUtils.getInstance(this).convertDpToPixel(HEIGHT_FLOTING_BUTTON_DP);
         changeTitleAnimationText(getResources().getString(R.string.app_name));
     }
 
@@ -248,6 +263,23 @@ public class MainContainerActivity extends BaseActivity implements MainContainer
         hideMonthNumberText();
     }
 
+    /*private void showFloatingButton()
+    {
+        _PhotoFloatingButton.setVisibility(View.VISIBLE);
+        _PhotoFloatingButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(mMonthBackgroundColor)));
+
+        Animation animation = CommonUtils.getInstance(mContext).getTranslateYAnimation(CommonUtils.getInstance(mContext).getPixel(mFlotingButtonHeight) + mCoordinatorLayoutParams.bottomMargin, 0, Common.DURATION_SHORT, Common.DURATION_DEFAULT, new AccelerateInterpolator());
+        _PhotoFloatingButton.startAnimation(animation);
+        _PhotoFloatingButton.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                mMainContainerCallback.onAddPhoto();
+            }
+        });
+    }*/
+
     @Override
     public void changeTitleAnimationText(String string)
     {
@@ -314,6 +346,97 @@ public class MainContainerActivity extends BaseActivity implements MainContainer
     public void hideMainTitleLayout()
     {
         _MainBaseTitleLayout.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
+    public void showSettingButton()
+    {
+        showSettingButton(Common.DURATION_SHORT);
+    }
+
+    @Override
+    public void showPhotoButton(int color)
+    {
+        showPhotoButton(Common.DURATION_SHORT, color);
+    }
+
+    private void showSettingButton(int delay)
+    {
+        _PhotoFloatingButton.setVisibility(View.VISIBLE);
+        _PhotoFloatingButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.color_999999)));
+        _PhotoFloatingButton.setImageResource(R.drawable.ic_menu_white_24dp);
+        Animation animation = CommonUtils.getInstance(this).getTranslateYAnimation(CommonUtils.getInstance(this).getPixel(mFlotingButtonHeight) + mCoordinatorLayoutParams.bottomMargin, 0, Common.DURATION_DEFAULT, delay, new AccelerateInterpolator());
+        _PhotoFloatingButton.startAnimation(animation);
+    }
+
+    private void showPhotoButton(int delay, int color)
+    {
+        _PhotoFloatingButton.setVisibility(View.VISIBLE);
+        _PhotoFloatingButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(color)));
+        _PhotoFloatingButton.setImageResource(R.drawable.ic_wallpaper_white);
+        Animation animation = CommonUtils.getInstance(this).getTranslateYAnimation(CommonUtils.getInstance(this).getPixel(mFlotingButtonHeight) + mCoordinatorLayoutParams.bottomMargin, 0, Common.DURATION_DEFAULT, delay, new AccelerateInterpolator());
+        _PhotoFloatingButton.startAnimation(animation);
+    }
+
+    @Override
+    public void changeSettingButton()
+    {
+        Animation animation = CommonUtils.getInstance(this).getTranslateYAnimation(0, CommonUtils.getInstance(this).getPixel(mFlotingButtonHeight) + mCoordinatorLayoutParams.bottomMargin, Common.DURATION_DEFAULT, 0, new AccelerateInterpolator());
+        animation.setFillAfter(true);
+        animation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {}
+
+            @Override
+            public void onAnimationEnd(Animation animation)
+            {
+                showSettingButton(0);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {}
+        });
+        _PhotoFloatingButton.startAnimation(animation);
+    }
+
+    @Override
+    public void changePhotoButton(int color)
+    {
+        final int photoColor = color;
+        Animation animation = CommonUtils.getInstance(this).getTranslateYAnimation(0, CommonUtils.getInstance(this).getPixel(mFlotingButtonHeight) + mCoordinatorLayoutParams.bottomMargin, Common.DURATION_DEFAULT, 0, new AccelerateInterpolator());
+        animation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {}
+
+            @Override
+            public void onAnimationEnd(Animation animation)
+            {
+                showPhotoButton(0, photoColor);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {}
+        });
+        _PhotoFloatingButton.startAnimation(animation);
+    }
+
+    @Override
+    public void hideFloatButton()
+    {
+        Log.i("");
+        _PhotoFloatingButton.clearAnimation();
+        _PhotoFloatingButton.setVisibility(View.INVISIBLE);
+    }
+
+    @OnClick(R.id._photoFloatingButton)
+    public void onClick(View view)
+    {
+        switch (view.getId())
+        {
+            case R.id._photoFloatingButton:
+                mMainContainerPresent.selectFloatButton();
+                break;
+        }
     }
 
     private DatePickerDialog.OnDateSetListener mDateSetListener = new DatePickerDialog.OnDateSetListener()

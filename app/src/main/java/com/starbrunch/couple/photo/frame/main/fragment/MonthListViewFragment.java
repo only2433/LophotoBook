@@ -5,12 +5,9 @@ import android.animation.Animator;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.res.ColorStateList;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.util.Pair;
 import android.support.v4.view.ViewPropertyAnimatorListener;
@@ -22,7 +19,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
-import android.view.animation.AccelerateInterpolator;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
@@ -69,24 +65,17 @@ public class MonthListViewFragment extends Fragment
     @BindView(R.id._monthPictureList)
     RecyclerView _MonthPictureList;
 
-    @BindView(R.id._photoFloatingButton)
-    FloatingActionButton _PhotoFloatingButton;
-
-    private static final int HEIGHT_FLOTING_BUTTON_DP = 56;
 
     private Context mContext = null;
     private MainContainerCallback mMainContainerCallback = null;
     private MonthPictureAdapter mMonthPictureAdapter = null;
     private LinearLayoutManager mLinearLayoutManager = null;
     private boolean isEnterAnimation = false;
-    private int mMonthBackgroundColor = 0;
-    private int mFlotingButtonHeight = 0;
-    private int mCurrentMonthPosition = 0;
+
     private int mDeleteIndex = 0;
     private boolean isCreate = false;
 
-    private CoordinatorLayout.LayoutParams mCoordinatorLayoutParams = null;
-    private ArrayList<PhotoInformationObject> mPhotoInformationList = null;
+     ArrayList<PhotoInformationObject> mPhotoInformationList = null;
 
     @Override
     public void onAttach(Context context) {
@@ -121,7 +110,6 @@ public class MonthListViewFragment extends Fragment
             showEmptyDataAnimation(Common.DURATION_DEFAULT);
         }
 
-        showFloatingButton();
         return view;
     }
 
@@ -158,14 +146,9 @@ public class MonthListViewFragment extends Fragment
 
         if (bundle != null)
         {
-            mCurrentMonthPosition = bundle.getInt(Common.INTENT_MONTH_POSITION);
             mPhotoInformationList = bundle.getParcelableArrayList(Common.INTENT_MONTH_PHOTO_LIST);
-            mMonthBackgroundColor = mContext.getResources().getIdentifier("color_month_" + (mCurrentMonthPosition + 1), "color", Common.PACKAGE_NAME);
         }
 
-
-        mCoordinatorLayoutParams = (CoordinatorLayout.LayoutParams) _PhotoFloatingButton.getLayoutParams();
-        mFlotingButtonHeight = (int) CommonUtils.getInstance(mContext).convertDpToPixel(HEIGHT_FLOTING_BUTTON_DP);
     }
 
     private void initFont()
@@ -265,24 +248,6 @@ public class MonthListViewFragment extends Fragment
         Log.i("position : "+position);
         mPhotoInformationList.set(position, object);
         mMonthPictureAdapter.notifyItemRangeChanged(position,1);
-    }
-
-
-    private void showFloatingButton()
-    {
-        _PhotoFloatingButton.setVisibility(View.VISIBLE);
-        _PhotoFloatingButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(mMonthBackgroundColor)));
-
-        Animation animation = CommonUtils.getInstance(mContext).getTranslateYAnimation(CommonUtils.getInstance(mContext).getPixel(mFlotingButtonHeight) + mCoordinatorLayoutParams.bottomMargin, 0, Common.DURATION_SHORT, Common.DURATION_DEFAULT, new AccelerateInterpolator());
-        _PhotoFloatingButton.startAnimation(animation);
-        _PhotoFloatingButton.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View view)
-            {
-                mMainContainerCallback.onAddPhoto();
-            }
-        });
     }
 
     private void showDeletePhotoConfirmDialog(final int position)
