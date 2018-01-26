@@ -13,7 +13,8 @@ public class SettingContainerContract
 
     public interface Presenter extends BaseContract.Presenter
     {
-
+        void sendBook();
+        void receiveBook();
     }
 
 }

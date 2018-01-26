@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Message;
 import android.support.annotation.Nullable;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -15,6 +16,7 @@ import com.starbrunch.couple.photo.frame.main.handler.callback.MessageHandlerCal
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 /**
  * Created by 정재현 on 2018-01-24.
@@ -105,9 +107,23 @@ public class SettingContainerActivity extends BaseActivity implements SettingCon
     public void ininFont()
     {
         _SettingTitleText.setTypeface(FontManager.getInstance(this).getMainTitleFont());
-        _SettingBluetoothSubtitleText.setTypeface(FontManager.getInstance(this).getMainTitleFont());
-        _SettingSendBookText.setTypeface(FontManager.getInstance(this).getDefaultLightTextFont());
-        _SettingReceiveBookText.setTypeface(FontManager.getInstance(this).getDefaultLightTextFont());
+        _SettingBluetoothSubtitleText.setTypeface(FontManager.getInstance(this).getDefaultLightTextFont());
+        _SettingSendBookText.setTypeface(FontManager.getInstance(this).getMainTitleFont());
+        _SettingReceiveBookText.setTypeface(FontManager.getInstance(this).getMainTitleFont());
+    }
+
+    @OnClick({R.id._settingSendButton, R.id._settingReceiveButton})
+    public void onClick(View view)
+    {
+        switch (view.getId())
+        {
+            case R.id._settingSendButton:
+                mSettingContainerContractPresenter.sendBook();
+                break;
+            case R.id._settingReceiveButton:
+                mSettingContainerContractPresenter.receiveBook();
+                break;
+        }
     }
 
     @Override

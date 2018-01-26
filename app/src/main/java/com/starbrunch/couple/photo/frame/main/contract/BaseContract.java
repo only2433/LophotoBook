@@ -23,7 +23,6 @@ public class BaseContract
         void destroy();
 
         void acvitityResult(int requestCode, int resultCode, Intent data);
-        void requestPermissionResult(int requestCode, String[] permissions, int[] grantResults);
         void sendMessageEvent(Message msg);
     }
 }

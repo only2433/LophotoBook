@@ -3,7 +3,7 @@ package com.starbrunch.couple.photo.frame.main.bluetooth.thread;
 import android.bluetooth.BluetoothSocket;
 
 import com.littlefox.logmonitor.Log;
-import com.starbrunch.couple.photo.frame.main.bluetooth.common.Constants;
+import com.starbrunch.couple.photo.frame.main.bluetooth.BluetoothController;
 import com.starbrunch.couple.photo.frame.main.bluetooth.listener.BluetoothThreadCallback;
 import com.starbrunch.couple.photo.frame.main.object.MessageObject;
 
@@ -38,7 +38,7 @@ public class ConnectedThread extends Thread
         }
         mInputStream = inputStream;
         mOutputStream = outputStream;
-        mBluetoothThreadCallback.sendConnectStatus(Constants.STATE_CONNECTED);
+        mBluetoothThreadCallback.sendConnectStatus(BluetoothController.STATE_CONNECTED);
     }
 
     @Override
@@ -49,7 +49,7 @@ public class ConnectedThread extends Thread
         byte[] buffer = new byte[1024];
         int bytes;
 
-        while(mBluetoothThreadCallback.getConnectStatus() == Constants.STATE_CONNECTED)
+        while(mBluetoothThreadCallback.getConnectStatus() == BluetoothController.STATE_CONNECTED)
         {
             try
             {
@@ -59,11 +59,11 @@ public class ConnectedThread extends Thread
                 object.argument1 = bytes;
                 object.data = buffer;
 
-                mBluetoothThreadCallback.sendMessage(Constants.MESSAGE_READ, object);
+                mBluetoothThreadCallback.sendMessage(BluetoothController.MESSAGE_READ, object);
             }catch(Exception e)
             {
                 Log.f("Message : "+ e.getMessage());
-                mBluetoothThreadCallback.sendConnectStatus(Constants.STATE_CONNECTION_LOST);
+                mBluetoothThreadCallback.sendConnectStatus(BluetoothController.STATE_CONNECTION_LOST);
             }
         }
     }
@@ -77,7 +77,7 @@ public class ConnectedThread extends Thread
             MessageObject object = new MessageObject();
             object.data = buffer;
             
-            mBluetoothThreadCallback.sendMessage(Constants.MESSAGE_WRITE, object);
+            mBluetoothThreadCallback.sendMessage(BluetoothController.MESSAGE_WRITE, object);
 
         }catch(Exception e)
         {

@@ -15,6 +15,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.view.Gravity;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AccelerateInterpolator;
@@ -52,6 +53,9 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class MainContainerActivity extends BaseActivity implements MainContainerContract.View, MessageHandlerCallback
 {
     private static final int HEIGHT_FLOTING_BUTTON_DP = 56;
+
+    @BindView(R.id._coordinatorMainLayout)
+    CoordinatorLayout _CoordinatorMainLayout;
 
     @BindView(R.id._mainBaseBackgroundLayout)
     FrameLayout _MainBaseBackgroundLayout;
@@ -415,6 +419,13 @@ public class MainContainerActivity extends BaseActivity implements MainContainer
         Log.i("");
         _PhotoFloatingButton.clearAnimation();
         _PhotoFloatingButton.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
+    public void showMessage(String message, int color)
+    {
+        Log.i("");
+        CommonUtils.getInstance(this).showSnackMessage(_CoordinatorMainLayout, message, color, Gravity.CENTER);
     }
 
     @OnClick(R.id._photoFloatingButton)

@@ -14,17 +14,15 @@ public class Common
 
     public static final String SHARED_PHOTO_IMAGE = "shared_photo_image";
 
-    public static final String INTENT_PHOTO_KEY_ID = "intent_photo_key_id";
     public static final String INTENT_PHOTO_TRANSITION_NAME = "intent_photo_transition_name";
-
     public static final String INTENT_MODIFIED_ITEM_OBJECT = "intent_modified_item_object";
-
-    public static final String INTENT_MONTH_POSITION = "intent_month_position";
     public static final String INTENT_MONTH_PHOTO_LIST = "intent_month_photo_list";
+    public static final String INTENT_WIDGET_UPDATE = "intent_widget_update";
+    public static final String INTENT_SETTING_SELECT_INDEX = "intent_setting_select_index";
 
     public static final String[] MONTH_TEXT_LIST =  {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "November"};
 
-    public static final String INTENT_WIDGET_UPDATE = "intent_widget_update";
+
 
     /** 개발자 이메일 */
     public static final String DEVELOPER_EMAIL 		= "only340@gmail.com";
@@ -43,4 +41,9 @@ public class Common
 
     public static final int SCREEN_MAIN         = 0;
     public static final int SCREEN_MONTH_LIST   = 1;
+
+    public static final int RESULT_SETTING_BLUETOOTH_SEND       = 1001;
+    public static final int RESULT_SETTING_BLUETOOTH_RECEIVE    = 1002;
+
+
 }

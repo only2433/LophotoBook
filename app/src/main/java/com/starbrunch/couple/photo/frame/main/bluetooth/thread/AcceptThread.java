@@ -4,7 +4,7 @@ import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 
 import com.littlefox.logmonitor.Log;
-import com.starbrunch.couple.photo.frame.main.bluetooth.common.Constants;
+import com.starbrunch.couple.photo.frame.main.bluetooth.BluetoothController;
 import com.starbrunch.couple.photo.frame.main.bluetooth.listener.BluetoothThreadCallback;
 
 
@@ -28,14 +28,14 @@ public class AcceptThread extends Thread
         try
         {
             bluetoothServerSocket = mBluetoothThreadCallback.getBluetoothAdapter().listenUsingInsecureRfcommWithServiceRecord(
-                    Constants.SERVICE_NAME, Constants.RFCCMM_UUID);
+                    BluetoothController.SERVICE_NAME, BluetoothController.RFCCMM_UUID);
 
         }catch(Exception e)
         {
             Log.f("Message : "+ e.getMessage());
         }
         mBluetoothServerSocket = bluetoothServerSocket;
-        mBluetoothThreadCallback.sendConnectStatus(Constants.STATE_LISTEN);
+        mBluetoothThreadCallback.sendConnectStatus(BluetoothController.STATE_LISTEN);
     }
 
     @Override
@@ -47,7 +47,7 @@ public class AcceptThread extends Thread
 
         BluetoothSocket socket = null;
 
-        while(mBluetoothThreadCallback.getConnectStatus() != Constants.STATE_CONNECTED)
+        while(mBluetoothThreadCallback.getConnectStatus() != BluetoothController.STATE_CONNECTED)
         {
             try
             {
@@ -63,12 +63,12 @@ public class AcceptThread extends Thread
                 {
                     switch (mBluetoothThreadCallback.getConnectStatus())
                     {
-                        case Constants.STATE_LISTEN:
-                        case Constants.STATE_CONNECTING:
+                        case BluetoothController.STATE_LISTEN:
+                        case BluetoothController.STATE_CONNECTING:
                             mBluetoothThreadCallback.connected(socket, socket.getRemoteDevice());
                             break;
-                        case Constants.STATE_NONE:
-                        case Constants.STATE_CONNECTED:
+                        case BluetoothController.STATE_NONE:
+                        case BluetoothController.STATE_CONNECTED:
                             try
                             {
                                 socket.close();

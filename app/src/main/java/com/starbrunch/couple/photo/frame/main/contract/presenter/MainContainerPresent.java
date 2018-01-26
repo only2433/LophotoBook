@@ -21,6 +21,7 @@ import com.littlefox.logmonitor.Log;
 import com.starbrunch.couple.photo.frame.main.MainContainerActivity;
 import com.starbrunch.couple.photo.frame.main.R;
 import com.starbrunch.couple.photo.frame.main.SettingContainerActivity;
+import com.starbrunch.couple.photo.frame.main.bluetooth.BluetoothController;
 import com.starbrunch.couple.photo.frame.main.callback.MainContainerCallback;
 import com.starbrunch.couple.photo.frame.main.common.Common;
 import com.starbrunch.couple.photo.frame.main.common.CommonUtils;
@@ -50,19 +51,21 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
 
     private static final int PERMISSION_REQUEST = 100;
 
-    private static final int REQUEST_PICK_FROM_ADD = 0;
-    private static final int REQUEST_CROP_FROM_ADD = 1;
+    private static final int REQUEST_PICK_FROM_ADD      = 0;
+    private static final int REQUEST_CROP_FROM_ADD      = 1;
+    private static final int REQUEST_PICK_FROM_MODIFY   = 2;
+    private static final int REQUEST_CROP_FROM_MODIFY   = 3;
 
-    private static final int REQUEST_PICK_FROM_MODIFY = 2;
-    private static final int REQUEST_CROP_FROM_MODIFY = 3;
+    private static final int REQUEST_SETTING                = 101;
+    private static final int REQUEST_BLUETOOTH_ENABLE       = 102;
+    private static final int REQUEST_BLUETOOTH_DISCOVERY    = 103;
 
-    private static final int REQUEST_SETTING            = 101;
-    private static final int RESULT_SETTING_BLUETOOTH_SEND = 1001;
-    private static final int RESULT_SETTING_BLUETOOTH_RECEIVE = 1002;
-
-    private static final int MESSAGE_TITLE_INIT_COLOR = 0;
+    private static final int MESSAGE_TITLE_INIT_COLOR       = 0;
     private static final int MESSAGE_IMAGE_INFORMATION_SAVE = 1;
-    private static final int MESSAGE_SAVE_COMPLETE = 2;
+    private static final int MESSAGE_SAVE_COMPLETE          = 2;
+    public static final int MESSAGE_BLUETOOTH_DATA_READ     = 201;
+    public static final int MESSAGE_BLUETOOTH_DATA_WRITE    = 202;
+    public static final int MESSAGE_BLUETOOTH_TOAST         = 203;
 
     private Context mContext = null;
     private MainViewFragment mMainViewFragment = null;
@@ -85,6 +88,10 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
     private Calendar mRequestCalendar = null;
     private long mModifiedDateTime = 0L;
     private int mCurrentViewState = Common.SCREEN_MAIN;
+    private int mCurrentSettingType = -1;
+    private BluetoothController mBluetoothController = null;
+
+
 
     public MainContainerPresent(Context context)
     {
@@ -93,6 +100,7 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
         mMainContainerContractView = (MainContainerContract.View)mContext;
         mPhotoInformationDBHelper = PhotoInformationDBHelper.getInstance(mContext);
         mWeakReferenceHandler = new WeakReferenceHandler((MainContainerActivity)mContext);
+        mBluetoothController = new BluetoothController(mContext, mWeakReferenceHandler);
         mModifiedCheckList = new HashMap<>();
         mCurrentViewState = Common.SCREEN_MAIN;
         settingInformation();
@@ -220,11 +228,41 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
         ((AppCompatActivity) mContext).overridePendingTransition(R.anim.slide_left_in, R.anim.slide_left_out);
     }
 
-    @Override
-    public void acvitityResult(int requestCode, int resultCode, Intent data)
+
+    /**
+     * Makes this device discoverable for 300 seconds (5 minutes).
+     */
+    private void enableBluetoothDiscoverable()
     {
-        Log.f("requestCode : "+requestCode+", resultCode : "+resultCode);
-        if(resultCode != ((AppCompatActivity)mContext).RESULT_OK)
+        Log.i("mBluetoothController.isConnectDiscoverable() : "+mBluetoothController.isConnectDiscoverable());
+        if(mBluetoothController.isConnectDiscoverable() == false)
+        {
+            mBluetoothController.startConnectDiscoverable(REQUEST_BLUETOOTH_DISCOVERY);
+        }
+    }
+
+    private void enableBluetooth()
+    {
+        mBluetoothController.startBluetoothEnable(REQUEST_BLUETOOTH_ENABLE);
+    }
+
+    @Override
+    public void acvitityResult(int requestCode, int resultCode, Intent data) {
+        Log.f("requestCode : " + requestCode + ", resultCode : " + resultCode);
+
+        if(requestCode == REQUEST_BLUETOOTH_ENABLE && resultCode != ((AppCompatActivity) mContext).RESULT_OK)
+        {
+            Log.i("Bluetooth enable fail");
+            mMainContainerContractView.showMessage(mContext.getResources().getString(R.string.message_not_enable_bluetooth),
+                    mContext.getResources().getColor(R.color.color_white));
+        }
+        else if(requestCode == REQUEST_BLUETOOTH_DISCOVERY && resultCode != ((AppCompatActivity) mContext).RESULT_OK)
+        {
+            Log.i("Bluetooth discovery fail");
+            mMainContainerContractView.showMessage(mContext.getResources().getString(R.string.message_not_discovery_enable),
+                    mContext.getResources().getColor(R.color.color_white));
+        }
+        else if (resultCode != ((AppCompatActivity)mContext).RESULT_OK)
         {
             return;
         }
@@ -256,6 +294,47 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
                 break;
             case REQUEST_SETTING:
                 //TODO : BLUETOOTH 선택에 따른 행동
+
+
+                mCurrentSettingType = data.getIntExtra(Common.INTENT_SETTING_SELECT_INDEX, 0);
+
+                switch (mCurrentSettingType) {
+                    case Common.RESULT_SETTING_BLUETOOTH_SEND:
+                        Log.i("Send mBluetoothController.isBluetoothEnable() : " + mBluetoothController.isBluetoothEnable());
+                        if (mBluetoothController.isBluetoothEnable() == false) {
+                            enableBluetooth();
+                        } else {
+                            //TODO: 리스트 팝업 보이게 실행
+                            //mBluetoothController.start();
+                        }
+                        break;
+                    case Common.RESULT_SETTING_BLUETOOTH_RECEIVE:
+                        Log.i("Receive");
+
+                        if (mBluetoothController.isBluetoothEnable() == false) {
+                            enableBluetooth();
+                        } else {
+                            enableBluetoothDiscoverable();
+                        }
+                        break;
+                }
+                break;
+            case REQUEST_BLUETOOTH_ENABLE:
+
+
+                Log.i("Bluetooth enable success");
+                if (mCurrentSettingType == Common.RESULT_SETTING_BLUETOOTH_RECEIVE) {
+                    enableBluetoothDiscoverable();
+                } else if (mCurrentSettingType == Common.RESULT_SETTING_BLUETOOTH_SEND) {
+
+                }
+
+
+                break;
+            case REQUEST_BLUETOOTH_DISCOVERY:
+                Log.i("Bluetooth discovery success");
+
+                //TODO: 연결팝업 보여주기
                 break;
 
         }
@@ -314,7 +393,15 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
                 PhotoInformationObject updatePhotoInformationObject = mPhotoInformationDBHelper.getPhotoInformationObject(mModifiedInformationObject.getKeyID());
                 mMonthListViewFragment.notifyChanged(mModifiedItemPosition,updatePhotoInformationObject);
                 break;
-
+            case MESSAGE_BLUETOOTH_DATA_READ:
+                //TODO: 데이터를 받는 처리 후 압축을 푼다. 데이터를 세팅한다.
+                break;
+            case MESSAGE_BLUETOOTH_DATA_WRITE:
+                //TODO: 압축하여 데이터를 보내고 완료 후 화면을 갱신
+                break;
+            case MESSAGE_BLUETOOTH_TOAST:
+                mMainContainerContractView.showMessage((String)msg.obj, mContext.getResources().getColor(R.color.color_white));
+                break;
 
         }
     }

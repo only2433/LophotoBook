@@ -4,7 +4,7 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 
 import com.littlefox.logmonitor.Log;
-import com.starbrunch.couple.photo.frame.main.bluetooth.common.Constants;
+import com.starbrunch.couple.photo.frame.main.bluetooth.BluetoothController;
 import com.starbrunch.couple.photo.frame.main.bluetooth.listener.BluetoothThreadCallback;
 
 import java.io.IOException;
@@ -26,13 +26,13 @@ public class ConnectingThread extends Thread
 
         try
         {
-            socket = device.createRfcommSocketToServiceRecord(Constants.RFCCMM_UUID);
+            socket = device.createRfcommSocketToServiceRecord(BluetoothController.RFCCMM_UUID);
         }catch(Exception e)
         {
             Log.f("Message : "+ e.getMessage());
         }
         mBluetoothSocket = socket;
-        mBluetoothThreadCallback.sendConnectStatus(Constants.STATE_CONNECTING);
+        mBluetoothThreadCallback.sendConnectStatus(BluetoothController.STATE_CONNECTING);
     }
 
 
@@ -59,7 +59,7 @@ public class ConnectingThread extends Thread
             {
                 Log.f("IO Message : "+ e1.getMessage());
             }
-            mBluetoothThreadCallback.sendConnectStatus(Constants.STATE_CONNECTION_FAILED);
+            mBluetoothThreadCallback.sendConnectStatus(BluetoothController.STATE_CONNECTION_FAILED);
         }
 
         synchronized (this)
