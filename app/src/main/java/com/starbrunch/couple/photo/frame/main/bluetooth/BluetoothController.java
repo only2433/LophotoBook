@@ -2,6 +2,7 @@ package com.starbrunch.couple.photo.frame.main.bluetooth;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.content.Intent;
@@ -17,6 +18,8 @@ import com.starbrunch.couple.photo.frame.main.contract.presenter.MainContainerPr
 import com.starbrunch.couple.photo.frame.main.handler.WeakReferenceHandler;
 import com.starbrunch.couple.photo.frame.main.object.MessageObject;
 
+import java.io.IOException;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -252,16 +255,32 @@ public class BluetoothController implements BluetoothThreadCallback
 
     }
 
+    public boolean isStartDiscovering()
+    {
+        return mBluetoothAdapter.isDiscovering();
+    }
+
+    public Set<BluetoothDevice> getBondedDevices()
+    {
+        return mBluetoothAdapter.getBondedDevices();
+    }
+
     @Override
     public void startDiscovery()
     {
-        mBluetoothAdapter.startDiscovery();
+        if(mBluetoothAdapter != null)
+        {
+            mBluetoothAdapter.startDiscovery();
+        }
     }
 
     @Override
     public void cancelDiscovery()
     {
-        mBluetoothAdapter.cancelDiscovery();
+        if(mBluetoothAdapter != null)
+        {
+            mBluetoothAdapter.cancelDiscovery();
+        }
     }
 
     @Override
@@ -300,9 +319,17 @@ public class BluetoothController implements BluetoothThreadCallback
     }
 
     @Override
-    public BluetoothAdapter getBluetoothAdapter()
+    public BluetoothServerSocket listenService(String serviceName, UUID serviceUUID)
     {
-        return mBluetoothAdapter;
+        try
+        {
+            return mBluetoothAdapter.listenUsingRfcommWithServiceRecord(serviceName, serviceUUID);
+        }
+        catch (IOException e)
+        {
+            Log.f("Exception : "+ e.getMessage());
+            return null;
+        }
     }
 
     @Override
@@ -312,8 +339,8 @@ public class BluetoothController implements BluetoothThreadCallback
     }
 
     @Override
-    public void destroyConnectingThread()
+    public synchronized void destroyConnectingThread()
     {
-
+        mConnectingThread = null;
     }
 }

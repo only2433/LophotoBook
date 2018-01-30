@@ -1,8 +1,13 @@
 package com.starbrunch.couple.photo.frame.main.contract.presenter;
 
 import android.Manifest;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothClass;
+import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -27,6 +32,7 @@ import com.starbrunch.couple.photo.frame.main.common.Common;
 import com.starbrunch.couple.photo.frame.main.common.CommonUtils;
 import com.starbrunch.couple.photo.frame.main.contract.MainContainerContract;
 import com.starbrunch.couple.photo.frame.main.database.PhotoInformationDBHelper;
+import com.starbrunch.couple.photo.frame.main.dialog.BluetoothScanDialog;
 import com.starbrunch.couple.photo.frame.main.fragment.MainViewFragment;
 import com.starbrunch.couple.photo.frame.main.fragment.ModifiedInformationFragment;
 import com.starbrunch.couple.photo.frame.main.fragment.MonthListViewFragment;
@@ -37,6 +43,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Set;
 
 /**
  * Created by 정재현 on 2017-12-21.
@@ -90,8 +97,7 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
     private int mCurrentViewState = Common.SCREEN_MAIN;
     private int mCurrentSettingType = -1;
     private BluetoothController mBluetoothController = null;
-
-
+    private BluetoothScanDialog mBluetoothScanDialog = null;
 
     public MainContainerPresent(Context context)
     {
@@ -104,11 +110,12 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
         mModifiedCheckList = new HashMap<>();
         mCurrentViewState = Common.SCREEN_MAIN;
         settingInformation();
-
+        initReceiver();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
         {
             CommonUtils.getInstance(mContext).requestPermission(new String[] { Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                    Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSION_REQUEST);
+                    Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION}, PERMISSION_REQUEST);
         }
 
     }
@@ -123,8 +130,21 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
     public void stop(){}
 
     @Override
-    public void destroy(){}
+    public void destroy()
+    {
+        mBluetoothController.cancelDiscovery();
 
+        ((AppCompatActivity)mContext).unregisterReceiver(mBluetoothScanReceiver);
+    }
+
+    private void initReceiver()
+    {
+        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+        ((AppCompatActivity)mContext).registerReceiver(mBluetoothScanReceiver, filter);
+
+        filter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+        ((AppCompatActivity)mContext).registerReceiver(mBluetoothScanReceiver, filter);
+    }
 
     private void settingInformation()
     {
@@ -166,7 +186,6 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
         mMainContainerContractView.setMonthNumberText(mSelectMonthColor, mCurrentPhotoInformationObjectList.size());
         mMainContainerContractView.changeTitleAnimationText(Common.MONTH_TEXT_LIST[mMonthPosition]);
     }
-
 
     private void startModifiedInformationFragment(Pair<View, String> item)
     {
@@ -228,6 +247,59 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
         ((AppCompatActivity) mContext).overridePendingTransition(R.anim.slide_left_in, R.anim.slide_left_out);
     }
 
+    private void showBluetoothScanDialog()
+    {
+        if(mBluetoothScanDialog == null)
+        {
+            mBluetoothScanDialog = new BluetoothScanDialog(mContext);
+            mBluetoothScanDialog.setBluetoothScanListener(mBluetoothScanListener);
+        }
+        mBluetoothScanDialog.show();
+        mBluetoothScanDialog.showLoading();
+    }
+
+    private void hideBluetoothScanDialog()
+    {
+        if(mBluetoothScanDialog != null)
+        {
+            mBluetoothScanDialog.dismiss();
+            mBluetoothScanDialog = null;
+        }
+    }
+
+    private void startDiscovery()
+    {
+        setPairBlutooth();
+        if(mBluetoothController.isStartDiscovering())
+        {
+            mBluetoothController.cancelDiscovery();
+        }
+
+        mBluetoothController.startDiscovery();
+    }
+
+    private void setPairBlutooth()
+    {
+        if(mBluetoothScanDialog != null)
+        {
+            Set<BluetoothDevice> pairedDevices = mBluetoothController.getBondedDevices();
+
+            if(pairedDevices.size() > 0)
+            {
+                for(BluetoothDevice device : pairedDevices)
+                {
+                    Log.i("device.getName() : "+device.getName()+", device.getAddress() : "+device.getAddress() +", type : " +device.getBluetoothClass().getDeviceClass());
+
+                    if(device.getBluetoothClass().getDeviceClass() == BluetoothClass.Device.PHONE_SMART)
+                    {
+                        mBluetoothScanDialog.addData(device.getName(), device.getAddress());
+                    }
+
+                }
+            }
+        }
+    }
+
 
     /**
      * Makes this device discoverable for 300 seconds (5 minutes).
@@ -235,10 +307,9 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
     private void enableBluetoothDiscoverable()
     {
         Log.i("mBluetoothController.isConnectDiscoverable() : "+mBluetoothController.isConnectDiscoverable());
-        if(mBluetoothController.isConnectDiscoverable() == false)
-        {
-            mBluetoothController.startConnectDiscoverable(REQUEST_BLUETOOTH_DISCOVERY);
-        }
+
+
+        mBluetoothController.startConnectDiscoverable(REQUEST_BLUETOOTH_DISCOVERY);
     }
 
     private void enableBluetooth()
@@ -250,19 +321,19 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
     public void acvitityResult(int requestCode, int resultCode, Intent data) {
         Log.f("requestCode : " + requestCode + ", resultCode : " + resultCode);
 
-        if(requestCode == REQUEST_BLUETOOTH_ENABLE && resultCode != ((AppCompatActivity) mContext).RESULT_OK)
+        if(requestCode == REQUEST_BLUETOOTH_ENABLE && resultCode == ((AppCompatActivity) mContext).RESULT_CANCELED)
         {
             Log.i("Bluetooth enable fail");
             mMainContainerContractView.showMessage(mContext.getResources().getString(R.string.message_not_enable_bluetooth),
                     mContext.getResources().getColor(R.color.color_white));
         }
-        else if(requestCode == REQUEST_BLUETOOTH_DISCOVERY && resultCode != ((AppCompatActivity) mContext).RESULT_OK)
+        else if(requestCode == REQUEST_BLUETOOTH_DISCOVERY && resultCode == ((AppCompatActivity) mContext).RESULT_CANCELED)
         {
             Log.i("Bluetooth discovery fail");
             mMainContainerContractView.showMessage(mContext.getResources().getString(R.string.message_not_discovery_enable),
                     mContext.getResources().getColor(R.color.color_white));
         }
-        else if (resultCode != ((AppCompatActivity)mContext).RESULT_OK)
+        else if (resultCode == ((AppCompatActivity)mContext).RESULT_CANCELED)
         {
             return;
         }
@@ -294,47 +365,55 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
                 break;
             case REQUEST_SETTING:
                 //TODO : BLUETOOTH 선택에 따른 행동
-
-
                 mCurrentSettingType = data.getIntExtra(Common.INTENT_SETTING_SELECT_INDEX, 0);
-
-                switch (mCurrentSettingType) {
+                Log.i("isBluetoothEnable() : " + mBluetoothController.isBluetoothEnable());
+                switch (mCurrentSettingType)
+                {
                     case Common.RESULT_SETTING_BLUETOOTH_SEND:
-                        Log.i("Send mBluetoothController.isBluetoothEnable() : " + mBluetoothController.isBluetoothEnable());
-                        if (mBluetoothController.isBluetoothEnable() == false) {
-                            enableBluetooth();
-                        } else {
-                            //TODO: 리스트 팝업 보이게 실행
-                            //mBluetoothController.start();
-                        }
-                        break;
                     case Common.RESULT_SETTING_BLUETOOTH_RECEIVE:
-                        Log.i("Receive");
 
-                        if (mBluetoothController.isBluetoothEnable() == false) {
+                        if (mBluetoothController.isBluetoothEnable() == false)
+                        {
                             enableBluetooth();
-                        } else {
-                            enableBluetoothDiscoverable();
+                        }
+                        else
+                        {
+                            if (mCurrentSettingType == Common.RESULT_SETTING_BLUETOOTH_SEND)
+                            {
+                                Log.i("Send");
+                                showBluetoothScanDialog();
+                                startDiscovery();
+                            }
+                            else if(mCurrentSettingType == Common.RESULT_SETTING_BLUETOOTH_RECEIVE)
+                            {
+                                Log.i("Receive");
+                                enableBluetoothDiscoverable();
+                            }
+
                         }
                         break;
+
                 }
                 break;
             case REQUEST_BLUETOOTH_ENABLE:
 
-
-                Log.i("Bluetooth enable success");
-                if (mCurrentSettingType == Common.RESULT_SETTING_BLUETOOTH_RECEIVE) {
-                    enableBluetoothDiscoverable();
-                } else if (mCurrentSettingType == Common.RESULT_SETTING_BLUETOOTH_SEND) {
-
+                Log.i("Bluetooth enable success : "+mCurrentSettingType);
+                if (mCurrentSettingType == Common.RESULT_SETTING_BLUETOOTH_SEND)
+                {
+                    showBluetoothScanDialog();
+                    startDiscovery();
                 }
-
+                else
+                {
+                    enableBluetoothDiscoverable();
+                }
 
                 break;
             case REQUEST_BLUETOOTH_DISCOVERY:
-                Log.i("Bluetooth discovery success");
+                Log.i("Bluetooth discovery success : "+mCurrentSettingType);
 
-                //TODO: 연결팝업 보여주기
+                //TODO: 리시브 완료되면 행동
+
                 break;
 
         }
@@ -564,8 +643,63 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
         }
 
         mWeakReferenceHandler.sendEmptyMessageDelayed(MESSAGE_SAVE_COMPLETE, 2000);
-
     }
+
+    private final BroadcastReceiver mBluetoothScanReceiver = new BroadcastReceiver()
+    {
+        @Override
+        public void onReceive(Context context, Intent intent)
+        {
+            String action = intent.getAction();
+
+            if(action.equals(BluetoothDevice.ACTION_FOUND))
+            {
+                if(mBluetoothScanDialog != null)
+                {
+                    BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+
+                    Log.i("Name : "+device.getName()+", Address : "+device.getAddress()+", type : " +device.getBluetoothClass().getDeviceClass());
+                    if(device.getBondState() != BluetoothDevice.BOND_BONDED &&
+                            device.getBluetoothClass().getDeviceClass() == BluetoothClass.Device.PHONE_SMART)
+                    {
+                        mBluetoothScanDialog.addData(device.getName(), device.getAddress());
+                    }
+                }
+            }
+            else if(action.equals(BluetoothAdapter.ACTION_DISCOVERY_FINISHED))
+            {
+                Log.i("ACTION_DISCOVERY_FINISHED ");
+                if(mBluetoothScanDialog != null)
+                {
+                    mBluetoothScanDialog.showData();
+                }
+            }
+        }
+    };
+
+    private BluetoothScanDialog.BluetoothScanListener mBluetoothScanListener = new BluetoothScanDialog.BluetoothScanListener() {
+
+        @Override
+        public void onSelectDevice(String deviceAddress)
+        {
+            Log.i("deviceAddress : "+deviceAddress);
+        }
+
+        @Override
+        public void onClickScan()
+        {
+            Log.i("onClickScan ");
+            mBluetoothScanDialog.showLoading();
+            startDiscovery();
+        }
+
+        @Override
+        public void onClickCancel()
+        {
+            Log.i("onClickCancel ");
+            hideBluetoothScanDialog();
+        }
+    };
 
 
 }

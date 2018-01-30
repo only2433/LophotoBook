@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <com.ssomai.android.scalablelayout.ScalableLayout
+        android:id="@+id/_adapterSearchBaseLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:scale_base_width="1280"
+        app:scale_base_height="180">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_speaker_phone_black_24dp_gray"
+            app:scale_left="40"
+            app:scale_top="40"
+            app:scale_width="100"
+            app:scale_height="100"/>
+        <TextView
+        android:id="@+id/_adapterDeviceInformationText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Galexy S8"
+        android:lineSpacingExtra="5dp"
+        android:textColor="@color/color_606565"
+        android:gravity="center_vertical"
+        app:scale_left="180"
+        app:scale_top="0"
+        app:scale_width="1000"
+        app:scale_height="180"
+        app:scale_textsize="60"/>
+
+
+    </com.ssomai.android.scalablelayout.ScalableLayout>
+
+</LinearLayout>
+

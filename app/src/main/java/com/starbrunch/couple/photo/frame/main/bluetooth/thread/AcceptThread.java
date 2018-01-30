@@ -27,7 +27,7 @@ public class AcceptThread extends Thread
 
         try
         {
-            bluetoothServerSocket = mBluetoothThreadCallback.getBluetoothAdapter().listenUsingInsecureRfcommWithServiceRecord(
+            bluetoothServerSocket = mBluetoothThreadCallback.listenService(
                     BluetoothController.SERVICE_NAME, BluetoothController.RFCCMM_UUID);
 
         }catch(Exception e)
