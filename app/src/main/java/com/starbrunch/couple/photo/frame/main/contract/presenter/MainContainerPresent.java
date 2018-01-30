@@ -107,6 +107,7 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
         mPhotoInformationDBHelper = PhotoInformationDBHelper.getInstance(mContext);
         mWeakReferenceHandler = new WeakReferenceHandler((MainContainerActivity)mContext);
         mBluetoothController = new BluetoothController(mContext, mWeakReferenceHandler);
+
         mModifiedCheckList = new HashMap<>();
         mCurrentViewState = Common.SCREEN_MAIN;
         settingInformation();
