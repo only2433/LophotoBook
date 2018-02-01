@@ -2,10 +2,10 @@ package com.starbrunch.couple.photo.frame.main.bluetooth;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 
 import com.littlefox.logmonitor.Log;
@@ -18,7 +18,6 @@ import com.starbrunch.couple.photo.frame.main.contract.presenter.MainContainerPr
 import com.starbrunch.couple.photo.frame.main.handler.WeakReferenceHandler;
 import com.starbrunch.couple.photo.frame.main.object.MessageObject;
 
-import java.io.IOException;
 import java.util.Set;
 import java.util.UUID;
 
@@ -100,7 +99,7 @@ public class BluetoothController implements BluetoothThreadCallback
     {
         if(mAcceptThread == null)
         {
-            mAcceptThread = new AcceptThread(this);
+            mAcceptThread = new AcceptThread(mBluetoothAdapter,this);
             mAcceptThread.start();
         }
     }
@@ -190,7 +189,10 @@ public class BluetoothController implements BluetoothThreadCallback
 
     private void connectionFailed()
     {
-        mWeakReferenceHandler.obtainMessage(MainContainerPresent.MESSAGE_BLUETOOTH_TOAST, -1,-1, mContext.getResources().getString(R.string.message_connection_failed));
+        Message message = Message.obtain();
+        message.what = MainContainerPresent.MESSAGE_BLUETOOTH_TOAST;
+        message.obj = mContext.getResources().getString(R.string.message_connection_failed);
+        mWeakReferenceHandler.sendMessage(message);
         mConnectStatus = STATE_NONE;
         updateConnectStatus();
 
@@ -199,7 +201,10 @@ public class BluetoothController implements BluetoothThreadCallback
 
     private void connectionLost()
     {
-        mWeakReferenceHandler.obtainMessage(MainContainerPresent.MESSAGE_BLUETOOTH_TOAST, -1,-1, mContext.getResources().getString(R.string.message_connection_lost));
+        Message message = Message.obtain();
+        message.what = MainContainerPresent.MESSAGE_BLUETOOTH_TOAST;
+        message.obj = mContext.getResources().getString(R.string.message_connection_lost);
+        mWeakReferenceHandler.sendMessage(message);
         mConnectStatus = STATE_NONE;
         updateConnectStatus();
         start();
@@ -235,6 +240,12 @@ public class BluetoothController implements BluetoothThreadCallback
         Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
         discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
         ((AppCompatActivity)mContext).startActivityForResult(discoverableIntent, requestCode);
+    }
+
+    public BluetoothDevice getRemoteDevice(String address)
+    {
+        BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(address);
+        return device;
     }
 
     @Override
@@ -289,11 +300,13 @@ public class BluetoothController implements BluetoothThreadCallback
         cancelConnectingThread();
         cancelConnectedThread();
         startConnectingThread(device);
+        updateConnectStatus();
     }
 
     @Override
     public void connected(BluetoothSocket socket, BluetoothDevice device)
     {
+        Log.i("");
         cancelConnectingThread();
         cancelConnectedThread();
         cancelAcceptThread();
@@ -301,8 +314,12 @@ public class BluetoothController implements BluetoothThreadCallback
         startConnectedThread(socket);
 
         mConnectDeviceName = device.getName();
-        mWeakReferenceHandler.obtainMessage(MainContainerPresent.MESSAGE_BLUETOOTH_TOAST, -1,-1,
-                mContext.getResources().getString(R.string.message_connect_to_device)+" "+device.getName());
+
+        Message message = Message.obtain();
+        message.what = MainContainerPresent.MESSAGE_BLUETOOTH_TOAST;
+        message.obj = mContext.getResources().getString(R.string.message_connect_to_device)+" "+device.getName();
+
+        mWeakReferenceHandler.sendMessage(message);
         updateConnectStatus();
     }
 
@@ -315,20 +332,6 @@ public class BluetoothController implements BluetoothThreadCallback
                 break;
             case MESSAGE_WRITE:
                 break;
-        }
-    }
-
-    @Override
-    public BluetoothServerSocket listenService(String serviceName, UUID serviceUUID)
-    {
-        try
-        {
-            return mBluetoothAdapter.listenUsingRfcommWithServiceRecord(serviceName, serviceUUID);
-        }
-        catch (IOException e)
-        {
-            Log.f("Exception : "+ e.getMessage());
-            return null;
         }
     }
 

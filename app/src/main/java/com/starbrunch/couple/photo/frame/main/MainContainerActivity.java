@@ -115,7 +115,7 @@ public class MainContainerActivity extends BaseActivity implements MainContainer
     }
 
     @Override
-    public void ininFont()
+    public void initFont()
     {
         _MainBaseTitleText.setTypeface(FontManager.getInstance(this).getMainTitleFont());
         _TitleMonthSubTitle.setTypeface(FontManager.getInstance(this).getDefaultLightTextFont());
@@ -424,7 +424,7 @@ public class MainContainerActivity extends BaseActivity implements MainContainer
     @Override
     public void showMessage(String message, int color)
     {
-        Log.i("");
+        Log.i("message : "+message);
         CommonUtils.getInstance(this).showSnackMessage(_CoordinatorMainLayout, message, color, Gravity.CENTER);
     }
 

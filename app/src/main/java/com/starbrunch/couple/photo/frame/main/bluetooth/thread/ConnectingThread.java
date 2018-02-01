@@ -22,6 +22,7 @@ public class ConnectingThread extends Thread
     public ConnectingThread(BluetoothDevice device, BluetoothThreadCallback bluetoothThreadCallback)
     {
         mBluetoothDevice = device;
+        mBluetoothThreadCallback = bluetoothThreadCallback;
         BluetoothSocket socket = null;
 
         try

@@ -34,6 +34,7 @@ public class BluetoothScanDialog extends Dialog
         public void onSelectDevice(String deviceAddress);
         public void onClickScan();
         public void onClickCancel();
+        public void onDismiss();
     }
 
     @BindView(R.id._searchTitleText)
@@ -127,6 +128,11 @@ public class BluetoothScanDialog extends Dialog
         }
     }
 
+    @Override
+    public void dismiss()
+    {
+        super.dismiss();
+    }
 
     @OnClick({R.id._buttonSearchText, R.id._buttonCancelText})
     public void onClick(View view)
@@ -170,6 +176,7 @@ public class BluetoothScanDialog extends Dialog
                 @Override
                 public void onClick(View v)
                 {
+                    Log.i("position : "+ position + " , Address : "+ mBluetoothScanInformationList.get(position).getScanDeviceAddress());
                     mBluetoothScanListener.onSelectDevice(mBluetoothScanInformationList.get(position).getScanDeviceAddress());
                 }
             });

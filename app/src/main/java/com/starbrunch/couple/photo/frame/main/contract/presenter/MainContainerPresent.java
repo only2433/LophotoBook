@@ -133,9 +133,11 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
     @Override
     public void destroy()
     {
-        mBluetoothController.cancelDiscovery();
-
-        ((AppCompatActivity)mContext).unregisterReceiver(mBluetoothScanReceiver);
+        Log.i("");
+        if (mBluetoothController != null)
+        {
+            mBluetoothController.stop();
+        }
     }
 
     private void initReceiver()
@@ -149,7 +151,7 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
 
     private void settingInformation()
     {
-        mMainContainerContractView.ininFont();
+        mMainContainerContractView.initFont();
         mMainContainerContractView.initView();
 
         mFragmentManager = ((AppCompatActivity)mContext).getSupportFragmentManager();
@@ -373,6 +375,8 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
                     case Common.RESULT_SETTING_BLUETOOTH_SEND:
                     case Common.RESULT_SETTING_BLUETOOTH_RECEIVE:
 
+
+
                         if (mBluetoothController.isBluetoothEnable() == false)
                         {
                             enableBluetooth();
@@ -387,6 +391,7 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
                             }
                             else if(mCurrentSettingType == Common.RESULT_SETTING_BLUETOOTH_RECEIVE)
                             {
+                                mBluetoothController.start();
                                 Log.i("Receive");
                                 enableBluetoothDiscoverable();
                             }
@@ -401,8 +406,10 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
                 Log.i("Bluetooth enable success : "+mCurrentSettingType);
                 if (mCurrentSettingType == Common.RESULT_SETTING_BLUETOOTH_SEND)
                 {
+
                     showBluetoothScanDialog();
                     startDiscovery();
+
                 }
                 else
                 {
@@ -413,7 +420,6 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
             case REQUEST_BLUETOOTH_DISCOVERY:
                 Log.i("Bluetooth discovery success : "+mCurrentSettingType);
 
-                //TODO: 리시브 완료되면 행동
 
                 break;
 
@@ -446,6 +452,7 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
     @Override
     public void sendMessageEvent(Message msg)
     {
+        Log.i("Message what : "+ msg.what);
         switch (msg.what)
         {
 
@@ -480,6 +487,7 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
                 //TODO: 압축하여 데이터를 보내고 완료 후 화면을 갱신
                 break;
             case MESSAGE_BLUETOOTH_TOAST:
+
                 mMainContainerContractView.showMessage((String)msg.obj, mContext.getResources().getColor(R.color.color_white));
                 break;
 
@@ -684,6 +692,9 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
         public void onSelectDevice(String deviceAddress)
         {
             Log.i("deviceAddress : "+deviceAddress);
+            hideBluetoothScanDialog();
+            BluetoothDevice device = mBluetoothController.getRemoteDevice(deviceAddress);
+            mBluetoothController.connecting(device);
         }
 
         @Override
@@ -699,6 +710,15 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
         {
             Log.i("onClickCancel ");
             hideBluetoothScanDialog();
+        }
+
+        @Override
+        public void onDismiss()
+        {
+            Log.i("onDismiss ");
+            mBluetoothController.cancelDiscovery();
+
+            ((AppCompatActivity)mContext).unregisterReceiver(mBluetoothScanReceiver);
         }
     };
 

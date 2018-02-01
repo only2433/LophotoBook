@@ -1,5 +1,6 @@
 package com.starbrunch.couple.photo.frame.main.bluetooth.thread;
 
+import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 
@@ -20,14 +21,14 @@ public class AcceptThread extends Thread
     private String mBluetoothServerSocketType = "";
     private BluetoothThreadCallback mBluetoothThreadCallback = null;
 
-    public AcceptThread(BluetoothThreadCallback bluetoothThreadCallback)
+    public AcceptThread(BluetoothAdapter adapter, BluetoothThreadCallback bluetoothThreadCallback)
     {
         BluetoothServerSocket bluetoothServerSocket = null;
         mBluetoothThreadCallback = bluetoothThreadCallback;
 
         try
         {
-            bluetoothServerSocket = mBluetoothThreadCallback.listenService(
+            bluetoothServerSocket = adapter.listenUsingRfcommWithServiceRecord(
                     BluetoothController.SERVICE_NAME, BluetoothController.RFCCMM_UUID);
 
         }catch(Exception e)

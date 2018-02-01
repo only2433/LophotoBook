@@ -23,7 +23,7 @@ public class SettingContainerPresent implements SettingContainerContract.Present
     {
         mContext = context;
         mSettingContainerContractView = (SettingContainerContract.View)mContext;
-        mSettingContainerContractView.ininFont();
+        mSettingContainerContractView.initFont();
         mSettingContainerContractView.initView();
     }
 

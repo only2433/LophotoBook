@@ -104,13 +104,14 @@ public class SettingContainerActivity extends BaseActivity implements SettingCon
     }
 
     @Override
-    public void ininFont()
+    public void initFont()
     {
         _SettingTitleText.setTypeface(FontManager.getInstance(this).getMainTitleFont());
         _SettingBluetoothSubtitleText.setTypeface(FontManager.getInstance(this).getDefaultLightTextFont());
         _SettingSendBookText.setTypeface(FontManager.getInstance(this).getMainTitleFont());
         _SettingReceiveBookText.setTypeface(FontManager.getInstance(this).getMainTitleFont());
     }
+
 
     @OnClick({R.id._settingSendButton, R.id._settingReceiveButton})
     public void onClick(View view)

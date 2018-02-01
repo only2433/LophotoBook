@@ -13,7 +13,7 @@ public class BaseContract
     public interface View
     {
         void initView();
-        void ininFont();
+        void initFont();
     }
     public interface Presenter
     {
