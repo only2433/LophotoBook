@@ -1,5 +1,7 @@
 package com.starbrunch.couple.photo.frame.main.common;
 
+import android.os.Environment;
+
 /**
  * Created by 정재현 on 2017-12-13.
  */
@@ -11,6 +13,11 @@ public class Common
     public static final String PACKAGE_NAME ="com.starbrunch.couple.photo.frame.main";
     public static final String PATH_APP_ROOT	 = "/data/data/" + PACKAGE_NAME + "/files/";
     public static final String PATH_IMAGE_ROOT = PATH_APP_ROOT+"images/";
+
+    public static final String PATH_BLUETOOTH_ZIP_ROOT = Environment.getExternalStorageDirectory()+"/CouplePhotoFrame/";
+    public static final String ZIP_FILE_NAME = "couplePhotoFrame.zip";
+    public static final String PHOTO_FRAME_INFORMATION_FILE_NAME = "photo_frame_information.json";
+
 
     public static final String SHARED_PHOTO_IMAGE = "shared_photo_image";
 

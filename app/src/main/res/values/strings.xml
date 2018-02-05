@@ -3,6 +3,8 @@
     <string name="title_setting">SETTING</string>
     <string name="title_bluetooth">BLUETOOTH</string>
     <string name="title_search">SEARCH</string>
+    <string name="title_send">SEND</string>
+    <string name="title_receive">RECEIVE</string>
     <string name="message_empty_picture_data">Post pictures of Your happy moments</string>
     <string name="message_question_delete_data">Do You want to delete this?</string>
     <string name="message_connection_failed">Unable to connect device</string>
@@ -11,6 +13,9 @@
     <string name="message_not_enable_bluetooth">you need to enable bluetooth to send photo</string>
     <string name="message_not_discovery_enable">you need to permit Bluetooth permission</string>
     <string name="message_search_fail">Please You must ready for connected device</string>
+
+    <string name="message_data_send_information">Attempting to send book to</string>
+    <string name="message_data_receive_information">Attempting to receive book from</string>
     <string name="button_ok">OK</string>
     <string name="button_cancel">Cancel</string>
     <string name="button_save">Save</string>

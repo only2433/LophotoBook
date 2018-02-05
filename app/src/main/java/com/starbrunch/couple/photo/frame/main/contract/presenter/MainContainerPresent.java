@@ -33,6 +33,7 @@ import com.starbrunch.couple.photo.frame.main.common.CommonUtils;
 import com.starbrunch.couple.photo.frame.main.contract.MainContainerContract;
 import com.starbrunch.couple.photo.frame.main.database.PhotoInformationDBHelper;
 import com.starbrunch.couple.photo.frame.main.dialog.BluetoothScanDialog;
+import com.starbrunch.couple.photo.frame.main.fragment.DataCommunicateFragment;
 import com.starbrunch.couple.photo.frame.main.fragment.MainViewFragment;
 import com.starbrunch.couple.photo.frame.main.fragment.ModifiedInformationFragment;
 import com.starbrunch.couple.photo.frame.main.fragment.MonthListViewFragment;
@@ -110,7 +111,8 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
 
         mModifiedCheckList = new HashMap<>();
         mCurrentViewState = Common.SCREEN_MAIN;
-        settingInformation();
+        //settingInformation();
+        settingInformationTest();
         initReceiver();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
         {
@@ -162,6 +164,21 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
                 .replace(R.id._mainContainer, mMainViewFragment)
                 .commit();
         mMainContainerContractView.showSettingButton();
+    }
+
+    private void settingInformationTest()
+    {
+        mMainContainerContractView.initFont();
+        mMainContainerContractView.initView();
+
+        mMainContainerContractView.hideMainTitleLayout();
+        mMainContainerContractView.hideFloatButton();
+
+        mFragmentManager = ((AppCompatActivity)mContext).getSupportFragmentManager();
+        DataCommunicateFragment fragment = new DataCommunicateFragment();
+        mFragmentManager.beginTransaction()
+                .replace(R.id._mainContainer, fragment)
+                .commit();
     }
 
     private void startMonthListViewFragment(int position)

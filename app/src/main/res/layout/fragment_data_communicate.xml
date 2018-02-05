@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <com.ssomai.android.scalablelayout.ScalableLayout
+        android:id="@+id/_baseDataLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:scale_base_width="1280"
+        app:scale_base_height="1050"
+        >
+        <ImageView
+            android:id="@+id/_baseDataLayoutBackgroundImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:scale_left="0"
+            app:scale_top ="0"
+            app:scale_width="1280"
+            app:scale_height="900"
+            android:background="@color/color_0ac8e2"/>
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/_baseDataPercentBackgroundImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/image_count_background"
+            app:civ_circle_background_color="@color/color_0ac8e2"
+
+            app:scale_top="750"
+            app:scale_left="490"
+            app:scale_width="300"
+            app:scale_height="300"/>
+
+        <TextView
+            android:id="@+id/_baseDataTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/title_send"
+            android:textColor="@color/color_white"
+            android:gravity="center"
+            app:scale_left="0"
+            app:scale_top="0"
+            app:scale_width="1280"
+            app:scale_height="300"
+            app:scale_textsize="120"
+            />
+
+        <com.littlefox.library.view.dialog.ProgressWheel
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:matProg_barColor="@color/color_white"
+            app:matProg_progressIndeterminate="true"
+            app:matProg_circleRadius="50dp"
+            app:matProg_barSpinCycleTime="@integer/anim_duration_long"
+            app:scale_top="750"
+            app:scale_left="490"
+            app:scale_width="300"
+            app:scale_height="300"/>
+
+        <TextView
+            android:id="@+id/_dataPercentProgressText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="92"
+            android:textColor="@color/color_white"
+            android:gravity="center"
+            app:scale_left="0"
+            app:scale_top="750"
+            app:scale_width="1280"
+            app:scale_height="300"
+            app:scale_textsize="120"
+            />
+
+
+    </com.ssomai.android.scalablelayout.ScalableLayout>
+
+    <com.ssomai.android.scalablelayout.ScalableLayout
+        android:id="@+id/_subDataLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:scale_base_width="1280"
+        app:scale_base_height="1200"
+        android:layout_alignParentBottom="true"
+        >
+        <TextView
+            android:id="@+id/_dataMessageText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/message_data_send_information"
+            android:textColor="@color/color_0ac8e2"
+            android:lineSpacingExtra="10dp"
+            android:gravity="center"
+            app:scale_left="0"
+            app:scale_top="0"
+            app:scale_width="1280"
+            app:scale_height="300"
+            app:scale_textsize="70"
+            />
+        <ImageView
+            android:id="@+id/_dataActionButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/color_0ac8e2"
+            android:foreground="?android:attr/selectableItemBackground"
+            app:scale_left="440"
+            app:scale_top="600"
+            app:scale_width="400"
+            app:scale_height="150"/>
+        <TextView
+            android:id="@+id/_dataButtonText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/button_cancel"
+            android:textColor="@color/color_white"
+            android:gravity="center"
+            app:scale_left="440"
+            app:scale_top="600"
+            app:scale_width="400"
+            app:scale_height="150"
+            app:scale_textsize="70"
+            />
+    </com.ssomai.android.scalablelayout.ScalableLayout>
+
+
+</RelativeLayout>
