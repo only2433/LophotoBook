@@ -14,14 +14,14 @@ import java.io.OutputStream;
  * Created by 정재현 on 2018-01-18.
  */
 
-public class ConnectedThread extends Thread
+public class ConnectedInformationThread extends Thread
 {
     private BluetoothThreadCallback mBluetoothThreadCallback = null;
     private final BluetoothSocket mBluetoothSocket;
     private final InputStream mInputStream;
     private final OutputStream mOutputStream;
 
-    public ConnectedThread(BluetoothSocket socket, BluetoothThreadCallback bluetoothThreadCallback)
+    public ConnectedInformationThread(BluetoothSocket socket, BluetoothThreadCallback bluetoothThreadCallback)
     {
         mBluetoothThreadCallback = bluetoothThreadCallback;
         mBluetoothSocket = socket;
@@ -34,7 +34,7 @@ public class ConnectedThread extends Thread
             outputStream = socket.getOutputStream();
         }catch(Exception e)
         {
-            Log.f("Message : "+ e.getMessage());
+            Log.f("Exception : "+ e.getMessage());
         }
         mInputStream = inputStream;
         mOutputStream = outputStream;
@@ -59,10 +59,10 @@ public class ConnectedThread extends Thread
                 object.argument1 = bytes;
                 object.data = buffer;
 
-                mBluetoothThreadCallback.sendMessage(BluetoothController.MESSAGE_READ, object);
+                mBluetoothThreadCallback.sendMessage(BluetoothController.MESSAGE_INFORMATION_READ, object);
             }catch(Exception e)
             {
-                Log.f("Message : "+ e.getMessage());
+                Log.f("Exception : "+ e.getMessage());
                 mBluetoothThreadCallback.sendConnectStatus(BluetoothController.STATE_CONNECTION_LOST);
             }
         }
@@ -74,14 +74,9 @@ public class ConnectedThread extends Thread
         {
             mOutputStream.write(buffer);
 
-            MessageObject object = new MessageObject();
-            object.data = buffer;
-            
-            mBluetoothThreadCallback.sendMessage(BluetoothController.MESSAGE_WRITE, object);
-
         }catch(Exception e)
         {
-            Log.f("Message : "+ e.getMessage());
+            Log.f("Exception : "+ e.getMessage());
         }
     }
 
@@ -92,7 +87,7 @@ public class ConnectedThread extends Thread
             mBluetoothSocket.close();
         }catch(Exception e)
         {
-            Log.f("Message : "+ e.getMessage());
+            Log.f("Exception : "+ e.getMessage());
         }
     }
 }

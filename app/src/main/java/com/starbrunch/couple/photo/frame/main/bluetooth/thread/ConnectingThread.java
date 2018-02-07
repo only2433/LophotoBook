@@ -68,7 +68,7 @@ public class ConnectingThread extends Thread
             mBluetoothThreadCallback.destroyConnectingThread();
         }
 
-        mBluetoothThreadCallback.connected(mBluetoothSocket, mBluetoothDevice);
+        mBluetoothThreadCallback.connectedInformation(mBluetoothSocket, mBluetoothDevice);
     }
 
     public void cancel()

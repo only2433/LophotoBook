@@ -396,6 +396,8 @@ public class CommonUtils
                 return pref.getBoolean(key, false);
             case Common.TYPE_PARAMS_INTEGER:
                 return pref.getInt(key, -1);
+			case Common.TYPE_PARAMS_LONG:
+				return pref.getLong(key, -1L);
             case Common.TYPE_PARAMS_STRING:
                 return pref.getString(key, "");
         }

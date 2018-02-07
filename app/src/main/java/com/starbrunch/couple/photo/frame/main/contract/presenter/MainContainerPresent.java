@@ -20,12 +20,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.transition.Transition;
 import android.transition.TransitionInflater;
 import android.view.View;
+import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.littlefox.library.system.async.listener.AsyncListener;
 import com.littlefox.library.system.common.FileUtils;
 import com.littlefox.logmonitor.Log;
 import com.starbrunch.couple.photo.frame.main.MainContainerActivity;
 import com.starbrunch.couple.photo.frame.main.R;
 import com.starbrunch.couple.photo.frame.main.SettingContainerActivity;
+import com.starbrunch.couple.photo.frame.main.async.CompressorAsync;
+import com.starbrunch.couple.photo.frame.main.async.UnCompressorAsync;
 import com.starbrunch.couple.photo.frame.main.bluetooth.BluetoothController;
 import com.starbrunch.couple.photo.frame.main.callback.MainContainerCallback;
 import com.starbrunch.couple.photo.frame.main.common.Common;
@@ -38,6 +43,7 @@ import com.starbrunch.couple.photo.frame.main.fragment.MainViewFragment;
 import com.starbrunch.couple.photo.frame.main.fragment.ModifiedInformationFragment;
 import com.starbrunch.couple.photo.frame.main.fragment.MonthListViewFragment;
 import com.starbrunch.couple.photo.frame.main.handler.WeakReferenceHandler;
+import com.starbrunch.couple.photo.frame.main.object.PhotoInformationListObject;
 import com.starbrunch.couple.photo.frame.main.object.PhotoInformationObject;
 
 import java.io.File;
@@ -71,9 +77,13 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
     private static final int MESSAGE_TITLE_INIT_COLOR       = 0;
     private static final int MESSAGE_IMAGE_INFORMATION_SAVE = 1;
     private static final int MESSAGE_SAVE_COMPLETE          = 2;
-    public static final int MESSAGE_BLUETOOTH_DATA_READ     = 201;
-    public static final int MESSAGE_BLUETOOTH_DATA_WRITE    = 202;
-    public static final int MESSAGE_BLUETOOTH_TOAST         = 203;
+
+    public static final int MESSAGE_BLUETOOTH_MESSAGE_READ          = 200;
+    public static final int MESSAGE_BLUETOOTH_DATA_READ             = 201;
+    public static final int MESSAGE_BLUETOOTH_DATA_WRITE            = 202;
+    public static final int MESSAGE_BLUETOOTH_DATA_READ_COMPLETE    = 203;
+    public static final int MESSAGE_BLUETOOTH_DATA_WRITE_COMPLETE   = 204;
+    public static final int MESSAGE_BLUETOOTH_TOAST         = 10001;
 
     private Context mContext = null;
     private MainViewFragment mMainViewFragment = null;
@@ -111,8 +121,8 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
 
         mModifiedCheckList = new HashMap<>();
         mCurrentViewState = Common.SCREEN_MAIN;
-        //settingInformation();
-        settingInformationTest();
+        settingInformation();
+
         initReceiver();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
         {
@@ -337,6 +347,48 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
         mBluetoothController.startBluetoothEnable(REQUEST_BLUETOOTH_ENABLE);
     }
 
+    private void startCompressorAsync()
+    {
+        Toast.makeText(mContext, "압축을 시도중 입니다.", Toast.LENGTH_SHORT).show();
+
+        String targetPath = Common.PATH_APP_ROOT;
+        String destinationFilePath = Common.PATH_EXTERNAL_ZIP_ROOT + Common.ZIP_FILE_NAME;
+
+        CompressorAsync async = new CompressorAsync(mContext);
+        async.setData(targetPath,destinationFilePath);
+        async.setAsyncListener(mOnAsyncListener);
+        async.execute();
+    }
+
+    private void startUnCompressorAsync()
+    {
+        Toast.makeText(mContext, "압축을 푸는 중 입니다.", Toast.LENGTH_SHORT).show();
+
+        String targetZipFile = Common.PATH_EXTERNAL_ZIP_ROOT+ Common.ZIP_FILE_NAME;
+        String destinationPath = Common.PATH_EXTERNAL_ZIP_ROOT;
+
+        UnCompressorAsync async = new UnCompressorAsync(mContext);
+        async.setData(targetZipFile, destinationPath);
+        async.setAsyncListener(mOnAsyncListener);
+        async.execute();
+    }
+
+    private void makePhotoInformationFile()
+    {
+        ArrayList<PhotoInformationObject> list = mPhotoInformationDBHelper.getPhotoInformationList();
+        PhotoInformationListObject object = new PhotoInformationListObject(list);
+        FileUtils.writeFile(object, Common.PATH_APP_ROOT+Common.PHOTO_INFORMATION_FILE_NAME);
+    }
+
+    private ArrayList<PhotoInformationObject> getPhotoInformationFromFile()
+    {
+        String fileInformation = FileUtils.getStringFromFile(Common.PATH_EXTERNAL_PHOTO_INFORMATION_ROOT+Common.PHOTO_INFORMATION_FILE_NAME);
+        PhotoInformationListObject object = new Gson().fromJson(fileInformation, PhotoInformationListObject.class);
+
+        Log.i("list size : "+ object.getPhotoInformationListObjectList().size());
+        return object.getPhotoInformationListObjectList();
+    }
+
     @Override
     public void acvitityResult(int requestCode, int resultCode, Intent data) {
         Log.f("requestCode : " + requestCode + ", resultCode : " + resultCode);
@@ -392,9 +444,7 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
                     case Common.RESULT_SETTING_BLUETOOTH_SEND:
                     case Common.RESULT_SETTING_BLUETOOTH_RECEIVE:
 
-
-
-                        if (mBluetoothController.isBluetoothEnable() == false)
+                       if (mBluetoothController.isBluetoothEnable() == false)
                         {
                             enableBluetooth();
                         }
@@ -412,10 +462,8 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
                                 Log.i("Receive");
                                 enableBluetoothDiscoverable();
                             }
-
                         }
                         break;
-
                 }
                 break;
             case REQUEST_BLUETOOTH_ENABLE:
@@ -496,6 +544,9 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
                 ((AppCompatActivity)mContext).onBackPressed();
                 PhotoInformationObject updatePhotoInformationObject = mPhotoInformationDBHelper.getPhotoInformationObject(mModifiedInformationObject.getKeyID());
                 mMonthListViewFragment.notifyChanged(mModifiedItemPosition,updatePhotoInformationObject);
+                break;
+            case MESSAGE_BLUETOOTH_MESSAGE_READ:
+                //TODO : 데이터의 파일사이즈 정보를 받기 위해 사용.
                 break;
             case MESSAGE_BLUETOOTH_DATA_READ:
                 //TODO: 데이터를 받는 처리 후 압축을 푼다. 데이터를 세팅한다.
@@ -736,6 +787,71 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
             mBluetoothController.cancelDiscovery();
 
             ((AppCompatActivity)mContext).unregisterReceiver(mBluetoothScanReceiver);
+        }
+    };
+
+    private AsyncListener mOnAsyncListener = new AsyncListener()
+    {
+        @Override
+        public void onRunningStart()
+        {
+
+        }
+
+        @Override
+        public void onRunningEnd(String type, Object object)
+        {
+            if(type.equals(Common.ASYNC_COMPRESSOR))
+            {
+                boolean result = (boolean) object;
+
+                if(result)
+                {
+                    Toast.makeText(mContext, "압축 성공", Toast.LENGTH_LONG).show();
+                }
+                else
+                {
+                    Toast.makeText(mContext, "압축 실패", Toast.LENGTH_LONG).show();
+                }
+            }
+            else if(type.equals(Common.ASYNC_UNCOMPRESSOR))
+            {
+                boolean result = (boolean) object;
+
+                if(result)
+                {
+
+                    Toast.makeText(mContext, "압축 풀기 성공", Toast.LENGTH_LONG).show();
+                }
+                else
+                {
+                    Toast.makeText(mContext, "압축 풀기 실패", Toast.LENGTH_LONG).show();
+                }
+            }
+        }
+
+        @Override
+        public void onRunningCanceled()
+        {
+
+        }
+
+        @Override
+        public void onRunningProgress(Integer integer)
+        {
+
+        }
+
+        @Override
+        public void onRunningAdvanceInformation(Object object)
+        {
+
+        }
+
+        @Override
+        public void onErrorListener(String type, String message)
+        {
+            Toast.makeText(mContext, message, Toast.LENGTH_LONG).show();
         }
     };
 

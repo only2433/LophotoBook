@@ -12,8 +12,11 @@ import com.littlefox.logmonitor.Log;
 import com.starbrunch.couple.photo.frame.main.R;
 import com.starbrunch.couple.photo.frame.main.bluetooth.listener.BluetoothThreadCallback;
 import com.starbrunch.couple.photo.frame.main.bluetooth.thread.AcceptThread;
-import com.starbrunch.couple.photo.frame.main.bluetooth.thread.ConnectedThread;
+import com.starbrunch.couple.photo.frame.main.bluetooth.thread.ConnectedFileTransferThread;
+import com.starbrunch.couple.photo.frame.main.bluetooth.thread.ConnectedInformationThread;
 import com.starbrunch.couple.photo.frame.main.bluetooth.thread.ConnectingThread;
+import com.starbrunch.couple.photo.frame.main.common.Common;
+import com.starbrunch.couple.photo.frame.main.common.CommonUtils;
 import com.starbrunch.couple.photo.frame.main.contract.presenter.MainContainerPresent;
 import com.starbrunch.couple.photo.frame.main.handler.WeakReferenceHandler;
 import com.starbrunch.couple.photo.frame.main.object.MessageObject;
@@ -32,8 +35,11 @@ public class BluetoothController implements BluetoothThreadCallback
     public static final UUID RFCCMM_UUID = UUID.fromString("00000003-0000-1000-8000-00805F9B34FB");
 
 
-    public static final int MESSAGE_READ    = 0;
-    public static final int MESSAGE_WRITE   = 1;
+    public static final int MESSAGE_INFORMATION_READ    = 0;
+    public static final int MESSAGE_DATA_READ_PERCENT   = 101;
+    public static final int MESSAGE_DATA_WRITE_PERCENT  = 102;
+
+    public static final int MAX_PERCENT = 100;
 
 
     // Key names received from the BluetoothChatService Handler
@@ -41,10 +47,12 @@ public class BluetoothController implements BluetoothThreadCallback
     public static final String TOAST = "toast";
 
     // Constants that indicate the current connection state
-    public static final int STATE_NONE              = 0; // we're doing nothing
-    public static final int STATE_LISTEN            = 1; // now listening for incoming connections
-    public static final int STATE_CONNECTING        = 2; // now initiating an outgoing connection
-    public static final int STATE_CONNECTED         = 3; // now connected to a remote device
+    public static final int STATE_NONE                      = 0; // we're doing nothing
+    public static final int STATE_LISTEN                    = 1; // now listening for incoming connections
+    public static final int STATE_CONNECTING                = 2; // now initiating an outgoing connection
+    public static final int STATE_CONNECTED                 = 3; // now connected to a remote device
+    public static final int STATE_CONNECTED_FILE_TRANSFER   = 4; // now ready to send client file
+
     public static final int STATE_CONNECTION_FAILED = 101;
     public static final int STATE_CONNECTION_LOST   = 102;
 
@@ -53,9 +61,10 @@ public class BluetoothController implements BluetoothThreadCallback
     private int mConnectStatus = STATE_NONE;
     private int mNewConnectStatus = STATE_NONE;
 
-    private AcceptThread mAcceptThread                  = null;
-    private ConnectingThread mConnectingThread          = null;
-    private ConnectedThread mConnectedThread            = null;
+    private AcceptThread mAcceptThread                                  = null;
+    private ConnectingThread mConnectingThread                          = null;
+    private ConnectedInformationThread mConnectedInformationThread      = null;
+    private ConnectedFileTransferThread mConnectedFileTransferThread    = null;
     private WeakReferenceHandler mWeakReferenceHandler  = null;
     private Context mContext = null;
     private String mConnectDeviceName = "";
@@ -78,6 +87,9 @@ public class BluetoothController implements BluetoothThreadCallback
         //TODO: 스테이트가 변경될때마다 데이터를 전달할 필요가 있을때 사용
         switch (mNewConnectStatus)
         {
+            case STATE_CONNECTED_FILE_TRANSFER:
+                Log.f("Ready to send File or receive File "+ mConnectDeviceName);
+                break;
             case STATE_CONNECTED:
                 Log.f("Connected to "+ mConnectDeviceName);
                 break;
@@ -131,21 +143,41 @@ public class BluetoothController implements BluetoothThreadCallback
         }
     }
 
-    private void startConnectedThread(BluetoothSocket socket)
+    private void startConnectedInformationThread(BluetoothSocket socket)
     {
-        if(mConnectedThread == null)
+        if(mConnectedInformationThread == null)
         {
-            mConnectedThread = new ConnectedThread(socket, this);
-            mConnectedThread.start();
+            mConnectedInformationThread = new ConnectedInformationThread(socket, this);
+            mConnectedInformationThread.start();
         }
     }
 
-    private void cancelConnectedThread()
+    private void cancelConnectedInformationThread()
     {
-        if(mConnectedThread != null)
+        if(mConnectedInformationThread != null)
         {
-            mConnectedThread.cancel();
-            mConnectedThread = null;
+            mConnectedInformationThread.cancel();
+            mConnectedInformationThread = null;
+        }
+    }
+
+    private void startConnectedFileTransferThread(BluetoothSocket socket)
+    {
+        if(mConnectedFileTransferThread == null)
+        {
+            long fileSize = (long) CommonUtils.getInstance(mContext).getSharedPreference(Common.PREFERENCE_SEND_FILE_SIZE, Common.TYPE_PARAMS_LONG);
+
+            mConnectedFileTransferThread = new ConnectedFileTransferThread(socket,fileSize, this);
+            mConnectedFileTransferThread.start();
+        }
+    }
+
+    private void cancelConnectedFileTransferThread()
+    {
+        if(mConnectedFileTransferThread != null)
+        {
+            mConnectedFileTransferThread.cancel();
+            mConnectedFileTransferThread = null;
         }
     }
 
@@ -156,7 +188,8 @@ public class BluetoothController implements BluetoothThreadCallback
     public synchronized void start()
     {
         cancelConnectingThread();
-        cancelConnectedThread();
+        cancelConnectedInformationThread();
+        cancelConnectedFileTransferThread();
         startAcceptThread();
 
         updateConnectStatus();
@@ -165,16 +198,17 @@ public class BluetoothController implements BluetoothThreadCallback
     public synchronized void stop()
     {
         cancelConnectingThread();
-        cancelConnectedThread();
+        cancelConnectedInformationThread();
+        cancelConnectedFileTransferThread();
         cancelAcceptThread();
 
         mConnectStatus = STATE_NONE;
         updateConnectStatus();
     }
 
-    public void write(byte[] out)
+    public void writeInformation(byte[] out)
     {
-        ConnectedThread connectedThread = null;
+        ConnectedInformationThread connectedInformationThread = null;
 
         synchronized (this)
         {
@@ -182,9 +216,9 @@ public class BluetoothController implements BluetoothThreadCallback
             {
                 return;
             }
-            connectedThread = mConnectedThread;
+            connectedInformationThread = mConnectedInformationThread;
         }
-        connectedThread.write(out);
+        connectedInformationThread.write(out);
     }
 
     private void connectionFailed()
@@ -298,20 +332,21 @@ public class BluetoothController implements BluetoothThreadCallback
     public void connecting(BluetoothDevice device)
     {
         cancelConnectingThread();
-        cancelConnectedThread();
+        cancelConnectedInformationThread();
         startConnectingThread(device);
         updateConnectStatus();
     }
 
     @Override
-    public void connected(BluetoothSocket socket, BluetoothDevice device)
+    public void connectedInformation(BluetoothSocket socket, BluetoothDevice device)
     {
         Log.i("");
         cancelConnectingThread();
-        cancelConnectedThread();
+        cancelConnectedInformationThread();
+        cancelConnectedFileTransferThread();
         cancelAcceptThread();
 
-        startConnectedThread(socket);
+        startConnectedInformationThread(socket);
 
         mConnectDeviceName = device.getName();
 
@@ -324,13 +359,61 @@ public class BluetoothController implements BluetoothThreadCallback
     }
 
     @Override
+    public void connectedFileTransfer(BluetoothSocket socket, BluetoothDevice device)
+    {
+        Log.i("");
+        cancelConnectingThread();
+        cancelConnectedInformationThread();
+        cancelConnectedFileTransferThread();
+        cancelAcceptThread();
+
+        startConnectedFileTransferThread(socket);
+
+        mConnectDeviceName = device.getName();
+
+        Message message = Message.obtain();
+        message.what = MainContainerPresent.MESSAGE_BLUETOOTH_TOAST;
+        message.obj = mContext.getResources().getString(R.string.message_ready_to_transfer_file)+" "+device.getName();
+
+        mWeakReferenceHandler.sendMessage(message);
+        updateConnectStatus();
+    }
+
+    @Override
     public void sendMessage(int messageType, MessageObject object)
     {
+        Message message = null;
         switch(messageType)
         {
-            case MESSAGE_READ:
+            case MESSAGE_INFORMATION_READ:
                 break;
-            case MESSAGE_WRITE:
+            case MESSAGE_DATA_WRITE_PERCENT:
+                if(object.argument1 == MAX_PERCENT)
+                {
+                    mWeakReferenceHandler.sendEmptyMessage(MainContainerPresent.MESSAGE_BLUETOOTH_DATA_WRITE_COMPLETE);
+                }
+                else
+                {
+                    message= Message.obtain();
+                    message.what = MainContainerPresent.MESSAGE_BLUETOOTH_DATA_WRITE;
+                    message.arg1 = object.argument1;
+                    mWeakReferenceHandler.sendMessage(message);
+                }
+                break;
+            case MESSAGE_DATA_READ_PERCENT:
+
+
+                if(object.argument1 == MAX_PERCENT)
+                {
+                    mWeakReferenceHandler.sendEmptyMessage(MainContainerPresent.MESSAGE_BLUETOOTH_DATA_READ_COMPLETE);
+                }
+                else
+                {
+                    message = Message.obtain();
+                    message.what = MainContainerPresent.MESSAGE_BLUETOOTH_DATA_WRITE;
+                    message.arg1 = object.argument1;
+                    mWeakReferenceHandler.sendMessage(message);
+                }
                 break;
         }
     }

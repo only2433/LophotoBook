@@ -66,7 +66,7 @@ public class AcceptThread extends Thread
                     {
                         case BluetoothController.STATE_LISTEN:
                         case BluetoothController.STATE_CONNECTING:
-                            mBluetoothThreadCallback.connected(socket, socket.getRemoteDevice());
+                            mBluetoothThreadCallback.connectedInformation(socket, socket.getRemoteDevice());
                             break;
                         case BluetoothController.STATE_NONE:
                         case BluetoothController.STATE_CONNECTED:

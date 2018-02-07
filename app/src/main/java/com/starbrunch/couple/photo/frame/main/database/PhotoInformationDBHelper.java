@@ -139,6 +139,12 @@ public class PhotoInformationDBHelper extends SQLiteOpenHelper
         return object;
     }
 
+    /**
+     * KEYID에 맞는 DB정보 중 해당 KEY의 Value를 수정하여 업데이트 한다.
+     * @param keyID 수정될 DB 아이템의 KEYID
+     * @param key 수정될 정보의 KEY
+     * @param value 수정될 정보 value
+     */
     public void updatePhotoInformationObject(String keyID, String key, String value)
     {
         SQLiteDatabase database = this.getWritableDatabase();
@@ -148,6 +154,10 @@ public class PhotoInformationDBHelper extends SQLiteOpenHelper
         database.update(DATABASE_NAME, values, KEY_ID + " =? ", new String[]{keyID});
     }
 
+    /**
+     * DB에 있는 정보중 해당 KEY ID 에 맞는 정보만 삭제.
+     * @param keyID
+     */
     public void deletePhotoInformationObject(String keyID)
     {
         SQLiteDatabase database = this.getWritableDatabase();
@@ -155,9 +165,18 @@ public class PhotoInformationDBHelper extends SQLiteOpenHelper
     }
 
     /**
+     * DB에 있는 모든 정보를 삭제 한다.
+     */
+    public void deletePhotoInformationAll()
+    {
+        SQLiteDatabase database = this.getWritableDatabase();
+        database.delete(DATABASE_NAME,  null, null);
+    }
+
+    /**
      * 해당 월에 저장된 사진 정보 리스트를 DB에서 가져온다.
-     * @param month
-     * @return
+     * @param month 해당 월
+     * @return 해당 월에 저장된 파일 정보를 리스트로 전달
      */
     public ArrayList<PhotoInformationObject> getPhotoInformationListByMonth(String month)
     {
@@ -176,6 +195,52 @@ public class PhotoInformationDBHelper extends SQLiteOpenHelper
                         KEY_LATITUDE,
                         KEY_LONGITUDE,
                         KEY_COMMENTS}, KEY_MONTH+"=?", new String[]{month}, null, null, null, null);
+
+        if(cursor == null || cursor.getCount() == 0)
+        {
+            Log.f("VALUE NOT HAVE");
+            return result;
+        }
+
+        if(cursor.moveToFirst())
+        {
+            do
+            {
+                result.add(new PhotoInformationObject(
+                        cursor.getString(INDEX_KEY_ID),
+                        cursor.getString(INDEX_MONTH),
+                        Long.valueOf(cursor.getString(INDEX_DATE_MILLISECOND)),
+                        Float.valueOf(cursor.getString(INDEX_LATITUDE)),
+                        Float.valueOf(cursor.getString(INDEX_LONGITUDE)),
+                        cursor.getString(INDEX_COMMENTS)));
+
+            }while (cursor.moveToNext());
+        }
+        cursor.close();
+        return result;
+    }
+
+    /**
+     * DB에 저정된 파일 정보를 모두 가져온다.
+     * @return
+     */
+    public ArrayList<PhotoInformationObject> getPhotoInformationList()
+    {
+        ArrayList<PhotoInformationObject> result = new ArrayList<PhotoInformationObject>();
+
+        SQLiteDatabase database = this.getReadableDatabase();
+        PhotoInformationObject object = null;
+        Cursor cursor;
+
+        cursor = database.query(DATABASE_NAME,
+                new String[] {
+                        KEY_ID,
+                        KEY_MONTH,
+                        KEY_FILE_NAME,
+                        KEY_DATE_MILLISECOND,
+                        KEY_LATITUDE,
+                        KEY_LONGITUDE,
+                        KEY_COMMENTS}, null, null, null, null, null, null);
 
         if(cursor == null || cursor.getCount() == 0)
         {

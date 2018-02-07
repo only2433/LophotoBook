@@ -14,10 +14,15 @@ public class Common
     public static final String PATH_APP_ROOT	 = "/data/data/" + PACKAGE_NAME + "/files/";
     public static final String PATH_IMAGE_ROOT = PATH_APP_ROOT+"images/";
 
-    public static final String PATH_BLUETOOTH_ZIP_ROOT = Environment.getExternalStorageDirectory()+"/CouplePhotoFrame/";
-    public static final String ZIP_FILE_NAME = "couplePhotoFrame.zip";
-    public static final String PHOTO_FRAME_INFORMATION_FILE_NAME = "photo_frame_information.json";
+    public static final String PATH_EXTERNAL_ZIP_ROOT = Environment.getExternalStorageDirectory()+"/CouplePhotoFrame/";
+    public static final String PATH_EXTERNAL_PHOTO_INFORMATION_ROOT = PATH_EXTERNAL_ZIP_ROOT +"files/";
 
+    public static final String ZIP_FILE_NAME = "couplePhotoFrame.zip";
+    public static final String PHOTO_INFORMATION_FILE_NAME ="photo_information.txt";
+
+
+    public static final String ASYNC_UNCOMPRESSOR   ="async_uncompressor";
+    public static final String ASYNC_COMPRESSOR     ="async_compressonr";
 
     public static final String SHARED_PHOTO_IMAGE = "shared_photo_image";
 
@@ -37,7 +42,8 @@ public class Common
     public static final String PARAMS_DISPLAY_METRICS	= "display_metrics";
     public static final int TYPE_PARAMS_BOOLEAN 	= 0;
     public static final int TYPE_PARAMS_INTEGER 	= 1;
-    public static final int TYPE_PARAMS_STRING		= 2;
+    public static final int TYPE_PARAMS_LONG        = 2;
+    public static final int TYPE_PARAMS_STRING		= 3;
 
 
     public static final int LOADING_DIALOG_SIZE = 100;
@@ -52,5 +58,5 @@ public class Common
     public static final int RESULT_SETTING_BLUETOOTH_SEND       = 1001;
     public static final int RESULT_SETTING_BLUETOOTH_RECEIVE    = 1002;
 
-
+    public static final String PREFERENCE_SEND_FILE_SIZE = "preference_file_size";
 }
