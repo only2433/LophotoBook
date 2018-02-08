@@ -49,6 +49,7 @@
             />
 
         <com.littlefox.library.view.dialog.ProgressWheel
+            android:id="@+id/_dataProgressView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:matProg_barColor="@color/color_white"

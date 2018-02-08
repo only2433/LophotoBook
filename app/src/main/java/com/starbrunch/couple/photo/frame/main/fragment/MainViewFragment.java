@@ -21,6 +21,7 @@ import com.starbrunch.couple.photo.frame.main.R;
 import com.starbrunch.couple.photo.frame.main.callback.MainContainerCallback;
 import com.starbrunch.couple.photo.frame.main.common.Common;
 import com.starbrunch.couple.photo.frame.main.common.FontManager;
+import com.starbrunch.couple.photo.frame.main.contract.presenter.MainContainerPresent;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -67,6 +68,7 @@ public class MainViewFragment extends Fragment
     public void onResume()
     {
         super.onResume();
+        mMainContainerCallback.setMainScene(MainContainerPresent.SCENE_MAIN_VIEW);
     }
 
     @Override

@@ -48,12 +48,11 @@ public class Common
 
     public static final int LOADING_DIALOG_SIZE = 100;
 
-    public static final int DURATION_SHORT = 300;
-    public static final int DURATION_DEFAULT = 500;
+    public static final int DURATION_SHORT                      = 300;
+    public static final int DURATION_DEFAULT                    = 500;
     public static final int DURATION_TITLE_BACKGROUND_ANIMATION = 700;
-
-    public static final int SCREEN_MAIN         = 0;
-    public static final int SCREEN_MONTH_LIST   = 1;
+    public static final int DURATION_LONG                       = 1000;
+    public static final int DURATION_LONGER                     = 2000;
 
     public static final int RESULT_SETTING_BLUETOOTH_SEND       = 1001;
     public static final int RESULT_SETTING_BLUETOOTH_RECEIVE    = 1002;

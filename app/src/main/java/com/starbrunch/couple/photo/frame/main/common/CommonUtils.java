@@ -426,8 +426,11 @@ public class CommonUtils
         else if(object instanceof String)
         {
             editor.putString(key, (String) object);
-
         }
+		else if(object instanceof Long)
+		{
+			editor.putLong(key, (Long) object);
+		}
 
         editor.commit();
 

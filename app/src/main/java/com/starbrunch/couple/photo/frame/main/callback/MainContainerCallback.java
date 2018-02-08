@@ -19,10 +19,14 @@ public interface MainContainerCallback
     public void onDeletePhoto(String keyID);
     public void onModifiedPhoto(int position, Pair<View, String> item);
     public void onModifiedEnd();
-
+    public void onDataTransferEnd();
     public void onModifiedItemSave();
     public void onModifiedItemCancel();
     public void onSelectPhotoModified();
     public void onSelectDateModified();
     public void onSelectCommentModifed();
+
+    public void setMainScene(int scene);
+    public void startFileTransfer();
+    public void cancelFileTransfer();
 }

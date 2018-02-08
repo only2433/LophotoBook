@@ -77,18 +77,30 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
     private static final int MESSAGE_TITLE_INIT_COLOR       = 0;
     private static final int MESSAGE_IMAGE_INFORMATION_SAVE = 1;
     private static final int MESSAGE_SAVE_COMPLETE          = 2;
+    private static final int MESSAGE_FILE_COMPRESSOR        = 3;
 
-    public static final int MESSAGE_BLUETOOTH_MESSAGE_READ          = 200;
+    public static final int MESSAGE_BLUETOOTH_READY_TO_SEND_INFORMATION     = 190;
+    public static final int MESSAGE_BLUETOOTH_READY_TO_TRANSFER_FILE        = 191;
+
+    public static final int MESSAGE_BLUETOOTH_INFORMATION_READ      = 200;
     public static final int MESSAGE_BLUETOOTH_DATA_READ             = 201;
     public static final int MESSAGE_BLUETOOTH_DATA_WRITE            = 202;
     public static final int MESSAGE_BLUETOOTH_DATA_READ_COMPLETE    = 203;
     public static final int MESSAGE_BLUETOOTH_DATA_WRITE_COMPLETE   = 204;
-    public static final int MESSAGE_BLUETOOTH_TOAST         = 10001;
+    public static final int MESSAGE_BLUETOOTH_CONNECTION_FAIL       = 1001;
+    public static final int MESSAGE_BLUETOOTH_CONNECTION_LOST       = 1002;
+    public static final int MESSAGE_BLUETOOTH_TOAST                 = 10001;
+
+    public static final int SCENE_MAIN_VIEW             = 0;
+    public static final int SCENE_MONTH_LIST_VIEW       = 1;
+    public static final int SCENE_MODIFIED_INFORMATION  = 2;
+    public static final int SCENE_DATA_COMMUNICATE      = 3;
 
     private Context mContext = null;
     private MainViewFragment mMainViewFragment = null;
     private MonthListViewFragment mMonthListViewFragment = null;
     private ModifiedInformationFragment mModifiedInformationFragment = null;
+    private DataCommunicateFragment mDataCommunicateFragment = null;
 
     private FragmentManager mFragmentManager = null;
     private MainContainerContract.View mMainContainerContractView = null;
@@ -105,8 +117,15 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
     private HashMap<Enum, Boolean> mModifiedCheckList = null;
     private Calendar mRequestCalendar = null;
     private long mModifiedDateTime = 0L;
-    private int mCurrentViewState = Common.SCREEN_MAIN;
+
+    private int mCurrentViewState = SCENE_MAIN_VIEW;
+
     private int mCurrentSettingType = -1;
+    /**
+     * 연결할 Bluetooth Address
+     */
+    private String mCurrentRemoteAddress = "";
+
     private BluetoothController mBluetoothController = null;
     private BluetoothScanDialog mBluetoothScanDialog = null;
 
@@ -120,7 +139,7 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
         mBluetoothController = new BluetoothController(mContext, mWeakReferenceHandler);
 
         mModifiedCheckList = new HashMap<>();
-        mCurrentViewState = Common.SCREEN_MAIN;
+
         settingInformation();
 
         initReceiver();
@@ -150,6 +169,7 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
         {
             mBluetoothController.stop();
         }
+        ((AppCompatActivity)mContext).unregisterReceiver(mBluetoothScanReceiver);
     }
 
     private void initReceiver()
@@ -176,7 +196,7 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
         mMainContainerContractView.showSettingButton();
     }
 
-    private void settingInformationTest()
+    private void showDataCommunicateFragment()
     {
         mMainContainerContractView.initFont();
         mMainContainerContractView.initView();
@@ -184,10 +204,17 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
         mMainContainerContractView.hideMainTitleLayout();
         mMainContainerContractView.hideFloatButton();
 
-        mFragmentManager = ((AppCompatActivity)mContext).getSupportFragmentManager();
-        DataCommunicateFragment fragment = new DataCommunicateFragment();
+        Bundle bundle = new Bundle();
+        bundle.putInt(Common.INTENT_SETTING_SELECT_INDEX, mCurrentSettingType);
+
+        mDataCommunicateFragment = new DataCommunicateFragment();
+        mDataCommunicateFragment.setArguments(bundle);
+        mDataCommunicateFragment.setMainContainerCallback(this);
         mFragmentManager.beginTransaction()
-                .replace(R.id._mainContainer, fragment)
+                .setCustomAnimations(R.anim.slide_down_in, R.anim.slide_up_out, R.anim.slide_up_in, R.anim.slide_down_out)
+
+                .replace(R.id._mainContainer, mDataCommunicateFragment)
+                .addToBackStack(null)
                 .commit();
     }
 
@@ -349,7 +376,7 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
 
     private void startCompressorAsync()
     {
-        Toast.makeText(mContext, "압축을 시도중 입니다.", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(mContext, "압축을 시도중 입니다.", Toast.LENGTH_SHORT).show();
 
         String targetPath = Common.PATH_APP_ROOT;
         String destinationFilePath = Common.PATH_EXTERNAL_ZIP_ROOT + Common.ZIP_FILE_NAME;
@@ -388,6 +415,8 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
         Log.i("list size : "+ object.getPhotoInformationListObjectList().size());
         return object.getPhotoInformationListObjectList();
     }
+
+
 
     @Override
     public void acvitityResult(int requestCode, int resultCode, Intent data) {
@@ -545,17 +574,71 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
                 PhotoInformationObject updatePhotoInformationObject = mPhotoInformationDBHelper.getPhotoInformationObject(mModifiedInformationObject.getKeyID());
                 mMonthListViewFragment.notifyChanged(mModifiedItemPosition,updatePhotoInformationObject);
                 break;
-            case MESSAGE_BLUETOOTH_MESSAGE_READ:
+            case MESSAGE_FILE_COMPRESSOR:
+                //makePhotoInformationFile();
+                startCompressorAsync();
+                break;
+            case MESSAGE_BLUETOOTH_READY_TO_SEND_INFORMATION:
+                Log.i("MESSAGE_BLUETOOTH_READY_TO_SEND_INFORMATION");
+                showDataCommunicateFragment();
+                break;
+
+            case MESSAGE_BLUETOOTH_INFORMATION_READ:
                 //TODO : 데이터의 파일사이즈 정보를 받기 위해 사용.
+                byte[] readBuf = (byte[]) msg.obj;
+                String readMessage = new String(readBuf, 0, msg.arg1);
+
+                if(mCurrentSettingType == Common.RESULT_SETTING_BLUETOOTH_SEND)
+                {
+                    Log.i("send message : "+readMessage);
+                    if(readMessage.equals(BluetoothController.RESULT_READY_TO_RECEIVE_FILE))
+                    {
+                        Log.i("send file ");
+                        File file = new File(Common.PATH_EXTERNAL_ZIP_ROOT+Common.ZIP_FILE_NAME);
+                        mBluetoothController.writeFile(file);
+                    }
+                }
+                else if(mCurrentSettingType == Common.RESULT_SETTING_BLUETOOTH_RECEIVE)
+                {
+                    mDataCommunicateFragment.startTransferData();
+                    Log.i("send message : "+readMessage);
+                    CommonUtils.getInstance(mContext).setSharedPreference(Common.PREFERENCE_SEND_FILE_SIZE, Long.valueOf(readMessage));
+                    Log.i("File Size : "+ readMessage);
+                    String message = BluetoothController.RESULT_READY_TO_RECEIVE_FILE;
+                    byte[] readyMessageByte = message.getBytes();
+                    mBluetoothController.writeInformation(readyMessageByte);
+                }
+
                 break;
             case MESSAGE_BLUETOOTH_DATA_READ:
-                //TODO: 데이터를 받는 처리 후 압축을 푼다. 데이터를 세팅한다.
+                //RECEIVE 화면 갱신
+                Log.f("MESSAGE_BLUETOOTH_DATA_READ");
+                mDataCommunicateFragment.setTransferPercent(msg.arg1);
                 break;
             case MESSAGE_BLUETOOTH_DATA_WRITE:
-                //TODO: 압축하여 데이터를 보내고 완료 후 화면을 갱신
+                //SEND 화면 갱신
+                Log.f("MESSAGE_BLUETOOTH_DATA_WRITE");
+                mDataCommunicateFragment.setTransferPercent(msg.arg1);
+                break;
+            case MESSAGE_BLUETOOTH_DATA_READ_COMPLETE:
+                Log.f("MESSAGE_BLUETOOTH_DATA_READ_COMPLETE");
+                mDataCommunicateFragment.endTransferData();
+                break;
+            case MESSAGE_BLUETOOTH_DATA_WRITE_COMPLETE:
+                Log.f("MESSAGE_BLUETOOTH_DATA_WRITE_COMPLETE");
+                mDataCommunicateFragment.endTransferData();
+                break;
+            case MESSAGE_BLUETOOTH_CONNECTION_FAIL:
+                break;
+            case MESSAGE_BLUETOOTH_CONNECTION_LOST:
+
+                if(mCurrentViewState == SCENE_DATA_COMMUNICATE)
+                {
+                    ((AppCompatActivity)mContext).onBackPressed();
+                }
+
                 break;
             case MESSAGE_BLUETOOTH_TOAST:
-
                 mMainContainerContractView.showMessage((String)msg.obj, mContext.getResources().getColor(R.color.color_white));
                 break;
 
@@ -586,7 +669,7 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
     @Override
     public void selectFloatButton()
     {
-        if(mCurrentViewState == Common.SCREEN_MONTH_LIST)
+        if(mCurrentViewState == SCENE_MONTH_LIST_VIEW)
         {
             Log.f("");
             startPickActivity(REQUEST_PICK_FROM_ADD);
@@ -603,7 +686,6 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
     @Override
     public void onSelectMonth(int position)
     {
-        mCurrentViewState = Common.SCREEN_MONTH_LIST;
         mSelectMonthColor = mContext.getResources().getIdentifier("color_month_"+(position+1), "color", Common.PACKAGE_NAME);
         mMainContainerContractView.changePhotoButton(mSelectMonthColor);
         startMonthListViewFragment(position);
@@ -613,7 +695,6 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
     @Override
     public void onChangeMainViewSetting()
     {
-        mCurrentViewState = Common.SCREEN_MAIN;
         mWeakReferenceHandler.sendEmptyMessageDelayed(MESSAGE_TITLE_INIT_COLOR, Common.DURATION_DEFAULT);
         mMainContainerContractView.hideMonthNumberAnimation();
         mMainContainerContractView.changeTitleAnimationText(mContext.getResources().getString(R.string.app_name));
@@ -663,6 +744,19 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
     }
 
     @Override
+    public void onDataTransferEnd()
+    {
+        Log.i("");
+        mMainContainerContractView.showMainTitleLayout();
+        mMainContainerContractView.showSettingButton();
+
+        if (mBluetoothController != null)
+        {
+            mBluetoothController.stop();
+        }
+    }
+
+    @Override
     public void onModifiedItemSave()
     {
         Log.i("");
@@ -694,6 +788,26 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
 
     @Override
     public void onSelectCommentModifed()
+    {
+
+    }
+
+    @Override
+    public void setMainScene(int scene)
+    {
+        mCurrentViewState = scene;
+    }
+
+    @Override
+    public void startFileTransfer()
+    {
+        Log.i("");
+        mDataCommunicateFragment.startTransferData();
+        mWeakReferenceHandler.sendEmptyMessage(MESSAGE_FILE_COMPRESSOR);
+    }
+
+    @Override
+    public void cancelFileTransfer()
     {
 
     }
@@ -760,8 +874,9 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
         public void onSelectDevice(String deviceAddress)
         {
             Log.i("deviceAddress : "+deviceAddress);
+            mCurrentRemoteAddress = deviceAddress;
             hideBluetoothScanDialog();
-            BluetoothDevice device = mBluetoothController.getRemoteDevice(deviceAddress);
+            BluetoothDevice device = mBluetoothController.getRemoteDevice(mCurrentRemoteAddress);
             mBluetoothController.connecting(device);
         }
 
@@ -786,7 +901,7 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
             Log.i("onDismiss ");
             mBluetoothController.cancelDiscovery();
 
-            ((AppCompatActivity)mContext).unregisterReceiver(mBluetoothScanReceiver);
+
         }
     };
 
@@ -804,14 +919,33 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
             if(type.equals(Common.ASYNC_COMPRESSOR))
             {
                 boolean result = (boolean) object;
-
+                Log.f("Compressor result : "+ result);
                 if(result)
                 {
-                    Toast.makeText(mContext, "압축 성공", Toast.LENGTH_LONG).show();
+
+                   /* File file = new File(Common.PATH_EXTERNAL_ZIP_ROOT+Common.ZIP_FILE_NAME);
+                    Log.i("zip file exist : "+ file.exists());
+
+                    if(file.exists())
+                    {
+                        if(file.length() > 0)
+                        {
+                            String fileSize = String.valueOf(file.length());
+                            Log.i("zip file size : "+ fileSize);
+
+                            byte[] sendFileSizeByte = fileSize.getBytes();
+                            mBluetoothController.writeInformation(sendFileSizeByte);
+                        }
+                        else
+                        {
+                            Log.f("File size error");
+                        }
+
+                    }*/
                 }
                 else
                 {
-                    Toast.makeText(mContext, "압축 실패", Toast.LENGTH_LONG).show();
+                    //TODO: 압축 실패했을때 seqence
                 }
             }
             else if(type.equals(Common.ASYNC_UNCOMPRESSOR))

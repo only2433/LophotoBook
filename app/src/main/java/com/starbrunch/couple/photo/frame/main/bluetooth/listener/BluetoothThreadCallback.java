@@ -17,6 +17,7 @@ public interface BluetoothThreadCallback
     public void connecting(BluetoothDevice device);
     public void connectedInformation(BluetoothSocket socket, BluetoothDevice device);
     public void connectedFileTransfer(BluetoothSocket socket, BluetoothDevice device);
+
     public void sendMessage(int messageType, MessageObject object);
 
     public int getConnectStatus();

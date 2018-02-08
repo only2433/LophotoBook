@@ -27,6 +27,7 @@ public class ConnectedFileTransferThread extends Thread
     private final InputStream mInputStream;
     private final OutputStream mOutputStream;
     private long mTotalFileSize = 0L;
+    private boolean isCancel = false;
 
     public ConnectedFileTransferThread(BluetoothSocket socket, long fileSize , BluetoothThreadCallback bluetoothThreadCallback)
     {
@@ -70,7 +71,8 @@ public class ConnectedFileTransferThread extends Thread
             file.createNewFile();
             outputStream = new FileOutputStream(file);
 
-            while(currentFileSize < mTotalFileSize)
+            while((currentFileSize < mTotalFileSize)
+                    && !isCancel)
             {
                 fileLength = mInputStream.read(buffer);
 
@@ -139,6 +141,7 @@ public class ConnectedFileTransferThread extends Thread
 
     public void cancel()
     {
+        isCancel = true;
         try
         {
             mBluetoothSocket.close();

@@ -36,6 +36,7 @@ import com.starbrunch.couple.photo.frame.main.callback.MainContainerCallback;
 import com.starbrunch.couple.photo.frame.main.common.Common;
 import com.starbrunch.couple.photo.frame.main.common.CommonUtils;
 import com.starbrunch.couple.photo.frame.main.common.FontManager;
+import com.starbrunch.couple.photo.frame.main.contract.presenter.MainContainerPresent;
 import com.starbrunch.couple.photo.frame.main.hanks.htextview.HTextView;
 import com.starbrunch.couple.photo.frame.main.hanks.htextview.HTextViewType;
 import com.starbrunch.couple.photo.frame.main.object.PhotoInformationObject;
@@ -117,6 +118,7 @@ public class MonthListViewFragment extends Fragment
     public void onResume()
     {
         super.onResume();
+        mMainContainerCallback.setMainScene(MainContainerPresent.SCENE_MONTH_LIST_VIEW);
         Log.i("");
     }
 

@@ -101,6 +101,11 @@ public class PhotoInformationDBHelper extends SQLiteOpenHelper
         database.insert(DATABASE_NAME, null,values);
     }
 
+    /**
+     * KEY ID 에 맞는 DB정보를  PhotoInformationObject 로 전달한다.
+     * @param keyID 찾으려고 하는 DB의 KEYID
+     * @return
+     */
     public PhotoInformationObject getPhotoInformationObject(String keyID)
     {
         SQLiteDatabase database = this.getReadableDatabase();

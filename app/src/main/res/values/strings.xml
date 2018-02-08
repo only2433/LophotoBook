@@ -17,9 +17,12 @@
 
     <string name="message_data_send_information">Attempting to send book to</string>
     <string name="message_data_receive_information">Attempting to receive book from</string>
+    <string name="message_data_success">Success</string>
+    <string name="message_data_fail">Fail</string>
     <string name="button_ok">OK</string>
     <string name="button_cancel">Cancel</string>
     <string name="button_save">Save</string>
+    <string name="button_send">Send</string>
     <string name="button_send_book">Send Book</string>
     <string name="button_receive_book">Receive Book</string>
     <string name="button_search">Search</string>

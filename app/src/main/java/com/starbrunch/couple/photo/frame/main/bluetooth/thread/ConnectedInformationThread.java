@@ -21,6 +21,8 @@ public class ConnectedInformationThread extends Thread
     private final InputStream mInputStream;
     private final OutputStream mOutputStream;
 
+    private boolean isCancel = false;
+
     public ConnectedInformationThread(BluetoothSocket socket, BluetoothThreadCallback bluetoothThreadCallback)
     {
         mBluetoothThreadCallback = bluetoothThreadCallback;
@@ -49,12 +51,12 @@ public class ConnectedInformationThread extends Thread
         byte[] buffer = new byte[1024];
         int bytes;
 
-        while(mBluetoothThreadCallback.getConnectStatus() == BluetoothController.STATE_CONNECTED)
+        while((mBluetoothThreadCallback.getConnectStatus() == BluetoothController.STATE_CONNECTED)
+                && !isCancel)
         {
             try
             {
                 bytes = mInputStream.read(buffer);
-
                 MessageObject object = new MessageObject();
                 object.argument1 = bytes;
                 object.data = buffer;
@@ -70,6 +72,7 @@ public class ConnectedInformationThread extends Thread
 
     public void write(byte[] buffer)
     {
+        Log.i("");
         try
         {
             mOutputStream.write(buffer);
@@ -82,6 +85,7 @@ public class ConnectedInformationThread extends Thread
 
     public void cancel()
     {
+        isCancel = true;
         try
         {
             mBluetoothSocket.close();
