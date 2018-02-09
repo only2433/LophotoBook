@@ -1,26 +1,10 @@
 package com.starbrunch.couple.photo.frame.main.bluetooth.thread;
 
-import android.bluetooth.BluetoothSocket;
-
-import com.littlefox.logmonitor.Log;
-import com.starbrunch.couple.photo.frame.main.bluetooth.BluetoothController;
-import com.starbrunch.couple.photo.frame.main.bluetooth.listener.BluetoothThreadCallback;
-import com.starbrunch.couple.photo.frame.main.common.Common;
-import com.starbrunch.couple.photo.frame.main.object.MessageObject;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-
 /**
  * Created by only340 on 2018-02-06.
  */
 
-public class ConnectedFileTransferThread extends Thread
+/*public class ConnectedFileTransferThread extends Thread
 {
     private BluetoothThreadCallback mBluetoothThreadCallback = null;
     private final BluetoothSocket mBluetoothSocket;
@@ -102,10 +86,7 @@ public class ConnectedFileTransferThread extends Thread
 
     }
 
-    /**
-     * 파일을 보내는 로직. 파일을 미리 만들어 놓은 걸 보내야한다.
-     * @param file
-     */
+
     public void write(File file)
     {
         int fileLength = 0;
@@ -150,4 +131,4 @@ public class ConnectedFileTransferThread extends Thread
             Log.f("Exception : "+ e.getMessage());
         }
     }
-}
+}*/

@@ -191,14 +191,14 @@ public class DataCommunicateFragment extends Fragment implements MessageHandlerC
         _DataButtonText.setVisibility(View.INVISIBLE);
         _DataActionButton.setVisibility(View.INVISIBLE);
 
-        _DataPercentProgressText.setText(MAX_PERCENT);
+        _DataPercentProgressText.setText(String.valueOf(MAX_PERCENT));
 
         mWeakReferenceHandler.sendEmptyMessageDelayed(MESSAGE_END_SCENE, Common.DURATION_LONGER);
     }
 
     public void setTransferPercent(int percent)
     {
-        _DataPercentProgressText.setText(percent);
+        _DataPercentProgressText.setText(String.valueOf(percent));
     }
 
     private View.OnClickListener mOnButtonClickListener = new View.OnClickListener()

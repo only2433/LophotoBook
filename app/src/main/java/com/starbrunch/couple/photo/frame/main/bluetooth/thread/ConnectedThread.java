@@ -14,7 +14,7 @@ import java.io.OutputStream;
  * Created by 정재현 on 2018-01-18.
  */
 
-public class ConnectedInformationThread extends Thread
+public class ConnectedThread extends Thread
 {
     private BluetoothThreadCallback mBluetoothThreadCallback = null;
     private final BluetoothSocket mBluetoothSocket;
@@ -23,7 +23,7 @@ public class ConnectedInformationThread extends Thread
 
     private boolean isCancel = false;
 
-    public ConnectedInformationThread(BluetoothSocket socket, BluetoothThreadCallback bluetoothThreadCallback)
+    public ConnectedThread(BluetoothSocket socket, BluetoothThreadCallback bluetoothThreadCallback)
     {
         mBluetoothThreadCallback = bluetoothThreadCallback;
         mBluetoothSocket = socket;

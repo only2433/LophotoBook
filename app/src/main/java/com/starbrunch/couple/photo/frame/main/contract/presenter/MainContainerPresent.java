@@ -575,7 +575,7 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
                 mMonthListViewFragment.notifyChanged(mModifiedItemPosition,updatePhotoInformationObject);
                 break;
             case MESSAGE_FILE_COMPRESSOR:
-                //makePhotoInformationFile();
+                makePhotoInformationFile();
                 startCompressorAsync();
                 break;
             case MESSAGE_BLUETOOTH_READY_TO_SEND_INFORMATION:
@@ -594,8 +594,10 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
                     if(readMessage.equals(BluetoothController.RESULT_READY_TO_RECEIVE_FILE))
                     {
                         Log.i("send file ");
-                        File file = new File(Common.PATH_EXTERNAL_ZIP_ROOT+Common.ZIP_FILE_NAME);
-                        mBluetoothController.writeFile(file);
+                        //File file = new File(Common.PATH_EXTERNAL_ZIP_ROOT+Common.ZIP_FILE_NAME);
+                        //mBluetoothController.writeFile(file);
+                        //TODO: 파일 스레드 동작 시키고 파일을 보내야한다.
+
                     }
                 }
                 else if(mCurrentSettingType == Common.RESULT_SETTING_BLUETOOTH_RECEIVE)
@@ -607,6 +609,8 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
                     String message = BluetoothController.RESULT_READY_TO_RECEIVE_FILE;
                     byte[] readyMessageByte = message.getBytes();
                     mBluetoothController.writeInformation(readyMessageByte);
+
+
                 }
 
                 break;
@@ -923,7 +927,7 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
                 if(result)
                 {
 
-                   /* File file = new File(Common.PATH_EXTERNAL_ZIP_ROOT+Common.ZIP_FILE_NAME);
+                   File file = new File(Common.PATH_EXTERNAL_ZIP_ROOT+Common.ZIP_FILE_NAME);
                     Log.i("zip file exist : "+ file.exists());
 
                     if(file.exists())
@@ -941,7 +945,7 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
                             Log.f("File size error");
                         }
 
-                    }*/
+                    }
                 }
                 else
                 {
