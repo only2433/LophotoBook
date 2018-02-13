@@ -193,7 +193,7 @@ public class DataCommunicateFragment extends Fragment implements MessageHandlerC
 
         _DataPercentProgressText.setText(String.valueOf(MAX_PERCENT));
 
-        mWeakReferenceHandler.sendEmptyMessageDelayed(MESSAGE_END_SCENE, Common.DURATION_LONGER);
+       //mWeakReferenceHandler.sendEmptyMessageDelayed(MESSAGE_END_SCENE, Common.DURATION_LONGER);
     }
 
     public void setTransferPercent(int percent)

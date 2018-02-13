@@ -20,7 +20,7 @@ public class AcceptThread extends Thread
     private final BluetoothServerSocket mBluetoothServerSocket;
     private String mBluetoothServerSocketType = "";
     private BluetoothThreadCallback mBluetoothThreadCallback = null;
-    private boolean isCancel = false;
+
 
     public AcceptThread(BluetoothAdapter adapter, BluetoothThreadCallback bluetoothThreadCallback)
     {
@@ -49,8 +49,7 @@ public class AcceptThread extends Thread
 
         BluetoothSocket socket = null;
 
-        while((mBluetoothThreadCallback.getConnectStatus() != BluetoothController.STATE_CONNECTED)
-                && !isCancel)
+        while((mBluetoothThreadCallback.getConnectStatus() != BluetoothController.STATE_CONNECTED))
         {
             try
             {
@@ -90,7 +89,6 @@ public class AcceptThread extends Thread
 
     public void cancel() {
         Log.f("CANCEL AcceptThread : " + this);
-        isCancel = true;
         try
         {
             mBluetoothServerSocket.close();

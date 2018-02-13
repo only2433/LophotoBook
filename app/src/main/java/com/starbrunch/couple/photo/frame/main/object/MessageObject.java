@@ -5,7 +5,7 @@ package com.starbrunch.couple.photo.frame.main.object;
  */
 public class MessageObject
 {
-    public int argument1 = -1;
-    public int argument2 = -1;
-    public Object data = null;
+    public int code         = -1;
+    public int argument1    = -1;
+    public Object data      = null;
 }

@@ -29,15 +29,19 @@ import java.util.UUID;
 public class BluetoothController implements BluetoothThreadCallback
 {
 
+
     public static final String SERVICE_NAME = "lophoco_book_service";
     public static final UUID RFCCMM_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
 
     public static final int MESSAGE_INFORMATION_READ    = 0;
-    public static final int MESSAGE_DATA_READ_PERCENT   = 101;
-    public static final int MESSAGE_DATA_WRITE_PERCENT  = 102;
+    public static final int MESSAGE_READ_PERCENT_UI     = 1;
+    public static final int MESSAGE_SEND_PERCENT_UI     = 2;
 
     public static final int MAX_PERCENT = 100;
+
+    public static final int READ_TYPE_MESSAGE   = 0;
+    public static final int READ_TYPE_FILE      = 1;
 
 
     // Constants that indicate the current connection state
@@ -46,11 +50,9 @@ public class BluetoothController implements BluetoothThreadCallback
     public static final int STATE_CONNECTING                = 2; // now initiating an outgoing connection
     public static final int STATE_CONNECTED                 = 3; // now connected to a remote device
 
+
     public static final int STATE_CONNECTION_FAILED = 101;
     public static final int STATE_CONNECTION_LOST   = 102;
-
-    public static final String RESULT_READY_TO_RECEIVE_FILE ="ready_to_receive_file";
-
 
     private BluetoothAdapter mBluetoothAdapter = null;
     private int mConnectStatus = STATE_NONE;
@@ -353,34 +355,47 @@ public class BluetoothController implements BluetoothThreadCallback
         mWeakReferenceHandler.sendMessage(toastMessage);
 
         updateConnectStatus();
-        mWeakReferenceHandler.sendEmptyMessageDelayed(MainContainerPresent.MESSAGE_BLUETOOTH_READY_TO_SEND_INFORMATION, Common.DURATION_LONG);
+        mWeakReferenceHandler.sendEmptyMessageDelayed(MainContainerPresent.MESSAGE_BLUETOOTH_LINK_COMPLETE, Common.DURATION_LONGER);
 
     }
 
-    @Override
-    public void connectedFileTransfer(BluetoothSocket socket, BluetoothDevice device)
+
+    public synchronized void sendFile(final String filePath)
     {
-        Log.i("");
-        cancelConnectingThread();
-        cancelConnectedThread();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                mConnectedThread.writeFile(filePath);
+            }
+        }).start();
 
-        mConnectDeviceName = mCurrentBluetoothDevice.getName();
 
-        Message message = Message.obtain();
-        message.what = MainContainerPresent.MESSAGE_BLUETOOTH_TOAST;
-        message.obj = mContext.getResources().getString(R.string.message_ready_to_transfer_file)+" "+mCurrentBluetoothDevice.getName();
-
-        mWeakReferenceHandler.sendMessage(message);
-        updateConnectStatus();
-        mWeakReferenceHandler.sendEmptyMessageDelayed(MainContainerPresent.MESSAGE_BLUETOOTH_READY_TO_TRANSFER_FILE ,Common.DURATION_LONG);
 
     }
 
+    public synchronized void setConnectedMessage()
+    {
+        mConnectedThread.setType(READ_TYPE_MESSAGE);
+    }
+
+    public synchronized void setConnectedFile()
+    {
+        mConnectedThread.setType(READ_TYPE_FILE);
+    }
+
+    public synchronized void setReadFileInformation(String path, long fileSize)
+    {
+        mConnectedThread.makeFileInformation(path, fileSize);
+    }
+
+
+
+
     @Override
-    public void sendMessage(int messageType, MessageObject object)
+    public void sendMessage(MessageObject object)
     {
         Message message = null;
-        switch(messageType)
+        switch(object.code)
         {
             case MESSAGE_INFORMATION_READ:
                 message = Message.obtain();
@@ -390,21 +405,7 @@ public class BluetoothController implements BluetoothThreadCallback
 
                 mWeakReferenceHandler.sendMessage(message);
                 break;
-            case MESSAGE_DATA_WRITE_PERCENT:
-                if(object.argument1 == MAX_PERCENT)
-                {
-                    mWeakReferenceHandler.sendEmptyMessage(MainContainerPresent.MESSAGE_BLUETOOTH_DATA_WRITE_COMPLETE);
-                }
-                else
-                {
-                    message= Message.obtain();
-                    message.what = MainContainerPresent.MESSAGE_BLUETOOTH_DATA_WRITE;
-                    message.arg1 = object.argument1;
-                    mWeakReferenceHandler.sendMessage(message);
-                }
-                break;
-            case MESSAGE_DATA_READ_PERCENT:
-
+            case MESSAGE_READ_PERCENT_UI:
 
                 if(object.argument1 == MAX_PERCENT)
                 {
@@ -413,11 +414,25 @@ public class BluetoothController implements BluetoothThreadCallback
                 else
                 {
                     message = Message.obtain();
-                    message.what = MainContainerPresent.MESSAGE_BLUETOOTH_DATA_WRITE;
+                    message.what = MainContainerPresent.MESSAGE_BLUETOOTH_DATA_READ_UI;
                     message.arg1 = object.argument1;
                     mWeakReferenceHandler.sendMessage(message);
                 }
                 break;
+            case MESSAGE_SEND_PERCENT_UI:
+                if(object.argument1 == MAX_PERCENT)
+                {
+                    mWeakReferenceHandler.sendEmptyMessage(MainContainerPresent.MESSAGE_BLUETOOTH_DATA_SEND_COMPLETE);
+                }
+                else
+                {
+                    message = Message.obtain();
+                    message.what = MainContainerPresent.MESSAGE_BLUETOOTH_DATA_SEND_UI;
+                    message.arg1 = object.argument1;
+                    mWeakReferenceHandler.sendMessage(message);
+                }
+                break;
+
         }
     }
 
@@ -432,4 +447,6 @@ public class BluetoothController implements BluetoothThreadCallback
     {
         mConnectingThread = null;
     }
+
+
 }

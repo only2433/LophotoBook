@@ -23,6 +23,9 @@ public class Common
 
     public static final String ASYNC_UNCOMPRESSOR   ="async_uncompressor";
     public static final String ASYNC_COMPRESSOR     ="async_compressonr";
+    public static final String ASYNC_BLUETOOTH_SEND_FILE = "async_bluetooth_send_file";
+    public static final String ASYNC_BLUETOOTH_READ_FILE = "async_bluetooth_read_file";
+
 
     public static final String SHARED_PHOTO_IMAGE = "shared_photo_image";
 
@@ -56,6 +59,10 @@ public class Common
 
     public static final int RESULT_SETTING_BLUETOOTH_SEND       = 1001;
     public static final int RESULT_SETTING_BLUETOOTH_RECEIVE    = 1002;
+
+    public static final int BLUETOOTH_CODE_RECEIVE_FILE_SIZE        = 700;
+    public static final int BLUETOOTH_CODE_READY_TO_RECEIVE_FILE    = 701;
+
 
     public static final String PREFERENCE_SEND_FILE_SIZE = "preference_file_size";
 }
