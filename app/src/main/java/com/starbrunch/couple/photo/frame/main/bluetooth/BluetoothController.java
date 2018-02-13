@@ -98,9 +98,7 @@ public class BluetoothController implements BluetoothThreadCallback
             case STATE_NONE:
                 Log.f("not connected");
                 break;
-
         }
-
     }
 
     private void startAcceptThread()
@@ -157,8 +155,6 @@ public class BluetoothController implements BluetoothThreadCallback
         }
     }
 
-
-
     /**
      * Start the chat service. Specifically start AcceptThread to begin a
      * session in listening (server) mode. Called by the Activity onResume()
@@ -174,19 +170,18 @@ public class BluetoothController implements BluetoothThreadCallback
 
     public synchronized void stop()
     {
+        mConnectStatus = STATE_NONE;
+        updateConnectStatus();
+
         cancelConnectingThread();
         cancelConnectedThread();
         cancelAcceptThread();
-
-        mConnectStatus = STATE_NONE;
-        updateConnectStatus();
     }
 
     public void writeInformation(byte[] out)
     {
         Log.i("");
         ConnectedThread  connectedThread= null;
-
 
         synchronized (this)
         {
@@ -216,7 +211,7 @@ public class BluetoothController implements BluetoothThreadCallback
         mConnectStatus = STATE_NONE;
         updateConnectStatus();
 
-        start();
+        stop();
 
         /**
          * 가끔 연결이 안될때가 있다. 히밤. 연결실패시 해결 대책 필요.
@@ -232,7 +227,7 @@ public class BluetoothController implements BluetoothThreadCallback
         mWeakReferenceHandler.sendMessage(message);
         mConnectStatus = STATE_NONE;
         updateConnectStatus();
-        start();
+        stop();
 
         /**
          * 가끔 연결이 안될때가 있다. 히밤. 연결이 되었는데 연결을 잃어버렸을때는 데이터 관련 프레그먼트를 닫아줘야한다.
@@ -360,6 +355,10 @@ public class BluetoothController implements BluetoothThreadCallback
     }
 
 
+    /**
+     * SEND 하는 사람이 파일을 보낼때 사용
+     * @param filePath 보낼 파일 위치
+     */
     public synchronized void sendFile(final String filePath)
     {
         new Thread(new Runnable() {
@@ -373,16 +372,27 @@ public class BluetoothController implements BluetoothThreadCallback
 
     }
 
+    /**
+     * Connected Thread의 데이터 읽는 형태를 메세지를 보내는 형태로 변경
+     */
     public synchronized void setConnectedMessage()
     {
         mConnectedThread.setType(READ_TYPE_MESSAGE);
     }
 
+    /**
+     * Connected Thread의 데이터 읽는 형태를 파일쓰는 형태로 변경
+     */
     public synchronized void setConnectedFile()
     {
         mConnectedThread.setType(READ_TYPE_FILE);
     }
 
+    /**
+     * 파일을 받는 정보 및 받을 파일 사이즈를 전달한다.
+     * @param path  파일 위치
+     * @param fileSize  파일 사이즈
+     */
     public synchronized void setReadFileInformation(String path, long fileSize)
     {
         mConnectedThread.makeFileInformation(path, fileSize);

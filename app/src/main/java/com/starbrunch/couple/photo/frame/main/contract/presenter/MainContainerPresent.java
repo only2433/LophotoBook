@@ -508,6 +508,8 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
                 }
                 else
                 {
+                    mBluetoothController.start();
+                    Log.i("Receive");
                     enableBluetoothDiscoverable();
                 }
 
@@ -686,7 +688,6 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
     @Override
     public void changeTimeSetComplete(int hourOfDay, int minute)
     {
-
         mModifiedCheckList.put(Check.DATE, true);
 
         mRequestCalendar.set(Calendar.HOUR_OF_DAY,hourOfDay);

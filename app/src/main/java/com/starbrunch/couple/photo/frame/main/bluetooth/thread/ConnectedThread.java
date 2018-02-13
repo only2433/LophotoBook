@@ -62,15 +62,13 @@ public class ConnectedThread extends Thread
         int bytes;
         int percent = 0;
         long currentFileSize = 0;
-        long fileMaxSize = 0;
 
-        while ((mBluetoothThreadCallback.getConnectStatus() == BluetoothController.STATE_CONNECTED))
-        {
+        while ((mBluetoothThreadCallback.getConnectStatus() == BluetoothController.STATE_CONNECTED)) {
 
             try {
                 bytes = mInputStream.read(buffer);
 
-                if(mReadType == BluetoothController.READ_TYPE_MESSAGE)
+                if (mReadType == BluetoothController.READ_TYPE_MESSAGE)
                 {
                     MessageObject object = new MessageObject();
                     object.code = BluetoothController.MESSAGE_INFORMATION_READ;
@@ -78,30 +76,31 @@ public class ConnectedThread extends Thread
                     object.data = buffer;
 
                     mBluetoothThreadCallback.sendMessage(object);
-                }
-                else if(mReadType == BluetoothController.READ_TYPE_FILE)
+                } else if (mReadType == BluetoothController.READ_TYPE_FILE)
                 {
                     currentFileSize += bytes;
                     percent = (int) (currentFileSize * 100 / mFileMaxSize);
                     mFileOutputStream.write(buffer, 0, bytes);
 
-                    Log.i("currentFileSize : "+ currentFileSize+", mTargetFileSize : "+mFileMaxSize+", fileLength : "+bytes);
+                    Log.i("currentFileSize : " + currentFileSize + ", mTargetFileSize : " + mFileMaxSize + ", fileLength : " + bytes);
 
                     MessageObject object = new MessageObject();
                     object.code = BluetoothController.MESSAGE_READ_PERCENT_UI;
                     object.argument1 = percent;
                     mBluetoothThreadCallback.sendMessage(object);
-
-
                 }
 
-            } catch (Exception e) {
+            }
+            catch (Exception e)
+            {
                 Log.f("Exception : " + e.getMessage());
-                mBluetoothThreadCallback.sendConnectStatus(BluetoothController.STATE_CONNECTION_LOST);
+                if (mBluetoothThreadCallback.getConnectStatus() == BluetoothController.STATE_CONNECTED)
+                {
+                    mBluetoothThreadCallback.sendConnectStatus(BluetoothController.STATE_CONNECTION_LOST);
+                }
+
             }
         }
-
-
     }
 
     public void write(byte[] buffer)

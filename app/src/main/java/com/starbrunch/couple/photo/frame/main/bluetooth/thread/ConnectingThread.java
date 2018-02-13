@@ -60,7 +60,14 @@ public class ConnectingThread extends Thread
             {
                 Log.f("IO Message : "+ e1.getMessage());
             }
-            mBluetoothThreadCallback.sendConnectStatus(BluetoothController.STATE_CONNECTION_FAILED);
+
+            if(mBluetoothThreadCallback.getConnectStatus() == BluetoothController.STATE_CONNECTING)
+            {
+                mBluetoothThreadCallback.sendConnectStatus(BluetoothController.STATE_CONNECTION_FAILED);
+            }
+
+            return;
+
         }
 
         synchronized (this)
