@@ -79,6 +79,8 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
     private static final int MESSAGE_IMAGE_INFORMATION_SAVE     = 1;
     private static final int MESSAGE_SAVE_COMPLETE              = 2;
     private static final int MESSAGE_FILE_COMPRESSOR            = 3;
+    private static final int MESSAGE_FILE_UNCOMPRESSOR          = 4;
+    private static final int MESSAGE_RECEIVE_SETTING_COMPLETE   = 5;
 
     public static final int MESSAGE_BLUETOOTH_LINK_COMPLETE         = 200;
     public static final int MESSAGE_BLUETOOTH_INFORMATION_READ      = 201;
@@ -122,6 +124,7 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
     private int mCurrentViewState = SCENE_MAIN_VIEW;
 
     private int mCurrentSettingType = -1;
+    private boolean isTransferFileComplete = false;
     /**
      * 연결할 Bluetooth Address
      */
@@ -390,10 +393,8 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
 
     private void startUnCompressorAsync()
     {
-        Toast.makeText(mContext, "압축을 푸는 중 입니다.", Toast.LENGTH_SHORT).show();
-
         String targetZipFile = Common.PATH_EXTERNAL_ZIP_ROOT+ Common.ZIP_FILE_NAME;
-        String destinationPath = Common.PATH_EXTERNAL_ZIP_ROOT;
+        String destinationPath = Common.PATH_BASE_APP_ROOT;
 
         UnCompressorAsync async = new UnCompressorAsync(mContext);
         async.setData(targetZipFile, destinationPath);
@@ -410,14 +411,27 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
 
     private ArrayList<PhotoInformationObject> getPhotoInformationFromFile()
     {
-        String fileInformation = FileUtils.getStringFromFile(Common.PATH_EXTERNAL_PHOTO_INFORMATION_ROOT+Common.PHOTO_INFORMATION_FILE_NAME);
+        String fileInformation = FileUtils.getStringFromFile(Common.PATH_APP_ROOT+Common.PHOTO_INFORMATION_FILE_NAME);
         PhotoInformationListObject object = new Gson().fromJson(fileInformation, PhotoInformationListObject.class);
 
         Log.i("list size : "+ object.getPhotoInformationListObjectList().size());
         return object.getPhotoInformationListObjectList();
     }
 
+    private void initSetPhotoInformaionList(ArrayList<PhotoInformationObject> list)
+    {
+        for(int i = 0; i < list.size() ; i++)
+        {
+            mPhotoInformationDBHelper.addPhotoInformationObject(list.get(i));
+        }
+    }
 
+    private void sendMessage(MessageObject object)
+    {
+        String message = new Gson().toJson(object);
+        byte[] readyMessageByte = message.getBytes();
+        mBluetoothController.writeInformation(readyMessageByte);
+    }
 
     @Override
     public void acvitityResult(int requestCode, int resultCode, Intent data) {
@@ -580,6 +594,18 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
                 makePhotoInformationFile();
                 startCompressorAsync();
                 break;
+            case MESSAGE_FILE_UNCOMPRESSOR:
+                mMainContainerContractView.showLoading();
+                startUnCompressorAsync();
+                break;
+
+            case MESSAGE_RECEIVE_SETTING_COMPLETE:
+
+                mMainContainerContractView.hideLoading();
+                FileUtils.deleteAllFileInPath(Common.PATH_EXTERNAL_ZIP_ROOT);
+                mMainContainerContractView.showMessage(mContext.getResources().getString(R.string.message_receive_complete),
+                        mContext.getResources().getColor(R.color.color_eb1e63));
+                break;
             case MESSAGE_BLUETOOTH_LINK_COMPLETE:
                 Log.i("MESSAGE_BLUETOOTH_READY_TO_SEND_INFORMATION");
                 showDataCommunicateFragment();
@@ -604,6 +630,12 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
                         {
                             mWeakReferenceHandler.sendEmptyMessageDelayed(MESSAGE_BLUETOOTH_FILE_SEND_SIGNAL , Common.DURATION_LONG);
                         }
+                        else if(object.code == Common.BLUETOOTH_CODE_SEND_SCENE_CLOSE)
+                        {
+                            FileUtils.deleteAllFileInPath(Common.PATH_EXTERNAL_ZIP_ROOT);
+                            mDataCommunicateFragment.closeFragment();
+
+                        }
                     }
                     else if(mCurrentSettingType == Common.RESULT_SETTING_BLUETOOTH_RECEIVE)
                     {
@@ -615,14 +647,9 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
                             CommonUtils.getInstance(mContext).setSharedPreference(Common.PREFERENCE_SEND_FILE_SIZE, Long.valueOf((String) object.data));
                             Log.i("File Size : "+ Long.valueOf((String) object.data));
 
-
                             MessageObject messageObject = new MessageObject();
                             messageObject.code = Common.BLUETOOTH_CODE_READY_TO_RECEIVE_FILE;
-
-                            String message = new Gson().toJson(messageObject);
-                            byte[] readyMessageByte = message.getBytes();
-                            mBluetoothController.writeInformation(readyMessageByte);
-
+                            sendMessage(messageObject);
 
                             long fileSize = (long) CommonUtils.getInstance(mContext).getSharedPreference(Common.PREFERENCE_SEND_FILE_SIZE, Common.TYPE_PARAMS_LONG);
                             mBluetoothController.setConnectedFile();
@@ -648,10 +675,20 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
                 break;
             case MESSAGE_BLUETOOTH_DATA_READ_COMPLETE:
                 Log.f("MESSAGE_BLUETOOTH_DATA_READ_COMPLETE");
+                isTransferFileComplete = true;
                 mDataCommunicateFragment.endTransferData();
+                mBluetoothController.setConnectedMessage();
+
+                MessageObject messageObject = new MessageObject();
+                messageObject.code = Common.BLUETOOTH_CODE_SEND_SCENE_CLOSE;
+                sendMessage(messageObject);
+
+                mDataCommunicateFragment.closeFragment();
+
                 break;
             case MESSAGE_BLUETOOTH_DATA_SEND_COMPLETE:
                 Log.f("MESSAGE_BLUETOOTH_DATA_SEND_COMPLETE");
+                isTransferFileComplete = true;
                 mDataCommunicateFragment.endTransferData();
                 break;
             case MESSAGE_BLUETOOTH_FILE_SEND_SIGNAL:
@@ -784,6 +821,23 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
         {
             mBluetoothController.stop();
         }
+
+        if(isTransferFileComplete)
+        {
+            if(mCurrentSettingType == Common.RESULT_SETTING_BLUETOOTH_RECEIVE)
+            {
+                FileUtils.deleteAllFileInPath(Common.PATH_APP_ROOT);
+                mPhotoInformationDBHelper.deletePhotoInformationAll();
+
+                mWeakReferenceHandler.sendEmptyMessageDelayed(MESSAGE_FILE_UNCOMPRESSOR, Common.DURATION_LONG);
+            }
+            else if(mCurrentSettingType == Common.RESULT_SETTING_BLUETOOTH_SEND)
+            {
+                mMainContainerContractView.showMessage(mContext.getResources().getString(R.string.message_send_complete),
+                        mContext.getResources().getColor(R.color.color_0ac8e2));
+            }
+        }
+
     }
 
     @Override
@@ -952,8 +1006,7 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
                 Log.f("Compressor result : "+ result);
                 if(result)
                 {
-
-                   File file = new File(Common.PATH_EXTERNAL_ZIP_ROOT+Common.ZIP_FILE_NAME);
+                    File file = new File(Common.PATH_EXTERNAL_ZIP_ROOT+Common.ZIP_FILE_NAME);
                     Log.i("zip file exist : "+ file.exists());
 
                     if(file.exists())
@@ -966,11 +1019,7 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
                             MessageObject messageObject = new MessageObject();
                             messageObject.code = Common.BLUETOOTH_CODE_RECEIVE_FILE_SIZE;
                             messageObject.data = fileSize;
-
-                            String sendMessage = new Gson().toJson(messageObject);
-
-                            byte[] sendFileSizeByte = sendMessage.getBytes();
-                            mBluetoothController.writeInformation(sendFileSizeByte);
+                            sendMessage(messageObject);
                         }
                         else
                         {
@@ -990,12 +1039,12 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
 
                 if(result)
                 {
-
-                    Toast.makeText(mContext, "압축 풀기 성공", Toast.LENGTH_LONG).show();
+                    initSetPhotoInformaionList(getPhotoInformationFromFile());
+                    mWeakReferenceHandler.sendEmptyMessageDelayed(MESSAGE_RECEIVE_SETTING_COMPLETE, Common.DURATION_LONGER);
                 }
                 else
                 {
-                    Toast.makeText(mContext, "압축 풀기 실패", Toast.LENGTH_LONG).show();
+
                 }
             }
         }

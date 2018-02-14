@@ -11,6 +11,7 @@ public class Common
 
 
     public static final String PACKAGE_NAME ="com.starbrunch.couple.photo.frame.main";
+    public static final String PATH_BASE_APP_ROOT   = "/data/data/" + PACKAGE_NAME;
     public static final String PATH_APP_ROOT	 = "/data/data/" + PACKAGE_NAME + "/files/";
     public static final String PATH_IMAGE_ROOT = PATH_APP_ROOT+"images/";
 
@@ -62,6 +63,7 @@ public class Common
 
     public static final int BLUETOOTH_CODE_RECEIVE_FILE_SIZE        = 700;
     public static final int BLUETOOTH_CODE_READY_TO_RECEIVE_FILE    = 701;
+    public static final int BLUETOOTH_CODE_SEND_SCENE_CLOSE         = 702;
 
 
     public static final String PREFERENCE_SEND_FILE_SIZE = "preference_file_size";

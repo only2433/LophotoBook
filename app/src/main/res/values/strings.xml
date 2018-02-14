@@ -14,6 +14,8 @@
     <string name="message_not_enable_bluetooth">you need to enable bluetooth to send photo</string>
     <string name="message_not_discovery_enable">you need to permit Bluetooth permission</string>
     <string name="message_search_fail">Please You must ready for connected device</string>
+    <string name="message_receive_complete">Complete to receive Lophoco Book</string>
+    <string name="message_send_complete">Complete to send Lophoco Book</string>
 
     <string name="message_data_send_information">Attempting to send book to</string>
     <string name="message_data_receive_information">Attempting to receive book from</string>
