@@ -194,7 +194,7 @@ public class BluetoothController implements BluetoothThreadCallback
 
         try
         {
-            connectedThread.write(out);
+            connectedThread.sendMessage(out);
         }catch(NullPointerException e)
         {
             Log.f("Exception e : "+ e.getMessage());
@@ -419,12 +419,12 @@ public class BluetoothController implements BluetoothThreadCallback
 
                 if(object.argument1 == MAX_PERCENT)
                 {
-                    mWeakReferenceHandler.sendEmptyMessage(MainContainerPresent.MESSAGE_BLUETOOTH_DATA_READ_COMPLETE);
+                    mWeakReferenceHandler.sendEmptyMessage(MainContainerPresent.MESSAGE_BLUETOOTH_DATA_RECEIVE_COMPLETE);
                 }
                 else
                 {
                     message = Message.obtain();
-                    message.what = MainContainerPresent.MESSAGE_BLUETOOTH_DATA_READ_UI;
+                    message.what = MainContainerPresent.MESSAGE_BLUETOOTH_DATA_RECEIVE_UI;
                     message.arg1 = object.argument1;
                     mWeakReferenceHandler.sendMessage(message);
                 }

@@ -10,10 +10,10 @@ import com.starbrunch.couple.photo.frame.main.object.MessageObject;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.FileOutputStream;
 
 /**
  * Created by 정재현 on 2018-01-18.
@@ -25,7 +25,6 @@ public class ConnectedThread extends Thread
     private final BluetoothSocket mBluetoothSocket;
     private final InputStream mInputStream;
     private final OutputStream mOutputStream;
-    private long mMaxFileSize = 0;
 
     private int mReadType = BluetoothController.READ_TYPE_MESSAGE;
     private File mDownloadFile = null;
@@ -76,7 +75,8 @@ public class ConnectedThread extends Thread
                     object.data = buffer;
 
                     mBluetoothThreadCallback.sendMessage(object);
-                } else if (mReadType == BluetoothController.READ_TYPE_FILE)
+                }
+                else if (mReadType == BluetoothController.READ_TYPE_FILE)
                 {
                     currentFileSize += bytes;
                     percent = (int) (currentFileSize * 100 / mFileMaxSize);
@@ -103,7 +103,7 @@ public class ConnectedThread extends Thread
         }
     }
 
-    public void write(byte[] buffer)
+    public void sendMessage(byte[] buffer)
     {
         Log.i("");
         try
@@ -115,6 +115,7 @@ public class ConnectedThread extends Thread
             Log.f("Exception : "+ e.getMessage());
         }
     }
+
 
     public void writeFile(String path)
     {

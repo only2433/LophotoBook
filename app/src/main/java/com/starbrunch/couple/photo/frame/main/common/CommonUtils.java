@@ -45,7 +45,6 @@ import android.transition.Slide;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.Display;
-import android.view.Gravity;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.Window;
@@ -1252,13 +1251,14 @@ public class CommonUtils
         return rect;
     }
 
-    public Slide getSlideTransition(int duration, int ...excludeTarget)
+    public Slide getSlideTransition(int gravity, int delay, int duration, int ...excludeTarget)
     {
         int[] excludeTargetList = null;
 
         Slide slide = new Slide();
-        slide.setSlideEdge(Gravity.LEFT);
+        slide.setSlideEdge(gravity);
         slide.setDuration(duration);
+		slide.setStartDelay(delay);
 
         if(excludeTarget != null)
         {

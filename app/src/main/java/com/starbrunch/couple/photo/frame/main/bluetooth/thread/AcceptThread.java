@@ -49,7 +49,7 @@ public class AcceptThread extends Thread
 
         BluetoothSocket socket = null;
 
-        while((mBluetoothThreadCallback.getConnectStatus() != BluetoothController.STATE_CONNECTED))
+        while((mBluetoothThreadCallback.getConnectStatus() == BluetoothController.STATE_LISTEN))
         {
             try
             {

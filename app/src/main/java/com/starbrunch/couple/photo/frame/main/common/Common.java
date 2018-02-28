@@ -61,9 +61,14 @@ public class Common
     public static final int RESULT_SETTING_BLUETOOTH_SEND       = 1001;
     public static final int RESULT_SETTING_BLUETOOTH_RECEIVE    = 1002;
 
+    // Send 기기가 Receive 기기에게 받을 파일 사이즈를 전달한다. ( BLUETOOTH로 주고 받는 메세지 의 코드 )
     public static final int BLUETOOTH_CODE_RECEIVE_FILE_SIZE        = 700;
+
+    // Receive 기기가 Send 기기에게 파일 받을 준비가 됬다고 알린다. ( BLUETOOTH로 주고 받는 메세지 의 코드 )
     public static final int BLUETOOTH_CODE_READY_TO_RECEIVE_FILE    = 701;
-    public static final int BLUETOOTH_CODE_SEND_SCENE_CLOSE         = 702;
+
+    // Receive 기기가 Send 기기에게 데이터가 다 전달 되었다고 알린다. ( BLUETOOTH로 주고 받는 메세지 의 코드 )
+    public static final int BLUETOOTH_CODE_RECEIVE_DATA_COMPLETE    = 702;
 
 
     public static final String PREFERENCE_SEND_FILE_SIZE = "preference_file_size";

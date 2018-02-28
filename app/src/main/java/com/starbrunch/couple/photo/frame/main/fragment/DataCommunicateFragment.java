@@ -7,6 +7,7 @@ import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.transition.Transition;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.littlefox.library.view.dialog.ProgressWheel;
+import com.littlefox.logmonitor.Log;
 import com.ssomai.android.scalablelayout.ScalableLayout;
 import com.starbrunch.couple.photo.frame.main.R;
 import com.starbrunch.couple.photo.frame.main.callback.MainContainerCallback;
@@ -124,7 +126,18 @@ public class DataCommunicateFragment extends Fragment implements MessageHandlerC
     public void onDestroyView()
     {
         super.onDestroyView();
-        mMainContainerCallback.onDataTransferEnd();
+
+    }
+
+    @Override
+    public void setReturnTransition(Object transition)
+    {
+        if(transition != null)
+        {
+            Transition tempTransition = (Transition) transition;
+            tempTransition.addListener(mReturnTransitionListener);
+            super.setReturnTransition(transition);
+        }
     }
 
     private void initView()
@@ -205,6 +218,57 @@ public class DataCommunicateFragment extends Fragment implements MessageHandlerC
         _DataPercentProgressText.setText(String.valueOf(percent));
     }
 
+
+
+    public void setMainContainerCallback(MainContainerCallback baseContainerCallback)
+    {
+        mMainContainerCallback = baseContainerCallback;
+    }
+
+    @Override
+    public void handlerMessage(Message message)
+    {
+        if(message.what == MESSAGE_END_SCENE)
+        {
+            ((AppCompatActivity)mContext).onBackPressed();
+        }
+
+    }
+
+    private Transition.TransitionListener mReturnTransitionListener = new Transition.TransitionListener()
+    {
+        @Override
+        public void onTransitionStart(Transition transition)
+        {
+
+        }
+
+        @Override
+        public void onTransitionEnd(Transition transition)
+        {
+            Log.i("");
+            mMainContainerCallback.onDataTransferEnd();
+        }
+
+        @Override
+        public void onTransitionCancel(Transition transition)
+        {
+
+        }
+
+        @Override
+        public void onTransitionPause(Transition transition)
+        {
+
+        }
+
+        @Override
+        public void onTransitionResume(Transition transition)
+        {
+
+        }
+    };
+
     private View.OnClickListener mOnButtonClickListener = new View.OnClickListener()
     {
 
@@ -232,19 +296,4 @@ public class DataCommunicateFragment extends Fragment implements MessageHandlerC
             }
         }
     };
-
-    public void setMainContainerCallback(MainContainerCallback baseContainerCallback)
-    {
-        mMainContainerCallback = baseContainerCallback;
-    }
-
-    @Override
-    public void handlerMessage(Message message)
-    {
-        if(message.what == MESSAGE_END_SCENE)
-        {
-            ((AppCompatActivity)mContext).onBackPressed();
-        }
-
-    }
 }

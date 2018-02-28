@@ -40,6 +40,9 @@ public class MainViewFragment extends Fragment
 
     private int mSelectPositionColor = 0;
 
+    private Transition mExitTransition = null;
+    private Transition mReEnterTransition = null;
+
     @BindView(R.id._monthItemList)
     RecyclerView _MonthItemList;
 
@@ -68,6 +71,7 @@ public class MainViewFragment extends Fragment
     public void onResume()
     {
         super.onResume();
+        Log.i("");
         mMainContainerCallback.setMainScene(MainContainerPresent.SCENE_MAIN_VIEW);
     }
 
@@ -93,73 +97,33 @@ public class MainViewFragment extends Fragment
     @Override
     public void setExitTransition(Object transition)
     {
-        Transition tempTransition = (Transition) transition;
-        tempTransition.addListener(new Transition.TransitionListener() {
-            @Override
-            public void onTransitionStart(@NonNull Transition transition)
-            {
-            }
+        Log.i("");
+        if(transition != null)
+        {
+            Transition tempTransition = (Transition) transition;
+            mExitTransition = tempTransition;
 
-            @Override
-            public void onTransitionEnd(@NonNull Transition transition)
-            {
-                Log.i("");
-                mMainContainerCallback.onChangeMonthListViewSetting();
-            }
+            tempTransition.addListener(mExitTransitionListener);
+            super.setExitTransition(transition);
+        }
 
-            @Override
-            public void onTransitionCancel(@NonNull Transition transition) {}
-
-            @Override
-            public void onTransitionPause(@NonNull Transition transition) {}
-
-            @Override
-            public void onTransitionResume(@NonNull Transition transition) {}
-        });
-        super.setExitTransition(transition);
     }
 
     @Override
     public void setReenterTransition(Object transition)
-
     {
-        Transition tempTransition = (Transition) transition;
-        tempTransition.addListener(new Transition.TransitionListener() {
-            @Override
-            public void onTransitionStart(@NonNull Transition transition) {
+        Log.i("");
+        if(transition != null)
+        {
+            Log.i("");
+            Transition tempTransition = (Transition) transition;
+            mReEnterTransition = tempTransition;
+            tempTransition.addListener(mReenterTransitionListener);
+            super.setReenterTransition(transition);
+        }
 
-                Log.i("");
-
-                mMainContainerCallback.onChangeMainViewSetting();
-            }
-
-            @Override
-            public void onTransitionEnd(@NonNull Transition transition) {
-
-            }
-
-            @Override
-            public void onTransitionCancel(@NonNull Transition transition) {
-
-            }
-
-            @Override
-            public void onTransitionPause(@NonNull Transition transition) {
-
-            }
-
-            @Override
-            public void onTransitionResume(@NonNull Transition transition) {
-
-            }
-        });
-        super.setReenterTransition(transition);
     }
 
-    private void initView()
-    {
-
-    }
 
 
     private void initRecyclerView()
@@ -172,7 +136,60 @@ public class MainViewFragment extends Fragment
         _MonthItemList.setAdapter(mMainMonthAdapter);
     }
 
+    private Transition.TransitionListener mExitTransitionListener = new Transition.TransitionListener()
+    {
+        @Override
+        public void onTransitionStart(@NonNull Transition transition)
+        {
+        }
 
+        @Override
+        public void onTransitionEnd(@NonNull Transition transition)
+        {
+            Log.i("");
+            mMainContainerCallback.onChangeMonthListViewSetting();
+        }
+
+        @Override
+        public void onTransitionCancel(@NonNull Transition transition) {}
+
+        @Override
+        public void onTransitionPause(@NonNull Transition transition) {}
+
+        @Override
+        public void onTransitionResume(@NonNull Transition transition) {}
+    };
+
+    private Transition.TransitionListener mReenterTransitionListener = new Transition.TransitionListener()
+    {
+        @Override
+        public void onTransitionStart(@NonNull Transition transition) {
+
+            Log.i("");
+
+            mMainContainerCallback.onChangeMainViewSetting();
+        }
+
+        @Override
+        public void onTransitionEnd(@NonNull Transition transition) {
+
+        }
+
+        @Override
+        public void onTransitionCancel(@NonNull Transition transition) {
+
+        }
+
+        @Override
+        public void onTransitionPause(@NonNull Transition transition) {
+
+        }
+
+        @Override
+        public void onTransitionResume(@NonNull Transition transition) {
+
+        }
+    };
 
     public class MainMonthAdapter extends RecyclerView.Adapter<MainMonthAdapter.ViewHolder>
     {
