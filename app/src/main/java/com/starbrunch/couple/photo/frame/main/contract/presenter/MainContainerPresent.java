@@ -137,7 +137,7 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
     private PhotoInformationObject mAddPhotoInformationObject = null;
     private PhotoInformationObject mModifiedInformationObject = null;
     private File mCropImageFile = null;
-    private ArrayList<PhotoInformationObject> mCurrentPhotoInformationObjectList = null;
+
     private HashMap<Enum, Boolean> mModifiedCheckList = null;
     private Calendar mRequestCalendar = null;
     private long mModifiedDateTime = 0L;
@@ -218,7 +218,7 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
         mFragmentManager.beginTransaction()
                 .replace(R.id._mainContainer, mMainViewFragment)
                 .commit();
-        mMainContainerContractView.showSettingButton();
+        mMainContainerContractView.showSettingButton(Common.DURATION_SHORT);
     }
 
     private void startDataCommunicateFragment()
@@ -227,7 +227,7 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
         mMainContainerContractView.initView();
 
         mMainContainerContractView.hideMainTitleLayout();
-        mMainContainerContractView.hideFloatButton();
+        mMainContainerContractView.invisibleFloatButton();
 
         mMainViewFragment.setExitTransition(CommonUtils.getInstance(mContext).getSlideTransition(Gravity.LEFT, 0,Common.DURATION_DEFAULT));
         mMainViewFragment.setReenterTransition(CommonUtils.getInstance(mContext).getSlideTransition(Gravity.LEFT, 300,Common.DURATION_DEFAULT));
@@ -252,10 +252,10 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
 
     private void startMonthListViewFragment(int position)
     {
-        mMonthPosition = position;
-        mCurrentPhotoInformationObjectList = mPhotoInformationDBHelper.getPhotoInformationListByMonth(Common.MONTH_TEXT_LIST[mMonthPosition]);
 
-        Log.i("position : "+position+", list size : "+ mCurrentPhotoInformationObjectList.size());
+        ArrayList<PhotoInformationObject> photoInformationList = mPhotoInformationDBHelper.getPhotoInformationListByMonth(Common.MONTH_TEXT_LIST[mMonthPosition]);
+
+        Log.i("position : "+position+", list size : "+ photoInformationList.size());
         mMonthListViewFragment = new MonthListViewFragment();
         mMonthListViewFragment.setMainContainerCallback(this);
 
@@ -265,7 +265,7 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
         mMainViewFragment.setReenterTransition(CommonUtils.getInstance(mContext).getSlideTransition(Gravity.LEFT, 0,Common.DURATION_DEFAULT));
 
 
-        bundle.putParcelableArrayList(Common.INTENT_MONTH_PHOTO_LIST, mCurrentPhotoInformationObjectList);
+        bundle.putParcelableArrayList(Common.INTENT_MONTH_PHOTO_LIST, photoInformationList);
 
         mMonthListViewFragment.setArguments(bundle);
 
@@ -273,7 +273,7 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
                 .addToBackStack(null)
                 .commit();
 
-        mMainContainerContractView.setMonthNumberText(mSelectMonthColor, mCurrentPhotoInformationObjectList.size());
+        mMainContainerContractView.setMonthNumberText(mSelectMonthColor, photoInformationList.size());
         mMainContainerContractView.changeTitleAnimationText(Common.MONTH_TEXT_LIST[mMonthPosition]);
     }
 
@@ -783,8 +783,19 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
     @Override
     public void onSelectMonth(int position)
     {
-        mSelectMonthColor = mContext.getResources().getIdentifier("color_month_"+(position+1), "color", Common.PACKAGE_NAME);
-        mMainContainerContractView.changePhotoButton(mSelectMonthColor);
+        mMonthPosition = position;
+        ArrayList<PhotoInformationObject> photoInformationList = mPhotoInformationDBHelper.getPhotoInformationListByMonth(Common.MONTH_TEXT_LIST[mMonthPosition]);
+
+        if(photoInformationList.size() >= Common.MAX_PHOTO_ITEM)
+        {
+            mMainContainerContractView.hideModeButton();
+        }
+        else
+        {
+            mSelectMonthColor = mContext.getResources().getIdentifier("color_month_"+(position+1), "color", Common.PACKAGE_NAME);
+            mMainContainerContractView.changePhotoButton(mSelectMonthColor);
+        }
+
         startMonthListViewFragment(position);
 
     }
@@ -804,6 +815,7 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
             mMainContainerContractView.changeSettingButton();
         }
 
+        mSelectMonthColor = 0;
     }
 
     @Override
@@ -839,18 +851,20 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
     public void onModifiedPhoto(int position, Pair<View, String> item)
     {
         Log.f("");
+        ArrayList<PhotoInformationObject> photoInformationList = mPhotoInformationDBHelper.getPhotoInformationListByMonth(Common.MONTH_TEXT_LIST[mMonthPosition]);
+
         mModifiedItemPosition = position;
-        mModifiedInformationObject = mCurrentPhotoInformationObjectList.get(mModifiedItemPosition);
+        mModifiedInformationObject = photoInformationList.get(mModifiedItemPosition);
         startModifiedInformationFragment(item);
         mMainContainerContractView.hideMainTitleLayout();
-        mMainContainerContractView.hideFloatButton();
+        mMainContainerContractView.invisibleFloatButton();
     }
 
     @Override
     public void onModifiedEnd()
     {
         mMainContainerContractView.showMainTitleLayout();
-        mMainContainerContractView.showPhotoButton(mSelectMonthColor);
+        mMainContainerContractView.showPhotoButton(Common.DURATION_SHORT, mSelectMonthColor);
     }
 
     @Override
@@ -858,7 +872,7 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
     {
         Log.i("");
         mMainContainerContractView.showMainTitleLayout();
-        mMainContainerContractView.showSettingButton();
+        mMainContainerContractView.showSettingButton(Common.DURATION_SHORT);
 
         if (mBluetoothController != null)
         {

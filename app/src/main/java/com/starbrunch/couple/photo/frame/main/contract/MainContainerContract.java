@@ -27,12 +27,13 @@ public class MainContainerContract
         void showMainTitleLayout();
         void hideMainTitleLayout();
 
-        void showSettingButton();
-        void showPhotoButton(int color);
+        void showSettingButton(int delay);
+        void showPhotoButton(int delay, int color);
+        void hideModeButton();
         void changeSettingButton();
         void changePhotoButton(int color);
 
-        void hideFloatButton();
+        void invisibleFloatButton();
 
         void showMessage(String message, int color);
 

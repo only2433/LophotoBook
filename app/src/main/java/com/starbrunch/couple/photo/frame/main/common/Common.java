@@ -61,6 +61,11 @@ public class Common
     public static final int RESULT_SETTING_BLUETOOTH_SEND       = 1001;
     public static final int RESULT_SETTING_BLUETOOTH_RECEIVE    = 1002;
 
+    /**
+     * 각 달마다 사진등록 최고 개수는 7개로 정의 한다. ( 추후 더 늘릴계획 있음 )
+     */
+    public static final int MAX_PHOTO_ITEM = 7;
+
     // Send 기기가 Receive 기기에게 받을 파일 사이즈를 전달한다. ( BLUETOOTH로 주고 받는 메세지 의 코드 )
     public static final int BLUETOOTH_CODE_RECEIVE_FILE_SIZE        = 700;
 

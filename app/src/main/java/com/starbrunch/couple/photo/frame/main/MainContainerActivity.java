@@ -81,6 +81,10 @@ public class MainContainerActivity extends BaseActivity implements MainContainer
     @BindView(R.id._photoFloatingButton)
     FloatingActionButton _PhotoFloatingButton;
 
+    private static final int MODE_HIDE_DEFAULT      = 0;
+    private static final int MODE_SHOW_SETTING      = 1;
+    private static final int MODE_SHOW_PHOTO        = 2;
+
     private MainContainerPresent mMainContainerPresent = null;
     private MaterialLoadingDialog mMaterialLoadingDialog = null;
     private CoordinatorLayout.LayoutParams mCoordinatorLayoutParams = null;
@@ -229,11 +233,12 @@ public class MainContainerActivity extends BaseActivity implements MainContainer
     @Override
     public void showTitleViewBackgroundAnimation(int color)
     {
+        final int backgroundColor = color;
         Rect rect = CommonUtils.getInstance(this).getGlobalVisibleRect(_MainBaseTitleText);
 
         CommonUtils.getInstance(MainContainerActivity.this).showAnimateReveal(
                 _MainBaseBackgroundLayout,
-                color,
+                backgroundColor,
                 rect.centerX(),
                 rect.centerY(),
                 Common.DURATION_TITLE_BACKGROUND_ANIMATION);
@@ -242,12 +247,12 @@ public class MainContainerActivity extends BaseActivity implements MainContainer
     @Override
     public void hideTitleViewBackgroundAnimation(int color)
     {
-
+        final int backgroundColor = color;
         Rect rect = CommonUtils.getInstance(this).getGlobalVisibleRect(_MainBaseTitleText);
 
         CommonUtils.getInstance(MainContainerActivity.this).hideAnimateReveal(
                 _MainBaseBackgroundLayout,
-                color,
+                backgroundColor,
                 rect.centerX(),
                 rect.centerY(),
                 Common.DURATION_TITLE_BACKGROUND_ANIMATION);
@@ -342,18 +347,7 @@ public class MainContainerActivity extends BaseActivity implements MainContainer
     }
 
     @Override
-    public void showSettingButton()
-    {
-        showSettingButton(Common.DURATION_SHORT);
-    }
-
-    @Override
-    public void showPhotoButton(int color)
-    {
-        showPhotoButton(Common.DURATION_SHORT, color);
-    }
-
-    private void showSettingButton(int delay)
+    public void showSettingButton(int delay)
     {
         _PhotoFloatingButton.setVisibility(View.VISIBLE);
         _PhotoFloatingButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.color_999999)));
@@ -362,7 +356,8 @@ public class MainContainerActivity extends BaseActivity implements MainContainer
         _PhotoFloatingButton.startAnimation(animation);
     }
 
-    private void showPhotoButton(int delay, int color)
+    @Override
+    public void showPhotoButton(int delay, int color)
     {
         _PhotoFloatingButton.setVisibility(View.VISIBLE);
         _PhotoFloatingButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(color)));
@@ -372,7 +367,12 @@ public class MainContainerActivity extends BaseActivity implements MainContainer
     }
 
     @Override
-    public void changeSettingButton()
+    public void hideModeButton()
+    {
+        changeModeButton(MODE_HIDE_DEFAULT);
+    }
+
+    private void changeModeButton(final int mode, final int ... color)
     {
         Animation animation = CommonUtils.getInstance(this).getTranslateYAnimation(0, CommonUtils.getInstance(this).getPixel(mFlotingButtonHeight) + mCoordinatorLayoutParams.bottomMargin, Common.DURATION_DEFAULT, 0, new AccelerateInterpolator());
         animation.setFillAfter(true);
@@ -383,38 +383,41 @@ public class MainContainerActivity extends BaseActivity implements MainContainer
             @Override
             public void onAnimationEnd(Animation animation)
             {
-                showSettingButton(0);
+                switch(mode)
+                {
+                    case MODE_SHOW_SETTING:
+                        showSettingButton(0);
+                        break;
+                    case MODE_SHOW_PHOTO:
+                        showPhotoButton(0, color[0]);
+                        break;
+                }
+
             }
 
             @Override
             public void onAnimationRepeat(Animation animation) {}
         });
         _PhotoFloatingButton.startAnimation(animation);
+    }
+
+
+    @Override
+    public void changeSettingButton()
+    {
+        changeModeButton(MODE_SHOW_SETTING);
     }
 
     @Override
     public void changePhotoButton(int color)
     {
-        final int photoColor = color;
-        Animation animation = CommonUtils.getInstance(this).getTranslateYAnimation(0, CommonUtils.getInstance(this).getPixel(mFlotingButtonHeight) + mCoordinatorLayoutParams.bottomMargin, Common.DURATION_DEFAULT, 0, new AccelerateInterpolator());
-        animation.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {}
-
-            @Override
-            public void onAnimationEnd(Animation animation)
-            {
-                showPhotoButton(0, photoColor);
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {}
-        });
-        _PhotoFloatingButton.startAnimation(animation);
+        changeModeButton(MODE_SHOW_PHOTO, color);
     }
 
+
+
     @Override
-    public void hideFloatButton()
+    public void invisibleFloatButton()
     {
         Log.i("");
         _PhotoFloatingButton.clearAnimation();
