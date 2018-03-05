@@ -253,7 +253,7 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
     private void startMonthListViewFragment(int position)
     {
 
-        ArrayList<PhotoInformationObject> photoInformationList = mPhotoInformationDBHelper.getPhotoInformationListByMonth(Common.MONTH_TEXT_LIST[mMonthPosition]);
+        ArrayList<PhotoInformationObject> photoInformationList = getPhotoInformationMonthList(mMonthPosition);
 
         Log.i("position : "+position+", list size : "+ photoInformationList.size());
         mMonthListViewFragment = new MonthListViewFragment();
@@ -462,6 +462,16 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
         mBluetoothController.writeInformation(readyMessageByte);
     }
 
+    /**
+     * 해당 월의 DB정보에서 Photo Information 의 list 를 넘겨준다.
+     * @param monthPosition 해당 월
+     * @return
+     */
+    private ArrayList<PhotoInformationObject> getPhotoInformationMonthList(int monthPosition)
+    {
+        return mPhotoInformationDBHelper.getPhotoInformationListByMonth(Common.MONTH_TEXT_LIST[monthPosition]);
+    }
+
     @Override
     public void acvitityResult(int requestCode, int resultCode, Intent data) {
         Log.f("requestCode : " + requestCode + ", resultCode : " + resultCode);
@@ -607,8 +617,14 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
                     mPhotoInformationDBHelper.addPhotoInformationObject(mAddPhotoInformationObject);
 
                     mMonthListViewFragment.insertItem(mAddPhotoInformationObject);
-                    mMainContainerContractView.setMonthNumberText(mSelectMonthColor, mPhotoInformationDBHelper.getPhotoInformationListByMonth(Common.MONTH_TEXT_LIST[mMonthPosition]).size());
+                    mMainContainerContractView.setMonthNumberText(mSelectMonthColor, getPhotoInformationMonthList(mMonthPosition).size());
                     CommonUtils.getInstance(mContext).updateWidget();
+
+
+                    if(getPhotoInformationMonthList(mMonthPosition).size() >= Common.MAX_PHOTO_ITEM)
+                    {
+                        mMainContainerContractView.invisibleFloatButton();
+                    }
                 }
                 break;
 
@@ -784,15 +800,14 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
     public void onSelectMonth(int position)
     {
         mMonthPosition = position;
-        ArrayList<PhotoInformationObject> photoInformationList = mPhotoInformationDBHelper.getPhotoInformationListByMonth(Common.MONTH_TEXT_LIST[mMonthPosition]);
+        mSelectMonthColor = mContext.getResources().getIdentifier("color_month_"+(position+1), "color", Common.PACKAGE_NAME);
 
-        if(photoInformationList.size() >= Common.MAX_PHOTO_ITEM)
+        if(getPhotoInformationMonthList(mMonthPosition).size() >= Common.MAX_PHOTO_ITEM)
         {
             mMainContainerContractView.hideModeButton();
         }
         else
         {
-            mSelectMonthColor = mContext.getResources().getIdentifier("color_month_"+(position+1), "color", Common.PACKAGE_NAME);
             mMainContainerContractView.changePhotoButton(mSelectMonthColor);
         }
 
@@ -812,7 +827,17 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
             mMainContainerContractView.hideMonthNumberAnimation();
             mMainContainerContractView.changeTitleAnimationText(mContext.getResources().getString(R.string.app_name));
             mMainContainerContractView.hideTitleViewBackgroundAnimation(mSelectMonthColor);
-            mMainContainerContractView.changeSettingButton();
+
+            if(getPhotoInformationMonthList(mMonthPosition).size() >= Common.MAX_PHOTO_ITEM)
+            {
+                mMainContainerContractView.showSettingButton(Common.DURATION_DEFAULT);
+            }
+            else
+            {
+                mMainContainerContractView.changeSettingButton();
+            }
+
+
         }
 
         mSelectMonthColor = 0;
@@ -836,25 +861,33 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
     public void onDeletePhoto(String keyID)
     {
         Log.f("Delete keyID : "+keyID);
+
         PhotoInformationObject object = mPhotoInformationDBHelper.getPhotoInformationObject(keyID);
         Log.f("Delete FileName : "+Common.PATH_IMAGE_ROOT+object.getFileName());
 
         FileUtils.deleteFile(Common.PATH_IMAGE_ROOT+object.getFileName());
         Log.f("Delete CheckFile : "+FileUtils.checkFile(Common.PATH_IMAGE_ROOT+object.getFileName()));
         mPhotoInformationDBHelper.deletePhotoInformationObject(keyID);
-        mMainContainerContractView.setMonthNumberText(mSelectMonthColor, mPhotoInformationDBHelper.getPhotoInformationListByMonth(Common.MONTH_TEXT_LIST[mMonthPosition]).size());
         mMonthListViewFragment.deleteItem();
         CommonUtils.getInstance(mContext).updateWidget();
+
+        ArrayList<PhotoInformationObject> photoInformationList = getPhotoInformationMonthList(mMonthPosition);
+
+        mMainContainerContractView.setMonthNumberText(mSelectMonthColor, photoInformationList.size());
+
+        if(photoInformationList.size() == Common.MAX_PHOTO_ITEM -1)
+        {
+            mMainContainerContractView.showPhotoButton(Common.DURATION_DEFAULT, mSelectMonthColor);
+        }
     }
 
     @Override
     public void onModifiedPhoto(int position, Pair<View, String> item)
     {
         Log.f("");
-        ArrayList<PhotoInformationObject> photoInformationList = mPhotoInformationDBHelper.getPhotoInformationListByMonth(Common.MONTH_TEXT_LIST[mMonthPosition]);
 
         mModifiedItemPosition = position;
-        mModifiedInformationObject = photoInformationList.get(mModifiedItemPosition);
+        mModifiedInformationObject = getPhotoInformationMonthList(mMonthPosition).get(mModifiedItemPosition);
         startModifiedInformationFragment(item);
         mMainContainerContractView.hideMainTitleLayout();
         mMainContainerContractView.invisibleFloatButton();

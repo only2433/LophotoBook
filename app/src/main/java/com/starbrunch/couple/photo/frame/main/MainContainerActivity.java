@@ -385,6 +385,9 @@ public class MainContainerActivity extends BaseActivity implements MainContainer
             {
                 switch(mode)
                 {
+                    case MODE_HIDE_DEFAULT:
+                        _PhotoFloatingButton.setVisibility(View.INVISIBLE);
+                        break;
                     case MODE_SHOW_SETTING:
                         showSettingButton(0);
                         break;
