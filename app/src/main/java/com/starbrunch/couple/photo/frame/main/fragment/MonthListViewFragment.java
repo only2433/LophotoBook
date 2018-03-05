@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.util.Pair;
@@ -234,15 +235,33 @@ public class MonthListViewFragment extends Fragment
         showMonthPictureList();
         initRecyclerView();
         mMonthPictureAdapter.notifyItemRangeInserted(mPhotoInformationList.size() == 0 ? 0 : mPhotoInformationList.size(), 1);
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+
+                _MonthPictureList.smoothScrollToPosition(mPhotoInformationList.size()-1);
+            }
+        }, 500);
     }
 
-
+    /**
+     * 아이템을 삭제해도 Adapter의 index 정보가 갱신되지 않는  Google 버그를 해결
+     */
     public void deleteItem()
     {
         Log.i("index : "+ mDeleteIndex);
 
         mPhotoInformationList.remove(mDeleteIndex);
         mMonthPictureAdapter.notifyItemRemoved(mDeleteIndex);
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mMonthPictureAdapter.notifyDataSetChanged();
+            }
+        }, 500);
+
     }
 
     public void notifyChanged(int position, PhotoInformationObject object)
