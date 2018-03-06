@@ -205,7 +205,7 @@ public class BluetoothController implements BluetoothThreadCallback
     private void connectionFailed()
     {
         Message message = Message.obtain();
-        message.what = MainContainerPresent.MESSAGE_BLUETOOTH_TOAST;
+        message.what = MainContainerPresent.MESSAGE_TOAST;
         message.obj = mContext.getResources().getString(R.string.message_connection_failed);
         mWeakReferenceHandler.sendMessage(message);
         mConnectStatus = STATE_NONE;
@@ -222,7 +222,7 @@ public class BluetoothController implements BluetoothThreadCallback
     private void connectionLost()
     {
         Message message = Message.obtain();
-        message.what = MainContainerPresent.MESSAGE_BLUETOOTH_TOAST;
+        message.what = MainContainerPresent.MESSAGE_TOAST;
         message.obj = mContext.getResources().getString(R.string.message_connection_lost);
         mWeakReferenceHandler.sendMessage(message);
         mConnectStatus = STATE_NONE;
@@ -344,7 +344,7 @@ public class BluetoothController implements BluetoothThreadCallback
         mConnectDeviceName = mCurrentBluetoothDevice.getName();
 
         Message toastMessage = Message.obtain();
-        toastMessage.what = MainContainerPresent.MESSAGE_BLUETOOTH_TOAST;
+        toastMessage.what = MainContainerPresent.MESSAGE_TOAST;
         toastMessage.obj = mContext.getResources().getString(R.string.message_connect_to_device)+" "+mCurrentBluetoothDevice.getName();
 
         mWeakReferenceHandler.sendMessage(toastMessage);

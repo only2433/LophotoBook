@@ -112,8 +112,8 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
     // 두 기기가 연결 도중 끊어졌을 때의 처리
     public static final int MESSAGE_BLUETOOTH_CONNECTION_LOST       = 1002;
 
-    // 블루투스 통신 도중 발생 상황에 대한 메세지를 보내기 위해 사용
-    public static final int MESSAGE_BLUETOOTH_TOAST                 = 10001;
+    //메세지를 보내기 위해 사용
+    public static final int MESSAGE_TOAST = 10001;
 
     public static final int SCENE_MAIN_VIEW             = 0;
     public static final int SCENE_MONTH_LIST_VIEW       = 1;
@@ -624,6 +624,11 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
                     if(getPhotoInformationMonthList(mMonthPosition).size() >= Common.MAX_PHOTO_ITEM)
                     {
                         mMainContainerContractView.invisibleFloatButton();
+
+                        Message message = Message.obtain();
+                        message.what = MESSAGE_TOAST;
+                        message.obj = mContext.getResources().getString(R.string.message_warning_add_picture_7);
+                        mWeakReferenceHandler.sendMessageDelayed(message, Common.DURATION_LONG);
                     }
                 }
                 break;
@@ -644,6 +649,10 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
             case MESSAGE_FILE_UNCOMPRESSOR:
                 mMainContainerContractView.showLoading();
                 startUnCompressorAsync();
+                break;
+
+            case MESSAGE_TOAST:
+                mMainContainerContractView.showMessage((String)msg.obj, mContext.getResources().getColor(R.color.color_white));
                 break;
 
             case MESSAGE_RECEIVE_SETTING_COMPLETE:
@@ -752,9 +761,7 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
                 }
                 break;
 
-            case MESSAGE_BLUETOOTH_TOAST:
-                mMainContainerContractView.showMessage((String)msg.obj, mContext.getResources().getColor(R.color.color_white));
-                break;
+
 
         }
     }
@@ -805,6 +812,12 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
         if(getPhotoInformationMonthList(mMonthPosition).size() >= Common.MAX_PHOTO_ITEM)
         {
             mMainContainerContractView.hideModeButton();
+
+            Message message = Message.obtain();
+            message.what = MESSAGE_TOAST;
+            message.obj = mContext.getResources().getString(R.string.message_warning_add_picture_7);
+            mWeakReferenceHandler.sendMessageDelayed(message, Common.DURATION_LONG);
+
         }
         else
         {

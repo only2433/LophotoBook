@@ -16,7 +16,7 @@
     <string name="message_search_fail">Please You must ready for connected device</string>
     <string name="message_receive_complete">Complete to receive Lophoco Book</string>
     <string name="message_send_complete">Complete to send Lophoco Book</string>
-
+    <string name="message_warning_add_picture_7">Photo can be added up to 7</string>
     <string name="message_receive_fail">Fail to receive Lophoco Book</string>
     <string name="message_send_fail">Fail to send Lophoco Book</string>
 
