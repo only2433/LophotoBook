@@ -1,6 +1,5 @@
 package com.starbrunch.couple.photo.frame.main.contract.presenter;
 
-import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothClass;
 import android.bluetooth.BluetoothDevice;
@@ -8,10 +7,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Message;
 import android.support.v4.app.FragmentManager;
@@ -65,14 +62,15 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
         PHOTO, DATE, COMMENT
     }
 
-    private static final int PERMISSION_REQUEST = 100;
+
 
     private static final int REQUEST_PICK_FROM_ADD      = 0;
     private static final int REQUEST_CROP_FROM_ADD      = 1;
     private static final int REQUEST_PICK_FROM_MODIFY   = 2;
     private static final int REQUEST_CROP_FROM_MODIFY   = 3;
+    private static final int REQUEST_SETTING            = 4;
+    private static final int REQUEST_SYNCHRONIZE        = 5;
 
-    private static final int REQUEST_SETTING                = 101;
     private static final int REQUEST_BLUETOOTH_ENABLE       = 102;
     private static final int REQUEST_BLUETOOTH_DISCOVERY    = 103;
 
@@ -168,12 +166,7 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
         settingInformation();
 
         initReceiver();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-        {
-            CommonUtils.getInstance(mContext).requestPermission(new String[] { Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                    Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_COARSE_LOCATION}, PERMISSION_REQUEST);
-        }
+
 
     }
 
@@ -334,7 +327,7 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
     {
         Intent intent = new Intent(mContext, SettingContainerActivity.class);
         ((AppCompatActivity)mContext).startActivityForResult(intent, REQUEST_SETTING);
-        ((AppCompatActivity) mContext).overridePendingTransition(R.anim.slide_left_in, R.anim.slide_left_out);
+        ((AppCompatActivity) mContext).overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
     }
 
     private void showBluetoothScanDialog()
@@ -577,27 +570,7 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
 
     }
 
-    @Override
-    public void requestPermissionResult(int requestCode, String[] permissions, int[] grantResults)
-    {
-        boolean isAllCheckSuccess = true;
-        switch(requestCode)
-        {
-            case PERMISSION_REQUEST:
-                for(int i = 0; i < permissions.length; i++)
-                {
-                    if(grantResults[i] != PackageManager.PERMISSION_GRANTED)
-                    {
-                        isAllCheckSuccess = false;
-                    }
-                }
 
-                if(isAllCheckSuccess == false)
-                {
-                    ((AppCompatActivity)mContext).finish();
-                }
-        }
-    }
 
     @Override
     public void sendMessageEvent(Message msg)

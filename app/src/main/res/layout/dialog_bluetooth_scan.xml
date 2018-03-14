@@ -33,7 +33,7 @@
                     android:textColor="@color/color_606565"
                     app:scale_height="196"
                     app:scale_left="0"
-                    app:scale_textsize="70"
+                    app:scale_textsize="80"
                     app:scale_top="0"
                     app:scale_width="1280" />
 
@@ -105,7 +105,7 @@
                     android:textColor="@color/color_4a9ebd"
                     app:scale_height="150"
                     app:scale_left="800"
-                    app:scale_textsize="50"
+                    app:scale_textsize="65"
                     app:scale_top="0"
                     app:scale_width="200" />
 
@@ -118,7 +118,7 @@
                     android:textColor="@color/color_4a9ebd"
                     app:scale_height="150"
                     app:scale_left="1050"
-                    app:scale_textsize="50"
+                    app:scale_textsize="65"
                     app:scale_top="0"
                     app:scale_width="200" />
             </com.ssomai.android.scalablelayout.ScalableLayout>

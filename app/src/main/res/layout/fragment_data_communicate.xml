@@ -100,7 +100,7 @@
             app:scale_height="300"
             app:scale_textsize="70"
             />
-        <ImageView
+        <!--<ImageView
             android:id="@+id/_dataActionButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -122,7 +122,20 @@
             app:scale_width="400"
             app:scale_height="150"
             app:scale_textsize="70"
-            />
+            /> -->
+
+        <Button
+            android:id="@+id/_dataActionButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:textColor="@color/color_white"
+            android:gravity="center"
+            app:scale_left="440"
+            app:scale_top="600"
+            app:scale_width="400"
+            app:scale_height="150"
+            app:scale_textsize="70"/>
     </com.ssomai.android.scalablelayout.ScalableLayout>
 
 

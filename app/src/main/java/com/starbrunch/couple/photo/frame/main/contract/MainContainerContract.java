@@ -35,7 +35,7 @@ public class MainContainerContract
 
         void invisibleFloatButton();
 
-        void showMessage(String message, int color);
+
 
     }
 
@@ -43,7 +43,7 @@ public class MainContainerContract
     {
         void changeDateSetComplete(int year, int monthOfYear, int dayOfMonth);
         void changeTimeSetComplete(int hourOfDay, int minute);
-        void requestPermissionResult(int requestCode, String[] permissions, int[] grantResults);
+
         void selectFloatButton();
 
     }

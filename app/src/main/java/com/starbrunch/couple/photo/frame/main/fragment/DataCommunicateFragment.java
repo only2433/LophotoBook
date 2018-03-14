@@ -11,6 +11,7 @@ import android.transition.Transition;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -60,10 +61,8 @@ public class DataCommunicateFragment extends Fragment implements MessageHandlerC
     TextView _DataPercentProgressText;
 
     @BindView(R.id._dataActionButton)
-    ImageView _DataActionButton;
+    Button _DataActionButton;
 
-    @BindView(R.id._dataButtonText)
-    TextView _DataButtonText;
 
 
     private static final int MESSAGE_END_SCENE = 0;
@@ -153,10 +152,10 @@ public class DataCommunicateFragment extends Fragment implements MessageHandlerC
             _BaseDataTitle.setText(mContext.getResources().getString(R.string.title_send));
             _BaseDataLayoutBackgroundImage.setBackgroundColor(mContext.getResources().getColor(R.color.color_0ac8e2));
             _BaseDataPercentBackgroundImage.setCircleBackgroundColor(mContext.getResources().getColor(R.color.color_0ac8e2));
-            _DataActionButton.setBackgroundColor(mContext.getResources().getColor(R.color.color_0ac8e2));
+            _DataActionButton.setBackground(mContext.getResources().getDrawable(R.drawable.round_send_button));
             _DataMessageText.setTextColor(mContext.getResources().getColor(R.color.color_0ac8e2));
             _DataMessageText.setText(mContext.getResources().getString(R.string.message_data_send_information)+"\n"+"1C:22:DD:CC:F8");
-            _DataButtonText.setText(mContext.getResources().getString(R.string.button_send));
+            _DataActionButton.setText(mContext.getResources().getString(R.string.button_send));
         }
         else if(mCurrentDataType == Common.RESULT_SETTING_BLUETOOTH_RECEIVE)
         {
@@ -164,10 +163,10 @@ public class DataCommunicateFragment extends Fragment implements MessageHandlerC
             _BaseDataLayoutBackgroundImage.setBackgroundColor(mContext.getResources().getColor(R.color.color_eb1e63));
             _BaseDataPercentBackgroundImage.setCircleBackgroundColor(mContext.getResources().getColor(R.color.color_eb1e63));
 
-            _DataActionButton.setBackgroundColor(mContext.getResources().getColor(R.color.color_eb1e63));
+            _DataActionButton.setBackground(mContext.getResources().getDrawable(R.drawable.round_receive_button));
             _DataMessageText.setTextColor(mContext.getResources().getColor(R.color.color_eb1e63));
             _DataMessageText.setText(mContext.getResources().getString(R.string.message_data_receive_information)+"\n"+"1C:22:DD:CC:F8");
-            _DataButtonText.setText(mContext.getResources().getString(R.string.button_cancel));
+            _DataActionButton.setText(mContext.getResources().getString(R.string.button_cancel));
         }
 
         _DataActionButton.setOnClickListener(mOnButtonClickListener);
@@ -175,9 +174,9 @@ public class DataCommunicateFragment extends Fragment implements MessageHandlerC
 
     private void initFont()
     {
-        _BaseDataTitle.setTypeface(FontManager.getInstance(mContext).getMainTitleFont());
-        _DataMessageText.setTypeface(FontManager.getInstance(mContext).getMainTitleFont());
-        _DataButtonText.setTypeface(FontManager.getInstance(mContext).getMainTitleFont());
+        _BaseDataTitle.setTypeface(FontManager.getInstance(mContext).getRampungRagularFont());
+        _DataMessageText.setTypeface(FontManager.getInstance(mContext).getRampungRagularFont());
+        _DataActionButton.setTypeface(FontManager.getInstance(mContext).getRampungRagularFont());
         _DataPercentProgressText.setTypeface(FontManager.getInstance(mContext).getDefaultLightTextFont());
     }
 
@@ -185,11 +184,11 @@ public class DataCommunicateFragment extends Fragment implements MessageHandlerC
     {
         if(mCurrentSendStatus == STATUS_NOT_YET_SEND)
         {
-            _DataButtonText.setText(mContext.getResources().getString(R.string.button_send));
+            _DataActionButton.setText(mContext.getResources().getString(R.string.button_send));
         }
         else if(mCurrentSendStatus == STATUS_SENDING)
         {
-            _DataButtonText.setText(mContext.getResources().getString(R.string.button_cancel));
+            _DataActionButton.setText(mContext.getResources().getString(R.string.button_cancel));
         }
     }
 
@@ -201,7 +200,6 @@ public class DataCommunicateFragment extends Fragment implements MessageHandlerC
     public void endTransferData()
     {
         _DataProgressView.setVisibility(View.INVISIBLE);
-        _DataButtonText.setVisibility(View.INVISIBLE);
         _DataActionButton.setVisibility(View.INVISIBLE);
 
         _DataPercentProgressText.setText(String.valueOf(MAX_PERCENT));

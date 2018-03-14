@@ -14,6 +14,7 @@ public class BaseContract
     {
         void initView();
         void initFont();
+        void showMessage(String message, int color);
     }
     public interface Presenter
     {

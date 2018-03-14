@@ -4,11 +4,15 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Message;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.littlefox.logmonitor.Log;
 import com.starbrunch.couple.photo.frame.main.base.BaseActivity;
+import com.starbrunch.couple.photo.frame.main.common.CommonUtils;
 import com.starbrunch.couple.photo.frame.main.common.FontManager;
 import com.starbrunch.couple.photo.frame.main.contract.SettingContainerContract;
 import com.starbrunch.couple.photo.frame.main.contract.presenter.SettingContainerPresent;
@@ -24,6 +28,9 @@ import butterknife.OnClick;
 
 public class SettingContainerActivity extends BaseActivity implements SettingContainerContract.View, MessageHandlerCallback
 {
+    @BindView(R.id._coordinatorMainLayout)
+    CoordinatorLayout _CoordinatorMainLayout;
+
     @BindView(R.id._settingBackButton)
     ImageView _SetttingBackButton;
 
@@ -88,7 +95,7 @@ public class SettingContainerActivity extends BaseActivity implements SettingCon
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        overridePendingTransition(R.anim.slide_right_in, R.anim.slide_right_out);
+        overridePendingTransition(R.anim.slide_left_in, R.anim.slide_right_out);
     }
 
     @Override
@@ -106,10 +113,17 @@ public class SettingContainerActivity extends BaseActivity implements SettingCon
     @Override
     public void initFont()
     {
-        _SettingTitleText.setTypeface(FontManager.getInstance(this).getMainTitleFont());
-        _SettingBluetoothSubtitleText.setTypeface(FontManager.getInstance(this).getDefaultLightTextFont());
-        _SettingSendBookText.setTypeface(FontManager.getInstance(this).getMainTitleFont());
-        _SettingReceiveBookText.setTypeface(FontManager.getInstance(this).getMainTitleFont());
+        _SettingTitleText.setTypeface(FontManager.getInstance(this).getRampungRagularFont());
+        _SettingBluetoothSubtitleText.setTypeface(FontManager.getInstance(this).getPhenomenaLightFont());
+        _SettingSendBookText.setTypeface(FontManager.getInstance(this).getPhenomenaLightFont());
+        _SettingReceiveBookText.setTypeface(FontManager.getInstance(this).getPhenomenaLightFont());
+    }
+
+    @Override
+    public void showMessage(String message, int color)
+    {
+        Log.i("message : "+message);
+        CommonUtils.getInstance(this).showSnackMessage(_CoordinatorMainLayout, message, color, Gravity.CENTER);
     }
 
 

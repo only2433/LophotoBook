@@ -11,7 +11,6 @@ import android.content.res.ColorStateList;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Message;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -115,13 +114,13 @@ public class MainContainerActivity extends BaseActivity implements MainContainer
 
         mCoordinatorLayoutParams = (CoordinatorLayout.LayoutParams) _PhotoFloatingButton.getLayoutParams();
         mFlotingButtonHeight = (int) CommonUtils.getInstance(this).convertDpToPixel(HEIGHT_FLOTING_BUTTON_DP);
-        changeTitleAnimationText(getResources().getString(R.string.app_name));
+        changeTitleAnimationText(getResources().getString(R.string.app_name).toUpperCase());
     }
 
     @Override
     public void initFont()
     {
-        _MainBaseTitleText.setTypeface(FontManager.getInstance(this).getMainTitleFont());
+        _MainBaseTitleText.setTypeface(FontManager.getInstance(this).getTypolinoRegularFont());
         _TitleMonthSubTitle.setTypeface(FontManager.getInstance(this).getDefaultLightTextFont());
     }
 
@@ -469,12 +468,6 @@ public class MainContainerActivity extends BaseActivity implements MainContainer
     protected void onActivityResult(int requestCode, int resultCode, Intent data)
     {
         mMainContainerPresent.acvitityResult(requestCode,resultCode,data);
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults)
-    {
-        mMainContainerPresent.requestPermissionResult(requestCode, permissions, grantResults);
     }
 
     @Override

@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/_coordinatorMainLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
+
+    <RelativeLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/color_ff3756">
+
+        <com.ssomai.android.scalablelayout.ScalableLayout
+            android:id="@+id/_synchronizeTitleLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:scale_base_height="300"
+            app:scale_base_width="1280">
+
+            <TextView
+                android:id="@+id/_synchronizeMainTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal|bottom"
+                android:text="@string/title_synchronization"
+                android:textColor="@color/color_white"
+                app:scale_height="300"
+                app:scale_left="0"
+                app:scale_textsize="120"
+                app:scale_top="0"
+                app:scale_width="1280" />
+        </com.ssomai.android.scalablelayout.ScalableLayout>
+
+        <com.ssomai.android.scalablelayout.ScalableLayout
+            android:id="@+id/_synchronizeProgressLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            app:scale_base_height="1000"
+            app:scale_base_width="1280">
+
+            <com.mikhaellopez.circularprogressbar.CircularProgressBar
+                android:id="@+id/_synchronizeTimerProgressBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                app:cpb_background_progressbar_color="@color/color_ed433e"
+                app:cpb_background_progressbar_width="5dp"
+                app:cpb_progressbar_color="@color/color_white"
+                app:cpb_progressbar_width="10dp"
+                app:scale_height="1000"
+                app:scale_left="140"
+                app:scale_top="0"
+                app:scale_width="1000" />
+        </com.ssomai.android.scalablelayout.ScalableLayout>
+
+        <com.ssomai.android.scalablelayout.ScalableLayout
+            android:id="@+id/_synchronizeTimerLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            app:scale_base_height="220"
+            app:scale_base_width="1280">
+
+            <TextView
+                android:id="@+id/_synchronizeTimerHourText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="00"
+                android:textColor="@color/color_white"
+                app:scale_height="220"
+                app:scale_left="220"
+                app:scale_textsize="160"
+                app:scale_top="0"
+                app:scale_width="230" />
+
+            <TextView
+                android:id="@+id/_synchronizeHourSignText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/text_hour"
+                android:textColor="@color/color_white"
+                app:scale_height="100"
+                app:scale_left="450"
+                app:scale_textsize="70"
+                app:scale_top="100"
+                app:scale_width="50" />
+
+            <TextView
+                android:id="@+id/_synchronizeTimerMinuteText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="00"
+                android:textColor="@color/color_white"
+                app:scale_height="220"
+                app:scale_left="500"
+                app:scale_textsize="160"
+                app:scale_top="0"
+                app:scale_width="230" />
+
+            <TextView
+                android:id="@+id/_synchronizeMinuteSignText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/text_minute"
+                android:textColor="@color/color_white"
+                app:scale_height="100"
+                app:scale_left="730"
+                app:scale_textsize="70"
+                app:scale_top="100"
+                app:scale_width="50" />
+
+            <TextView
+                android:id="@+id/_synchronizeTimerSecondText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="00"
+                android:textColor="@color/color_white"
+                app:scale_height="220"
+                app:scale_left="780"
+                app:scale_textsize="160"
+                app:scale_top="0"
+                app:scale_width="230" />
+
+            <TextView
+                android:id="@+id/_synchronizeSecondSignText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/text_second"
+                android:textColor="@color/color_white"
+                app:scale_height="100"
+                app:scale_left="1010"
+                app:scale_textsize="70"
+                app:scale_top="100"
+                app:scale_width="50" />
+
+
+        </com.ssomai.android.scalablelayout.ScalableLayout>
+
+        <com.ssomai.android.scalablelayout.ScalableLayout
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/_synchronizeProgressLayout"
+            app:scale_base_height="200"
+            app:scale_base_width="1280">
+
+            <TextView
+                android:id="@+id/_synchronizeWarningMessageText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/message_synchronization_end"
+                android:textColor="@color/color_white"
+                app:scale_height="200"
+                app:scale_left="0"
+                app:scale_textsize="50"
+                app:scale_top="0"
+                app:scale_width="1280" />
+        </com.ssomai.android.scalablelayout.ScalableLayout>
+
+        <com.ssomai.android.scalablelayout.ScalableLayout
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="10dp"
+            app:scale_base_height="200"
+            app:scale_base_width="1280">
+
+            <Button
+                android:id="@+id/_synchronizeInAppButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/round_white_button"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:text="@string/button_apply_now"
+                android:textColor="@color/color_eb1e63"
+                app:scale_height="150"
+                app:scale_left="190"
+                app:scale_textsize="60"
+                app:scale_top="0"
+                app:scale_width="400" />
+
+            <Button
+                android:id="@+id/_synchronizeCancelButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/round_white_button"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:text="@string/button_cancel"
+                android:textColor="@color/color_eb1e63"
+                app:scale_height="150"
+                app:scale_left="690"
+                app:scale_textsize="60"
+                app:scale_top="0"
+                app:scale_width="400" />
+        </com.ssomai.android.scalablelayout.ScalableLayout>
+
+
+    </RelativeLayout>
+</android.support.design.widget.CoordinatorLayout>

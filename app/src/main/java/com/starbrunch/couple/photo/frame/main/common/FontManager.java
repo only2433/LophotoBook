@@ -11,9 +11,15 @@ import android.graphics.Typeface;
 public class FontManager
 {
     private static FontManager self;
-    private Typeface mMainTitleFont = null;
+    private Typeface mRampungRagularFont    = null;
+    private Typeface mPhenomenaBoldFont     = null;
+    private Typeface mPhenomenaLightFont    = null;
+    private Typeface mPhenomenaThinFont     = null;
+    private Typeface mOccopiedFont          = null;
+    private Typeface mBodrumRegularFont     = null;
+    private Typeface mTypolinoRegularFont   = null;
 
-    private Typeface mMainImageCountFont = null;
+
     private Typeface mDefaultBoldTextFont = null;
     private Typeface mDefaultRegularTextFont = null;
     private Typeface mDefaultLightTextFont = null;
@@ -32,22 +38,27 @@ public class FontManager
     private FontManager(Context context)
     {
         AssetManager assetManager = context.getAssets();
-        mMainTitleFont = Typeface.createFromAsset(assetManager, "fonts/rampung.regular.ttf");
-        mMainImageCountFont = Typeface.createFromAsset(assetManager, "fonts/johnny_fever.ttf");
-        mDefaultBoldTextFont = Typeface.createFromAsset(assetManager, "fonts/Roboto-Bold.ttf");
+        mRampungRagularFont     = Typeface.createFromAsset(assetManager, "fonts/rampung.regular.ttf");
+        mOccopiedFont           = Typeface.createFromAsset(assetManager,"fonts/Occupied.otf");
+        mBodrumRegularFont      = Typeface.createFromAsset(assetManager, "fonts/bodrum.regular.ttf");
+        mTypolinoRegularFont    = Typeface.createFromAsset(assetManager, "fonts/typolino.regular.ttf");
+
+        mDefaultBoldTextFont    = Typeface.createFromAsset(assetManager, "fonts/Roboto-Bold.ttf");
         mDefaultRegularTextFont = Typeface.createFromAsset(assetManager, "fonts/Roboto-Medium.ttf");
-        mDefaultLightTextFont = Typeface.createFromAsset(assetManager, "fonts/Roboto-Light.ttf");
+        mDefaultLightTextFont   = Typeface.createFromAsset(assetManager, "fonts/Roboto-Light.ttf");
 
-        if(mMainTitleFont == null)
+
+        mPhenomenaBoldFont  = Typeface.createFromAsset(assetManager, "fonts/Phenomena-Bold.otf");
+        mPhenomenaLightFont = Typeface.createFromAsset(assetManager, "fonts/Phenomena-Light.otf");
+        mPhenomenaThinFont  = Typeface.createFromAsset(assetManager, "fonts/Phenomena-Thin.otf");
+
+
+
+        if(mRampungRagularFont == null)
         {
-            mMainTitleFont = Typeface.DEFAULT;
+            mRampungRagularFont = Typeface.DEFAULT;
         }
 
-
-        if(mMainImageCountFont == null)
-        {
-            mMainImageCountFont = Typeface.DEFAULT;
-        }
 
         if(mDefaultBoldTextFont == null)
         {
@@ -63,17 +74,47 @@ public class FontManager
         {
             mDefaultLightTextFont = Typeface.DEFAULT;
         }
+
+        if(mPhenomenaBoldFont == null)
+        {
+            mPhenomenaBoldFont = Typeface.DEFAULT;
+        }
+
+        if(mPhenomenaLightFont == null)
+        {
+            mPhenomenaLightFont = Typeface.DEFAULT;
+        }
+
+        if(mPhenomenaThinFont == null)
+        {
+            mPhenomenaThinFont = Typeface.DEFAULT;
+        }
+
+        if(mOccopiedFont == null)
+        {
+            mOccopiedFont = Typeface.DEFAULT;
+        }
+
+        if(mBodrumRegularFont == null)
+        {
+            mBodrumRegularFont = Typeface.DEFAULT;
+        }
+
+        if(mTypolinoRegularFont == null)
+        {
+            mTypolinoRegularFont = Typeface.DEFAULT;
+        }
+
+
+
     }
 
-    public Typeface getMainTitleFont()
+    public Typeface getRampungRagularFont()
     {
-        return mMainTitleFont;
+        return mRampungRagularFont;
     }
 
-    public Typeface getMainImageCountFont()
-    {
-        return mMainImageCountFont;
-    }
+
     public Typeface getDefaultBoldTextFont()
     {
         return mDefaultBoldTextFont;
@@ -87,5 +128,35 @@ public class FontManager
     public Typeface getDefaultRegularTextFont()
     {
         return mDefaultRegularTextFont;
+    }
+
+    public Typeface getPhenomenaBoldFont()
+    {
+        return mPhenomenaBoldFont;
+    }
+
+    public Typeface getPhenomenaLightFont()
+    {
+        return mPhenomenaLightFont;
+    }
+
+    public Typeface getPhenomenaThinFont()
+    {
+        return mPhenomenaThinFont;
+    }
+
+    public Typeface getOccopiedFont()
+    {
+        return mOccopiedFont;
+    }
+
+    public Typeface getBodrumRegularFont()
+    {
+        return mBodrumRegularFont;
+    }
+
+    public Typeface getTypolinoRegularFont()
+    {
+        return mTypolinoRegularFont;
     }
 }

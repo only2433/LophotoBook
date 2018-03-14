@@ -89,10 +89,10 @@ public class BluetoothScanDialog extends Dialog
 
     private void initFont()
     {
-        _SearchTitleText.setTypeface(FontManager.getInstance(mContext).getMainTitleFont());
+        _SearchTitleText.setTypeface(FontManager.getInstance(mContext).getPhenomenaBoldFont());
         _SearchFailMessageTextView.setTypeface(FontManager.getInstance(mContext).getDefaultLightTextFont());
-        _ButtonSearchText.setTypeface(FontManager.getInstance(mContext).getDefaultLightTextFont());
-        _ButtonCancelText.setTypeface(FontManager.getInstance(mContext).getDefaultLightTextFont());
+        _ButtonSearchText.setTypeface(FontManager.getInstance(mContext).getPhenomenaLightFont());
+        _ButtonCancelText.setTypeface(FontManager.getInstance(mContext).getPhenomenaLightFont());
 
     }
 
@@ -208,7 +208,7 @@ public class BluetoothScanDialog extends Dialog
 
             private void initFont()
             {
-                _AdapterDeviceInformationText.setTypeface(FontManager.getInstance(mContext).getMainTitleFont());
+                _AdapterDeviceInformationText.setTypeface(FontManager.getInstance(mContext).getPhenomenaLightFont());
             }
         }
     }

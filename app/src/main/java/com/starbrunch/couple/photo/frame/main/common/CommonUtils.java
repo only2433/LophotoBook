@@ -1295,15 +1295,15 @@ public class CommonUtils
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
-    public ArrayList<String> getUnAuthorizePermissionList(ArrayList<String> permissionList)
+    public ArrayList<String> getUnAuthorizePermissionList(String[] permissionList)
     {
         ArrayList<String> unAuthorizeList = new ArrayList<String>();
 
-        for(int i = 0 ; i < permissionList.size() ; i++)
+        for(int i = 0 ; i < permissionList.length ; i++)
         {
-            if(sContext.checkSelfPermission(permissionList.get(i)) != PackageManager.PERMISSION_GRANTED)
+            if(sContext.checkSelfPermission(permissionList[i]) != PackageManager.PERMISSION_GRANTED)
             {
-                unAuthorizeList.add(permissionList.get(i));
+                unAuthorizeList.add(permissionList[i]);
             }
         }
         return unAuthorizeList;

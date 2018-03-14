@@ -9,27 +9,27 @@
         android:layout_height="wrap_content"
         android:foreground="?android:attr/selectableItemBackground"
         app:scale_base_width="1280"
-        app:scale_base_height="180">
+        app:scale_base_height="220">
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_speaker_phone_black_24dp_gray"
             app:scale_left="40"
-            app:scale_top="40"
+            app:scale_top="60"
             app:scale_width="100"
             app:scale_height="100"/>
         <TextView
         android:id="@+id/_adapterDeviceInformationText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Galexy S8"
+        android:text=""
         android:lineSpacingExtra="5dp"
         android:textColor="@color/color_606565"
         android:gravity="center_vertical"
         app:scale_left="180"
-        app:scale_top="0"
+        app:scale_top="10"
         app:scale_width="1000"
-        app:scale_height="180"
+        app:scale_height="200"
         app:scale_textsize="60"/>
 
 

@@ -26,7 +26,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme" >
 
-        <activity android:name=".MainContainerActivity"
+        <activity android:name=".SplashContainerActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme_NoActionBar"
             android:configChanges="orientation|screenSize">
@@ -37,11 +37,24 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".SynchronizeContainerActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme"
+            android:configChanges="orientation|screenSize">
+        </activity>
+
+     <activity android:name=".MainContainerActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme"
+            android:configChanges="orientation|screenSize">
+        </activity>
+
         <activity android:name=".SettingContainerActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme"
             android:configChanges="orientation|screenSize">
         </activity>
+
         <!-- 1. The broadcast receiver that refers to our widget. This needs the
                 intent-filter android.appwidget.action.APPWIDGET_UPDATE and the
                 meta-data for our XML widget configuration -->

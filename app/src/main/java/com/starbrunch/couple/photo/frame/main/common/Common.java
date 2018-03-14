@@ -31,19 +31,23 @@ public class Common
     public static final String SHARED_PHOTO_IMAGE = "shared_photo_image";
 
     public static final String INTENT_PHOTO_TRANSITION_NAME = "intent_photo_transition_name";
-    public static final String INTENT_MODIFIED_ITEM_OBJECT = "intent_modified_item_object";
-    public static final String INTENT_MONTH_PHOTO_LIST = "intent_month_photo_list";
-    public static final String INTENT_WIDGET_UPDATE = "intent_widget_update";
-    public static final String INTENT_SETTING_SELECT_INDEX = "intent_setting_select_index";
+    public static final String INTENT_MODIFIED_ITEM_OBJECT  = "intent_modified_item_object";
+    public static final String INTENT_MONTH_PHOTO_LIST      = "intent_month_photo_list";
+    public static final String INTENT_WIDGET_UPDATE         = "intent_widget_update";
+    public static final String INTENT_SETTING_SELECT_INDEX  = "intent_setting_select_index";
+    public static final String INTENT_SYNCHRONIZE           = "intent_synchronize";
 
-    public static final String[] MONTH_TEXT_LIST =  {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "November"};
 
+    public static final String[] MONTH_TEXT_LIST =  {"JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"};
 
+    public static final long END_SYNCHRONIZE_TIME = 12 * 60 * 60;
 
     /** 개발자 이메일 */
     public static final String DEVELOPER_EMAIL 		= "only340@gmail.com";
 
-    public static final String PARAMS_DISPLAY_METRICS	= "display_metrics";
+    public static final String PARAMS_IS_SYNCHRONIZING          = "params_synchronizing";
+    public static final String PARAMS_SYNCHRONIZE_REMAIN_TIME   = "params_synchronize_remain_time";
+    public static final String PARAMS_DISPLAY_METRICS	        = "display_metrics";
     public static final int TYPE_PARAMS_BOOLEAN 	= 0;
     public static final int TYPE_PARAMS_INTEGER 	= 1;
     public static final int TYPE_PARAMS_LONG        = 2;
@@ -60,6 +64,9 @@ public class Common
 
     public static final int RESULT_SETTING_BLUETOOTH_SEND       = 1001;
     public static final int RESULT_SETTING_BLUETOOTH_RECEIVE    = 1002;
+    public static final int RESULT_SYNCRONIZE_SUCCESS           = 1003;
+    public static final int RESULT_SYNCRONIZE_FAIL              = 1004;
+
 
     /**
      * 각 달마다 사진등록 최고 개수는 7개로 정의 한다. ( 추후 더 늘릴계획 있음 )

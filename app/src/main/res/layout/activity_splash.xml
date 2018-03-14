@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/_coordinatorMainLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/_splashTitleImage"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitXY"
+            android:src="@drawable/road_2563427_1920" />
+
+        <com.ssomai.android.scalablelayout.ScalableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:scale_base_height="300"
+            app:scale_base_width="1280">
+
+            <com.starbrunch.couple.photo.frame.main.hanks.htextview.HTextView
+                android:id="@+id/_splashTitleText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text=""
+                android:textColor="@color/color_606565"
+                app:scale_height="200"
+                app:scale_left="0"
+                app:scale_textsize="120"
+                app:scale_top="100"
+                app:scale_width="1280" />
+        </com.ssomai.android.scalablelayout.ScalableLayout>
+
+        <com.ssomai.android.scalablelayout.ScalableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            app:scale_base_height="300"
+            app:scale_base_width="1280">
+
+            <com.starbrunch.couple.photo.frame.main.hanks.htextview.HTextView
+                android:id="@+id/_splashMessageText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text=""
+                android:textColor="@color/color_e6ebeb"
+                app:scale_height="200"
+                app:scale_left="0"
+                app:scale_textsize="80"
+                app:scale_top="0"
+                app:scale_width="1280" />
+        </com.ssomai.android.scalablelayout.ScalableLayout>
+
+    </RelativeLayout>
+
+
+</android.support.design.widget.CoordinatorLayout>
