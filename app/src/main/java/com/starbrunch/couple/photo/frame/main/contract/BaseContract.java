@@ -1,6 +1,5 @@
 package com.starbrunch.couple.photo.frame.main.contract;
 
-import android.content.Intent;
 import android.os.Message;
 
 /**
@@ -23,7 +22,7 @@ public class BaseContract
         void stop();
         void destroy();
 
-        void acvitityResult(int requestCode, int resultCode, Intent data);
+
         void sendMessageEvent(Message msg);
     }
 }

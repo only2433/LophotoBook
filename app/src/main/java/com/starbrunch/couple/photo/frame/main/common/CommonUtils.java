@@ -157,8 +157,6 @@ public class CommonUtils
          int minutes = (millisecond / 60) % 60;
          int hours   = millisecond / 3600;
 
-
-         
          mFormatBuilder.setLength(0);
          if (hours > 0) {
              return mFormatter.format("%d:%02d:%02d", hours, minutes, seconds).toString();
@@ -543,8 +541,6 @@ public class CommonUtils
         try
         {
             Intent intent = sContext.getPackageManager().getLaunchIntentForPackage(packageName);
-
-
             if(intent == null)
             {
                 result = false;
@@ -564,8 +560,6 @@ public class CommonUtils
 
 	public static boolean checkPlayServices()
 	{
-
-
         GoogleApiAvailability googleApiAvailability = GoogleApiAvailability.getInstance();
         int resultCode = googleApiAvailability.isGooglePlayServicesAvailable(sContext);
 		switch (resultCode)
@@ -952,6 +946,43 @@ public class CommonUtils
 		return calendar.get(Calendar.MONTH);
 	}
 
+	public String[] getSyncronizeTime(int time)
+	{
+		String[] result = new String[3];
+		int hour = time / (60 * 60);
+		int minute = (time % (60 * 60)) / 60;
+		int second = (time % (60 * 60)) % 60;
+
+		if(hour < 10)
+		{
+			result[0] = "0"+ hour;
+		}
+		else if(hour > 10)
+		{
+			result[0] = String.valueOf(hour);
+		}
+
+		if(minute < 10)
+		{
+			result[1] = "0"+ minute;
+		}
+		else if(minute > 10)
+		{
+			result[1] = String.valueOf(minute);
+		}
+
+		if(second < 10)
+		{
+			result[2] = "0"+ second;
+		}
+		else if(second > 10)
+		{
+			result[2] = String.valueOf(second);
+		}
+
+		return result;
+	}
+
 	
 	public void startLinkMove(String link)
 	{
@@ -983,7 +1014,8 @@ public class CommonUtils
 	 * 네이게이션바 사이즈를 리턴한다.
 	 * @return
 	 */
-	public Point getNavigationBarSize() {
+	public Point getNavigationBarSize()
+    {
 	    Point appUsableSize = getAppUsableScreenSize();
 	    Point realScreenSize = getRealScreenSize();
 
@@ -1003,7 +1035,8 @@ public class CommonUtils
 	    return new Point();
 	}
 
-	public Point getAppUsableScreenSize() {
+	public Point getAppUsableScreenSize()
+    {
 	    WindowManager windowManager = (WindowManager) sContext.getSystemService(Context.WINDOW_SERVICE);
 	    Display display = windowManager.getDefaultDisplay();
 	    Point size = new Point();

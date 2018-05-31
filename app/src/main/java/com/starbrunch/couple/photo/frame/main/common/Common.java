@@ -40,13 +40,13 @@ public class Common
 
     public static final String[] MONTH_TEXT_LIST =  {"JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"};
 
-    public static final long END_SYNCHRONIZE_TIME = 12 * 60 * 60;
+    public static final int END_SYNCHRONIZE_TIME = 12 * 60 * 60;
 
     /** 개발자 이메일 */
     public static final String DEVELOPER_EMAIL 		= "only340@gmail.com";
 
     public static final String PARAMS_IS_SYNCHRONIZING          = "params_synchronizing";
-    public static final String PARAMS_SYNCHRONIZE_REMAIN_TIME   = "params_synchronize_remain_time";
+    public static final String PARAMS_CURRENT_SYNCHRONIZE_TIME  = "params_current_synchronize_time";
     public static final String PARAMS_DISPLAY_METRICS	        = "display_metrics";
     public static final int TYPE_PARAMS_BOOLEAN 	= 0;
     public static final int TYPE_PARAMS_INTEGER 	= 1;

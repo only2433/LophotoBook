@@ -51,13 +51,6 @@ public class SettingContainerPresent implements SettingContainerContract.Present
 
     }
 
-    @Override
-    public void acvitityResult(int requestCode, int resultCode, Intent data)
-    {
-
-    }
-
-
 
     @Override
     public void sendMessageEvent(Message msg)

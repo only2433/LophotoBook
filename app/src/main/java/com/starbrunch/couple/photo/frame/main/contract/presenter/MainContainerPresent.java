@@ -27,6 +27,7 @@ import com.littlefox.logmonitor.Log;
 import com.starbrunch.couple.photo.frame.main.MainContainerActivity;
 import com.starbrunch.couple.photo.frame.main.R;
 import com.starbrunch.couple.photo.frame.main.SettingContainerActivity;
+import com.starbrunch.couple.photo.frame.main.SynchronizeContainerActivity;
 import com.starbrunch.couple.photo.frame.main.async.CompressorAsync;
 import com.starbrunch.couple.photo.frame.main.async.UnCompressorAsync;
 import com.starbrunch.couple.photo.frame.main.bluetooth.BluetoothController;
@@ -166,9 +167,13 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
         settingInformation();
 
         initReceiver();
-
-
     }
+
+    private boolean isSyncronizingApp()
+    {
+        return (boolean) CommonUtils.getInstance(mContext).getSharedPreference(Common.PARAMS_IS_SYNCHRONIZING, Common.TYPE_PARAMS_BOOLEAN);
+    }
+
 
     @Override
     public void resume(){}
@@ -330,6 +335,13 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
         ((AppCompatActivity) mContext).overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
     }
 
+    private void startSynchronizeActivity()
+    {
+        Intent intent = new Intent(mContext, SynchronizeContainerActivity.class);
+        ((AppCompatActivity)mContext).startActivityForResult(intent, REQUEST_SYNCHRONIZE);
+        ((AppCompatActivity) mContext).overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
+    }
+
     private void showBluetoothScanDialog()
     {
         if(mBluetoothScanDialog == null)
@@ -466,7 +478,8 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
     }
 
     @Override
-    public void acvitityResult(int requestCode, int resultCode, Intent data) {
+    public void acvitityResult(int requestCode, int resultCode, Intent data)
+    {
         Log.f("requestCode : " + requestCode + ", resultCode : " + resultCode);
 
         if(requestCode == REQUEST_BLUETOOTH_ENABLE && resultCode == ((AppCompatActivity) mContext).RESULT_CANCELED)
@@ -541,6 +554,9 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
                         }
                         break;
                 }
+                break;
+            case REQUEST_SYNCHRONIZE:
+                //TODO: 결제 또는 시간 지나서 싱크로나이즈 성공 함.
                 break;
             case REQUEST_BLUETOOTH_ENABLE:
 
@@ -902,10 +918,12 @@ public class MainContainerPresent implements MainContainerCallback, MainContaine
         {
             if(mCurrentSettingType == Common.RESULT_SETTING_BLUETOOTH_RECEIVE)
             {
-                FileUtils.deleteAllFileInPath(Common.PATH_APP_ROOT);
+                //TODO: 싱크로나이즈 관련 액티비티 로 보내고 결제 이후 해당 루틴을 허용하게 한다.
+               /* FileUtils.deleteAllFileInPath(Common.PATH_APP_ROOT);
                 mPhotoInformationDBHelper.deletePhotoInformationAll();
+                mWeakReferenceHandler.sendEmptyMessageDelayed(MESSAGE_FILE_UNCOMPRESSOR, Common.DURATION_LONG);*/
 
-                mWeakReferenceHandler.sendEmptyMessageDelayed(MESSAGE_FILE_UNCOMPRESSOR, Common.DURATION_LONG);
+               startSynchronizeActivity();
             }
             else if(mCurrentSettingType == Common.RESULT_SETTING_BLUETOOTH_SEND)
             {

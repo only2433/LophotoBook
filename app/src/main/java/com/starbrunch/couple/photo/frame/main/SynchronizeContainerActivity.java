@@ -135,13 +135,15 @@ public class SynchronizeContainerActivity extends BaseActivity implements Synchr
     }
 
     @Override
-    public void setRemainingTimer(int hour, int minute, int second, int percent)
+    public void setRemainingTimer(String hour, String minute, String second, int percent)
     {
         _SynchronizeTimerHourText.setText(String.valueOf(hour));
         _SynchronizeTimerMinuteText.setText(String.valueOf(minute));
         _SynchronizeTimerSecondText.setText(String.valueOf(second));
         _SynchronizeTimerProgressBar.setProgress(percent);
     }
+
+
 
     @Override
     public void showMessage(String message, int color)
@@ -159,7 +161,12 @@ public class SynchronizeContainerActivity extends BaseActivity implements Synchr
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data)
     {
-        mSynchronizeContainerContractPresenter.acvitityResult(requestCode,resultCode,data);
+        boolean isInappDataResult = mSynchronizeContainerContractPresenter.acvitityResult(requestCode,resultCode,data);
+
+        if(isInappDataResult == false)
+        {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
     @OnClick({R.id._synchronizeInAppButton, R.id._synchronizeCancelButton})

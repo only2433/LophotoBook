@@ -165,12 +165,6 @@ public class SplashContainerPresent implements SplashContainerContract.Presenter
     }
 
     @Override
-    public void acvitityResult(int requestCode, int resultCode, Intent data)
-    {
-
-    }
-
-    @Override
     public void requestPermissionResult(int requestCode, String[] permissions, int[] grantResults)
     {
         boolean isAllCheckSuccess = true;

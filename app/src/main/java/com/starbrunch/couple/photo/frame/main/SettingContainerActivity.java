@@ -1,6 +1,5 @@
 package com.starbrunch.couple.photo.frame.main;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Message;
 import android.support.annotation.Nullable;
@@ -141,9 +140,4 @@ public class SettingContainerActivity extends BaseActivity implements SettingCon
         }
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data)
-    {
-        mSettingContainerContractPresenter.acvitityResult(requestCode, resultCode, data);
-    }
 }

@@ -1,5 +1,7 @@
 package com.starbrunch.couple.photo.frame.main.contract;
 
+import android.content.Intent;
+
 /**
  * Created by 정재현 on 2017-12-20.
  */
@@ -35,12 +37,12 @@ public class MainContainerContract
 
         void invisibleFloatButton();
 
-
-
     }
 
     public interface Presenter extends BaseContract.Presenter
     {
+        void acvitityResult(int requestCode, int resultCode, Intent data);
+
         void changeDateSetComplete(int year, int monthOfYear, int dayOfMonth);
         void changeTimeSetComplete(int hourOfDay, int minute);
 

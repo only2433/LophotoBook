@@ -123,7 +123,6 @@ android:fitsSystemWindows="true">
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@color/color_white"
-            android:foreground="?android:attr/selectableItemBackground"
             app:scale_height="200"
             app:scale_left="20"
             app:scale_top="0"
