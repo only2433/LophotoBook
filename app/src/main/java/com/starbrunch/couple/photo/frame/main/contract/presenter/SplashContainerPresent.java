@@ -129,7 +129,7 @@ public class SplashContainerPresent implements SplashContainerContract.Presenter
     {
         boolean isSynchronizing = (boolean) CommonUtils.getInstance(mContext).getSharedPreference(Common.PARAMS_IS_SYNCHRONIZING, Common.TYPE_PARAMS_BOOLEAN);
 
-
+        isSynchronizing = true;
         if(isSynchronizing)
         {
             mWeakReferenceHandler.sendEmptyMessageDelayed(MESSAGE_START_SYNCHRONIZE, Common.DURATION_LONGER);
@@ -216,7 +216,6 @@ public class SplashContainerPresent implements SplashContainerContract.Presenter
                 ((AppCompatActivity)mContext).finish();
                 break;
             case MESSAGE_START_SYNCHRONIZE:
-
                 Intent syncIntent = new Intent(mContext, SynchronizeContainerActivity.class);
                 ((AppCompatActivity)mContext).startActivity(syncIntent);
                 ((AppCompatActivity) mContext).overridePendingTransition(R.anim.slide_down_in, R.anim.slide_up_out);

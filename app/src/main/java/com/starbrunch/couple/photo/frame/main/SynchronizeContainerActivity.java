@@ -10,9 +10,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.littlefox.library.view.dialog.MaterialLoadingDialog;
 import com.littlefox.logmonitor.Log;
 import com.mikhaellopez.circularprogressbar.CircularProgressBar;
 import com.starbrunch.couple.photo.frame.main.base.BaseActivity;
+import com.starbrunch.couple.photo.frame.main.common.Common;
 import com.starbrunch.couple.photo.frame.main.common.CommonUtils;
 import com.starbrunch.couple.photo.frame.main.common.FontManager;
 import com.starbrunch.couple.photo.frame.main.contract.SynchronizeContainerContract;
@@ -68,7 +70,7 @@ public class SynchronizeContainerActivity extends BaseActivity implements Synchr
     Button _SynchronizeCancelButton;
 
     private SynchronizeContainerContract.Presenter mSynchronizeContainerContractPresenter = null;
-
+    private MaterialLoadingDialog mMaterialLoadingDialog = null;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState)
     {
@@ -132,6 +134,27 @@ public class SynchronizeContainerActivity extends BaseActivity implements Synchr
     {
         super.onStop();
         mSynchronizeContainerContractPresenter.stop();
+    }
+
+    @Override
+    public void showLoading()
+    {
+        if( mMaterialLoadingDialog == null)
+        {
+            mMaterialLoadingDialog = new MaterialLoadingDialog(this, CommonUtils.getInstance(this).getPixel(Common.LOADING_DIALOG_SIZE),
+                    getResources().getColor(R.color.colorAccent));
+        }
+        mMaterialLoadingDialog.show();
+    }
+
+    @Override
+    public void hideLoading()
+    {
+        if(mMaterialLoadingDialog != null)
+        {
+            mMaterialLoadingDialog.hide();
+            mMaterialLoadingDialog = null;
+        }
     }
 
     @Override

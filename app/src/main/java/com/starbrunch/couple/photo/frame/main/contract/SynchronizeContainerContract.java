@@ -10,6 +10,8 @@ public class SynchronizeContainerContract
 {
     public interface View extends BaseContract.View
     {
+        void showLoading();
+        void hideLoading();
         void setRemainingTimer(String hour, String minute, String second, int percent);
     }
 

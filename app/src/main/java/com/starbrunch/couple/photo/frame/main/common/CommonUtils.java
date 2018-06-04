@@ -957,7 +957,7 @@ public class CommonUtils
 		{
 			result[0] = "0"+ hour;
 		}
-		else if(hour > 10)
+		else if(hour >= 10)
 		{
 			result[0] = String.valueOf(hour);
 		}
@@ -966,7 +966,7 @@ public class CommonUtils
 		{
 			result[1] = "0"+ minute;
 		}
-		else if(minute > 10)
+		else if(minute >= 10)
 		{
 			result[1] = String.valueOf(minute);
 		}
@@ -975,7 +975,7 @@ public class CommonUtils
 		{
 			result[2] = "0"+ second;
 		}
-		else if(second > 10)
+		else if(second >= 10)
 		{
 			result[2] = String.valueOf(second);
 		}

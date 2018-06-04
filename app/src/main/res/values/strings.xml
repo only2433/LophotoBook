@@ -33,6 +33,7 @@
     <string name="message_data_fail">Fail</string>
     <string name="message_iab_wrong_product">you can`t make purchase.</string>
     <string name="message_iab_aleady_buy_product">You already purchased this item.</string>
+    <string name="message_warning_synchronize_cancel">Do you Want to leave?\nIf you leave now, the synchronization will not work.</string>
     <string name="product_is_null">Your purchase cannot be completed. \nIn-app purchases are disabled on your device. </string>
     <string name="button_ok">OK</string>
     <string name="button_cancel">Cancel</string>

@@ -21,6 +21,7 @@ public class Common
     public static final String ZIP_FILE_NAME = "couplePhotoFrame.zip";
     public static final String PHOTO_INFORMATION_FILE_NAME ="photo_information.txt";
 
+    public static final String SKU_SYNCHRONIZE_ITEM = "sku_synchronize_item";
 
     public static final String ASYNC_UNCOMPRESSOR   ="async_uncompressor";
     public static final String ASYNC_COMPRESSOR     ="async_compressonr";
